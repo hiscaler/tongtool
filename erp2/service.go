@@ -8,11 +8,6 @@ type service struct {
 	tongTool tongtool.TongTool
 }
 
-type result struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-}
-
 type Service interface {
 	FBAOrders(param FBAOrderQueryParam) (items []FBAOrder, isLastPage bool, err error)                      // FBA 订单列表
 	Orders(param OrderQueryParam) (items []Order, isLastPage bool, err error)                               // 订单列表
