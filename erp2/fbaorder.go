@@ -53,9 +53,9 @@ type fbaOrderResult struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=c33e7bd4e73d4d2d9a27de56f794cc82
 func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	params.MerchantId = s.tongTool.MerchantId

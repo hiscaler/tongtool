@@ -184,9 +184,9 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
 func (s service) Products(params ProductQueryParams) (items []Product, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	if len(params.Skus) > 10 {

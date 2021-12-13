@@ -77,9 +77,9 @@ type purchaseOrdersResult struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=0dd564d52ce34ad0afce1f304d6b7824
 func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	params.MerchantId = s.tongTool.MerchantId

@@ -58,9 +58,9 @@ type stocksResult struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=9aaf6b145a014060b3b3f669b0487096
 func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	params.MerchantId = s.tongTool.MerchantId

@@ -55,9 +55,9 @@ type supplierResult struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=1456c221fcbf4632b06d4810e8e0d4e4
 func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	params.MerchantId = s.tongTool.MerchantId

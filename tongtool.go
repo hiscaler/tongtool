@@ -128,5 +128,4 @@ func ErrorWrap(code int, defaultMessage string) error {
 		}
 	}
 	return errors.New(msg)
-
 }

@@ -35,9 +35,9 @@ type accountsResult struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=1e81e4bbae0b4d60b5f7777fc629ba2a
 func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	params.MerchantId = s.tongTool.MerchantId

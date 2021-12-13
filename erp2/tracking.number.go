@@ -43,9 +43,9 @@ func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []Trac
 		items = append(items, TrackingNumber{OrderId: orderId})
 	}
 	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+		params.PageNo = 1
 	}
-	if params.PageSize <= 0 {
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	params.MerchantId = s.tongTool.MerchantId
