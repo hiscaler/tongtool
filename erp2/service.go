@@ -22,8 +22,9 @@ type Service interface {
 	Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                // 供应商列表
 	PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error) // 采购单列表
 	CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                    // 创建采购单
-	SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error)        // 创建采购单
-	Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                          // 创建采购单
+	SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error)        // 商户账号列表
+	Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                          // 库存列表
+	Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error)              // 仓库列表
 }
 
 func NewService(tt *tongtool.TongTool) Service {
