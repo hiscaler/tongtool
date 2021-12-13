@@ -26,42 +26,42 @@ type CreatePurchaseOrderRequest struct {
 }
 
 type PurchaseOrder struct {
-	ActualPayments      float64 `json:"actual_payments"`
-	Amount              float64 `json:"amount"`
-	CorporationFullName string  `json:"corporation_fullname"`
-	CreatedDate         string  `json:"createdDate"`
-	Currency            string  `json:"currency"`
-	GoodsIdKey          string  `json:"goodsIdKey"`
-	GoodsSKU            string  `json:"goods_sku"`
-	InQuantity          int     `json:"in_quantity"`
-	PayableAmounts      float64 `json:"payableAmounts"`
-	PoNum               string  `json:"ponum"`
-	PurchaseArrivalDate string  `json:"purchaseArrivalDate"`
-	PurchaseDate        string  `json:"purchaseDate"`
-	PurchaseOrderId     string  `json:"purchaseOrderId"`
-	Quantity            int     `json:"quantity"`
-	ShippingCost        float64 `json:"shipping_cost"`
-	Status              string  `json:"status"`
-	SupplierCode        string  `json:"supplier_code"`
-	TrackingNumber      string  `json:"tracking_number"`
-	UnitPrice           float64 `json:"unit_price"`
-	WarehouseIdKey      string  `json:"warehouseIdKey"`
-	WarehouseName       string  `json:"warehouseName"`
-	WillArriveDate      string  `json:"willArriveDate"`
+	ActualPayments      float64 `json:"actual_payments"`      // 实际已付款金额
+	Amount              float64 `json:"amount"`               // 采购金额
+	CorporationFullName string  `json:"corporation_fullname"` // 供应商名称
+	CreatedDate         string  `json:"createdDate"`          // 采购单创建时间
+	Currency            string  `json:"currency"`             // 币种
+	GoodsIdKey          string  `json:"goodsIdKey"`           // 通途商品id key
+	GoodsSKU            string  `json:"goods_sku"`            // 商品 SKU
+	InQuantity          int     `json:"in_quantity"`          // 已入库数量
+	PayableAmounts      float64 `json:"payableAmounts"`       // 应付金额
+	PoNum               string  `json:"ponum"`                // 采购单号
+	PurchaseArrivalDate string  `json:"purchaseArrivalDate"`  // 采购到货时间
+	PurchaseDate        string  `json:"purchaseDate"`         // 采购日期
+	PurchaseOrderId     string  `json:"purchaseOrderId"`      // 采购单id
+	Quantity            int     `json:"quantity"`             // 采购数量
+	ShippingCost        float64 `json:"shipping_cost"`        // 采购运费
+	Status              string  `json:"status"`               // 采购单状态0-等待到货、未全部到货, 1-部分到货等待剩余, 2-部分到货不等待剩余, 3-全部到货, 4-作废
+	SupplierCode        string  `json:"supplier_code"`        // 供应商代码
+	TrackingNumber      string  `json:"tracking_number"`      // 跟踪号
+	UnitPrice           float64 `json:"unit_price"`           // 采购单价
+	WarehouseIdKey      string  `json:"warehouseIdKey"`       // 通途仓库id key
+	WarehouseName       string  `json:"warehouseName"`        // 仓库名称
+	WillArriveDate      string  `json:"willArriveDate"`       // 预计到达日期
 }
 
 type PurchaseOrdersQueryParams struct {
-	MerchantId        string `json:"merchantId"`
-	POrderStatus      string `json:"pOrderStatus,omitempty"`
-	PurchaseDateFrom  string `json:"purchaseDateFrom,omitempty"`
-	PurchaseDateTo    string `json:"purchaseDateTo,omitempty"`
-	PurchaseOrderCode string `json:"purchaseOrderCode,omitempty"`
-	SKUs              string `json:"skus,omitempty"`
-	SupplierName      string `json:"supplierName,omitempty"`
-	UpdatedDateFrom   string `json:"updatedDateFrom,omitempty"`
-	UpdatedDateTo     string `json:"updatedDateTo,omitempty"`
-	PageNo            int    `json:"pageNo,omitempty,omitempty"`
-	PageSize          int    `json:"pageSize,omitempty,omitempty"`
+	MerchantId        string `json:"merchantId"`                   // 商户ID
+	POrderStatus      string `json:"pOrderStatus,omitempty"`       // 采购单状态:delivering/等待到货 、pReceivedAndWaitM/部分到货等待剩余、partialReceived/部分到货不等待剩余、Received/全部到货、cancel/已作废、NotPaymentApply/未申请付款、paymentApply/已申请付款、paymentCancel/已取消付款、payed/已付款、partialPayed/部分付款
+	PurchaseDateFrom  string `json:"purchaseDateFrom,omitempty"`   // 采购日期开始时间
+	PurchaseDateTo    string `json:"purchaseDateTo,omitempty"`     // 采购日期结束时间
+	PurchaseOrderCode string `json:"purchaseOrderCode,omitempty"`  // 采购单号
+	SKUs              string `json:"skus,omitempty"`               // SKU数组，长度不超过10
+	SupplierName      string `json:"supplierName,omitempty"`       // 供应商名称
+	UpdatedDateFrom   string `json:"updatedDateFrom,omitempty"`    // 采购单更新开始时间
+	UpdatedDateTo     string `json:"updatedDateTo,omitempty"`      // 采购单更新结束时间
+	PageNo            int    `json:"pageNo,omitempty,omitempty"`   // 查询页数
+	PageSize          int    `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 }
 
 type purchaseOrdersResult struct {
