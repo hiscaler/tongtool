@@ -62,9 +62,21 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 }
 
 func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err error) {
-	byId := params.WarehouseId != ""
-	byName := params.WarehouseName != ""
-	if !byId && !byName {
+	const (
+		searchById   = "id"
+		searchByName = "name"
+		searchByAll  = "all"
+	)
+	searchBy := ""
+	if params.WarehouseId != "" && params.WarehouseName != "" {
+		searchBy = searchByAll
+	} else if params.WarehouseId != "" {
+		searchBy = searchById
+	} else if params.WarehouseName != "" {
+		searchBy = searchByName
+	}
+
+	if searchBy == "" {
 		err = errors.New("invalid query params")
 		return
 	}
@@ -79,20 +91,16 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 			} else {
 				exists := false
 				for _, warehouse := range items {
-					if byId {
-						if strings.EqualFold(warehouse.WarehouseId, params.WarehouseId) {
-							item = warehouse
-							exists = true
-							break
-						}
-					} else if byName {
-						if strings.EqualFold(warehouse.WarehouseName, params.WarehouseName) {
-							item = warehouse
-							exists = true
-							break
-						}
+					switch searchBy {
+					case searchByAll:
+						exists = strings.EqualFold(warehouse.WarehouseId, params.WarehouseId) && strings.EqualFold(warehouse.WarehouseName, params.WarehouseName)
+					case searchById:
+						exists = strings.EqualFold(warehouse.WarehouseId, params.WarehouseId)
+					case searchByName:
+						exists = strings.EqualFold(warehouse.WarehouseName, params.WarehouseName)
 					}
 					if exists {
+						item = warehouse
 						break
 					}
 				}
