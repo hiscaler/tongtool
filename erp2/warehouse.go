@@ -19,7 +19,7 @@ type WarehouseQueryParams struct {
 	PageNo        int    `json:"pageNo,omitempty"`        // 查询页数
 	PageSize      int    `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
-	WarehouseId   string `json:"warehouseId,omitempty"`   // 仓库名称
+	WarehouseId   string `json:"warehouseId,omitempty"`   // 仓库id（通途无此参数）
 }
 
 type warehousesResult struct {
@@ -31,6 +31,7 @@ type warehousesResult struct {
 	}
 }
 
+// Warehouses 查询仓库列表
 func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
@@ -61,6 +62,7 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 	return
 }
 
+// Warehouse 查询指定仓库
 func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err error) {
 	const (
 		searchById        = "id"

@@ -3,6 +3,7 @@ package erp2
 import (
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"strings"
 )
 
 // Order 通途订单
@@ -132,14 +133,19 @@ func (s service) Order(id string) (item Order, err error) {
 		PageSize: s.tongTool.QueryDefaultValues.PageSize,
 	}
 	for {
-		orders := make([]Order, 0)
+		items := make([]Order, 0)
 		isLastPage := false
-		orders, isLastPage, err = s.Orders(params)
+		items, isLastPage, err = s.Orders(params)
 		if err == nil {
-			if len(orders) == 0 {
+			if len(items) == 0 {
 				err = errors.New("not found")
 			} else {
-				item = orders[0]
+				for _, order := range items {
+					if strings.EqualFold(order.OrderIdKey, id) {
+						item = order
+						return
+					}
+				}
 			}
 		}
 		if err != nil || isLastPage {
