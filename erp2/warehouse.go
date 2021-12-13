@@ -63,13 +63,13 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 
 func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err error) {
 	const (
-		searchById   = "id"
-		searchByName = "name"
-		searchByAll  = "all"
+		searchById        = "id"
+		searchByName      = "name"
+		searchByIdAndName = "id.name"
 	)
 	searchBy := ""
 	if params.WarehouseId != "" && params.WarehouseName != "" {
-		searchBy = searchByAll
+		searchBy = searchByIdAndName
 	} else if params.WarehouseId != "" {
 		searchBy = searchById
 	} else if params.WarehouseName != "" {
@@ -92,7 +92,7 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 				exists := false
 				for _, warehouse := range items {
 					switch searchBy {
-					case searchByAll:
+					case searchByIdAndName:
 						exists = strings.EqualFold(warehouse.WarehouseId, params.WarehouseId) && strings.EqualFold(warehouse.WarehouseName, params.WarehouseName)
 					case searchById:
 						exists = strings.EqualFold(warehouse.WarehouseId, params.WarehouseId)
@@ -101,11 +101,8 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 					}
 					if exists {
 						item = warehouse
-						break
+						return
 					}
-				}
-				if exists {
-					break
 				}
 			}
 		}
