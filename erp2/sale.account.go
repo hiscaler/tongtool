@@ -13,6 +13,7 @@ type SaleAccount struct {
 	PlatformId    string   `json:"platformId"`    // 平台id
 	SiteIds       []string `json:"siteIds"`       // 站点id列表
 	Status        string   `json:"status"`        // 账号状态 0停用,1 启用
+	StatusBoolean bool     `json:"statusBoolean"` // 账号状态布尔值
 }
 
 type SaleAccountQueryParams struct {
@@ -50,6 +51,9 @@ func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccoun
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					items[i].StatusBoolean = item.Status == "1"
+				}
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
