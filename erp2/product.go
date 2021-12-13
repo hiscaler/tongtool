@@ -180,7 +180,8 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 	return err
 }
 
-// Products 根据制定参数查询商品列表
+// Products 根据指定参数查询商品列表
+// https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
 func (s service) Products(params ProductQueryParams) (items []Product, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo

@@ -54,6 +54,8 @@ type stocksResult struct {
 	}
 }
 
+// Stocks 库存列表
+// https://open.tongtool.com/apiDoc.html#/?docId=9aaf6b145a014060b3b3f669b0487096
 func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo

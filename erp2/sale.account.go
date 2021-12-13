@@ -30,6 +30,8 @@ type accountsResult struct {
 	}
 }
 
+// SaleAccounts 商户账号列表
+// https://open.tongtool.com/apiDoc.html#/?docId=1e81e4bbae0b4d60b5f7777fc629ba2a
 func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo

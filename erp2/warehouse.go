@@ -32,6 +32,7 @@ type warehousesResult struct {
 }
 
 // Warehouses 查询仓库列表
+// https://open.tongtool.com/apiDoc.html#/?docId=cdb49c57add3448daf1f4cd0fad40bef
 func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
@@ -154,6 +155,8 @@ type shippingMethodsResult struct {
 	}
 }
 
+// ShippingMethods 仓库物流渠道查询
+// https://open.tongtool.com/apiDoc.html#/?docId=9ed7d6c3e7c44e498c0d43329d5a443b
 func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo

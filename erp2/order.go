@@ -128,6 +128,8 @@ type orderResult struct {
 	}
 }
 
+// Orders 订单列表
+// https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo

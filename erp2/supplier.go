@@ -51,6 +51,8 @@ type supplierResult struct {
 	}
 }
 
+// Suppliers 供应商列表
+// https://open.tongtool.com/apiDoc.html#/?docId=1456c221fcbf4632b06d4810e8e0d4e4
 func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
