@@ -35,15 +35,18 @@ type trackingNumbersResult struct {
 
 // TrackingNumbers 订单物流单号列表
 func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []TrackingNumber, isLastPage bool, err error) {
+	items = make([]TrackingNumber, 0)
+	if len(params.OrderIds) == 0 {
+		return
+	}
+	for _, orderId := range params.OrderIds {
+		items = append(items, TrackingNumber{OrderId: orderId})
+	}
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}
 	if params.PageSize <= 0 {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
-	items = make([]TrackingNumber, 0)
-	for _, orderId := range params.OrderIds {
-		items = append(items, TrackingNumber{OrderId: orderId})
 	}
 	params.MerchantId = s.tongTool.MerchantId
 	res := trackingNumbersResult{}
