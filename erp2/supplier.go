@@ -32,7 +32,7 @@ type Supplier struct {
 	ZipCode             string  `json:"zipCode"`
 }
 
-type SuppliersQueryParam struct {
+type SuppliersQueryParams struct {
 	MerchantId string `json:"merchantId"`
 	PageNo     int    `json:"pageNo,omitempty"`
 	PageSize   int    `json:"pageSize,omitempty"`
@@ -47,7 +47,7 @@ type supplierResult struct {
 	}
 }
 
-func (s service) Suppliers(params SuppliersQueryParam) (items []Supplier, isLastPage bool, err error) {
+func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}

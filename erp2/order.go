@@ -69,7 +69,7 @@ type GoodsInfo struct {
 	TongToolGoodsInfoList []TongToolGoodsInfoList `json:"tongToolGoodsInfoList"`
 }
 
-type OrderQueryParam struct {
+type OrderQueryParams struct {
 	AccountCode      string `json:"accountCode"`
 	BuyerEmail       string `json:"buyerEmail,omitempty"`
 	MerchantId       string `json:"merchantId"`
@@ -98,7 +98,7 @@ type orderResult struct {
 	}
 }
 
-func (s service) Orders(params OrderQueryParam) (items []Order, isLastPage bool, err error) {
+func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}
@@ -128,7 +128,7 @@ func (s service) Orders(params OrderQueryParam) (items []Order, isLastPage bool,
 func (s service) Order(id string) (Order, error) {
 	pkg := Order{}
 	var err error
-	params := OrderQueryParam{
+	params := OrderQueryParams{
 		OrderId:  id,
 		PageNo:   1,
 		PageSize: s.tongTool.QueryDefaultValues.PageSize,

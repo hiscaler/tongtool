@@ -31,7 +31,7 @@ type FBAOrder struct {
 	TotalShippingTax   string  `json:"totalShippingTax"`
 }
 
-type FBAOrderQueryParam struct {
+type FBAOrderQueryParams struct {
 	Account          string `json:"account"`
 	MerchantId       string `json:"merchantId"`
 	PageNo           int    `json:"pageNo,omitempty"`
@@ -47,7 +47,7 @@ type fbaOrderResult struct {
 	}
 }
 
-func (s service) FBAOrders(params FBAOrderQueryParam) (items []FBAOrder, isLastPage bool, err error) {
+func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}

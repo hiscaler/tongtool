@@ -49,7 +49,7 @@ type PurchaseOrder struct {
 	WillArriveDate      string  `json:"willArriveDate"`
 }
 
-type PurchaseOrdersQueryParam struct {
+type PurchaseOrdersQueryParams struct {
 	MerchantId        string `json:"merchantId"`
 	POrderStatus      string `json:"pOrderStatus,omitempty"`
 	PurchaseDateFrom  string `json:"purchaseDateFrom,omitempty"`
@@ -72,7 +72,7 @@ type purchaseOrdersResult struct {
 	}
 }
 
-func (s service) PurchaseOrders(params PurchaseOrdersQueryParam) (items []PurchaseOrder, isLastPage bool, err error) {
+func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}

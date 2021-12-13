@@ -16,7 +16,7 @@ type Package struct {
 	CarrierPostage        float64 `json:"carrierPostage"`        // 物流商运费
 }
 
-type PackageQueryParam struct {
+type PackageQueryParams struct {
 	AssignTimeFrom     string `json:"assignTimeFrom,omitempty"`
 	AssignTimeTo       string `json:"assignTimeTo,omitempty"`
 	DespatchTimeFrom   string `json:"despatchTimeFrom,omitempty"`
@@ -38,7 +38,7 @@ type packageResult struct {
 	}
 }
 
-func (s service) Packages(params PackageQueryParam) (items []Package, isLastPage bool, err error) {
+func (s service) Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}
@@ -66,7 +66,7 @@ func (s service) Packages(params PackageQueryParam) (items []Package, isLastPage
 func (s service) Package(orderNumber, packageNumber string) (Package, error) {
 	pkg := Package{}
 	var err error
-	params := PackageQueryParam{
+	params := PackageQueryParams{
 		MerchantId: s.tongTool.MerchantId,
 		OrderId:    strings.TrimSpace(orderNumber),
 		PageNo:     1,

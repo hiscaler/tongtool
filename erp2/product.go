@@ -108,7 +108,7 @@ type UpdateProductRequest struct {
 	PackageHeight        float64 `json:"packageHeight"`        // 包裹尺寸(高cm)
 }
 
-type ProductQueryParam struct {
+type ProductQueryParams struct {
 	CategoryName     string   `json:"category_name,omitempty"`
 	MerchantId       string   `json:"merchantId"`
 	PageNo           int      `json:"pageNo"`
@@ -180,7 +180,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 }
 
 // Products 根据制定参数查询商品列表
-func (s service) Products(params ProductQueryParam) (items []Product, isLastPage bool, err error) {
+func (s service) Products(params ProductQueryParams) (items []Product, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}
@@ -214,7 +214,7 @@ func (s service) Product(typ int, skus []string, isAlias bool) (product Product,
 		typ = ProductTypeNormal
 	}
 
-	params := ProductQueryParam{
+	params := ProductQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
 		ProductType: strconv.Itoa(typ),
 		PageNo:      1,
