@@ -23,6 +23,7 @@ type Service interface {
 	PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error) // 采购单列表
 	CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                    // 创建采购单
 	SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error)        // 创建采购单
+	Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                          // 创建采购单
 }
 
 func NewService(tt *tongtool.TongTool) Service {
