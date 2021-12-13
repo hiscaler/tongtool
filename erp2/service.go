@@ -9,10 +9,10 @@ type service struct {
 }
 
 type Service interface {
-	FBAOrders(param FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error)                  // FBA 订单列表
-	Orders(param OrderQueryParams) (items []Order, isLastPage bool, err error)                           // 订单列表
+	FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error)                 // FBA 订单列表
+	Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error)                          // 订单列表
 	Order(id string) (Order, error)                                                                      // 单个订单
-	Products(param ProductQueryParams) (items []Product, isLastPage bool, err error)                     // 商品列表
+	Products(params ProductQueryParams) (items []Product, isLastPage bool, err error)                    // 商品列表
 	Product(typ int, skus []string, isAlias bool) (product Product, err error)                           // 单个商品
 	ProductExists(typ int, skus []string, isAlias bool) bool                                             // 商品是否存在
 	CreateProduct(req CreateProductRequest) error                                                        // 创建商品
