@@ -6,6 +6,7 @@ import (
 )
 
 func TestService_FBAOrders(t *testing.T) {
+	_, ttService := newTestTongTool()
 	params := FBAOrderQueryParam{
 		PurchaseDateFrom: "2021-12-01 00:00:00",
 		PurchaseDateTo:   "2021-12-10 23:59:59",

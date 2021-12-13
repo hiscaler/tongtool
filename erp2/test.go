@@ -7,10 +7,7 @@ import (
 	"os"
 )
 
-var tt *tongtool.TongTool
-var ttService Service
-
-func init() {
+func newTestTongTool() (*tongtool.TongTool, Service) {
 	type config struct {
 		Debug     bool   `json:"debug"`
 		AppKey    string `json:"appKey"`
@@ -26,6 +23,6 @@ func init() {
 		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
 	}
 
-	tt = tongtool.NewTongTool(c.AppKey, c.AppSecret, c.Debug)
-	ttService = NewService(*tt)
+	instance := tongtool.NewTongTool(c.AppKey, c.AppSecret, c.Debug)
+	return instance, NewService(instance)
 }

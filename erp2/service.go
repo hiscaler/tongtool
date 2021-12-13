@@ -5,7 +5,7 @@ import (
 )
 
 type service struct {
-	tongTool tongtool.TongTool
+	tongTool *tongtool.TongTool
 }
 
 type Service interface {
@@ -24,6 +24,6 @@ type Service interface {
 	CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                       // 创建采购单
 }
 
-func NewService(tt tongtool.TongTool) Service {
+func NewService(tt *tongtool.TongTool) Service {
 	return service{tt}
 }
