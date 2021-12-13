@@ -125,9 +125,7 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	return
 }
 
-func (s service) Order(id string) (Order, error) {
-	pkg := Order{}
-	var err error
+func (s service) Order(id string) (item Order, err error) {
 	params := OrderQueryParams{
 		OrderId:  id,
 		PageNo:   1,
@@ -141,11 +139,7 @@ func (s service) Order(id string) (Order, error) {
 			if len(orders) == 0 {
 				err = errors.New("not found")
 			} else {
-				if len(orders) == 0 {
-					err = errors.New("not found")
-				} else {
-					pkg = orders[0]
-				}
+				item = orders[0]
 			}
 		}
 		if err != nil || isLastPage {
@@ -153,5 +147,5 @@ func (s service) Order(id string) (Order, error) {
 		}
 		params.PageNo++
 	}
-	return pkg, err
+	return
 }

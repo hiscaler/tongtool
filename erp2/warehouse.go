@@ -3,6 +3,7 @@ package erp2
 import (
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"strings"
 )
 
 type Warehouse struct {
@@ -18,6 +19,7 @@ type WarehouseQueryParams struct {
 	PageNo        int    `json:"pageNo,omitempty"`        // 查询页数
 	PageSize      int    `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
+	WarehouseId   string `json:"warehouseId,omitempty"`   // 仓库名称
 }
 
 type warehousesResult struct {
@@ -55,6 +57,54 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 		} else {
 			err = errors.New(resp.Status())
 		}
+	}
+	return
+}
+
+func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err error) {
+	byId := params.WarehouseId != ""
+	byName := params.WarehouseName != ""
+	if !byId && !byName {
+		err = errors.New("invalid query params")
+		return
+	}
+
+	for {
+		items := make([]Warehouse, 0)
+		isLastPage := false
+		items, isLastPage, err = s.Warehouses(params)
+		if err == nil {
+			if len(items) == 0 {
+				err = errors.New("not found")
+			} else {
+				exists := false
+				for _, warehouse := range items {
+					if byId {
+						if strings.EqualFold(warehouse.WarehouseId, params.WarehouseId) {
+							item = warehouse
+							exists = true
+							break
+						}
+					} else if byName {
+						if strings.EqualFold(warehouse.WarehouseName, params.WarehouseName) {
+							item = warehouse
+							exists = true
+							break
+						}
+					}
+					if exists {
+						break
+					}
+				}
+				if exists {
+					break
+				}
+			}
+		}
+		if err != nil || isLastPage {
+			break
+		}
+		params.PageNo++
 	}
 	return
 }

@@ -66,9 +66,7 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 	return
 }
 
-func (s service) Package(orderNumber, packageNumber string) (Package, error) {
-	pkg := Package{}
-	var err error
+func (s service) Package(orderNumber, packageNumber string) (item Package, err error) {
 	params := PackageQueryParams{
 		MerchantId: s.tongTool.MerchantId,
 		OrderId:    strings.TrimSpace(orderNumber),
@@ -87,11 +85,11 @@ func (s service) Package(orderNumber, packageNumber string) (Package, error) {
 				err = errors.New("not found")
 			} else {
 				if packageNumber == "" {
-					pkg = packages[len(packages)-1]
+					item = packages[len(packages)-1]
 				} else {
 					for _, p := range packages {
 						if strings.EqualFold(p.PackageId, packageNumber) {
-							pkg = p
+							item = p
 							break
 						}
 					}
@@ -104,5 +102,5 @@ func (s service) Package(orderNumber, packageNumber string) (Package, error) {
 		params.PageNo++
 	}
 
-	return pkg, err
+	return
 }

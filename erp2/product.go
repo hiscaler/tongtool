@@ -208,9 +208,9 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 }
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
-func (s service) Product(typ int, skus []string, isAlias bool) (product Product, err error) {
+func (s service) Product(typ int, skus []string, isAlias bool) (item Product, err error) {
 	if len(skus) == 0 {
-		return product, errors.New("please support query param values")
+		return item, errors.New("invalid param values")
 	}
 
 	if typ != ProductTypeVariable && typ != ProductTypeBinding {
@@ -247,13 +247,13 @@ func (s service) Product(typ int, skus []string, isAlias bool) (product Product,
 				if isAlias {
 					for _, label := range p.LabelList {
 						if inFunc(label.SKULabel) {
-							product = p
+							item = p
 							exists = true
 						}
 					}
 				} else {
 					if inFunc(p.SKU) {
-						product = p
+						item = p
 						exists = true
 					}
 				}
