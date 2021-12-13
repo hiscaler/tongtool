@@ -3,6 +3,7 @@ package erp2
 import (
 	"errors"
 	"fmt"
+	"github.com/hiscaler/tongtool"
 	"strconv"
 	"strings"
 	"time"
@@ -195,8 +196,10 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 		Post("/openapi/tongtool/goodsQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			items = res.Datas.Array
-			isLastPage = len(items) <= params.PageSize
+			if err = tongtool.HasError(res.Code); err == nil {
+				items = res.Datas.Array
+				isLastPage = len(items) <= params.PageSize
+			}
 		} else {
 			err = errors.New(resp.Status())
 		}

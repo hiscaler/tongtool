@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"errors"
+	"github.com/hiscaler/tongtool"
 	"strings"
 )
 
@@ -88,8 +89,10 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 		Post("/openapi/tongtool/purchaseOrderQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			items = res.Datas.Array
-			isLastPage = len(items) < params.PageSize
+			if err = tongtool.HasError(res.Code); err == nil {
+				items = res.Datas.Array
+				isLastPage = len(items) < params.PageSize
+			}
 		} else {
 			err = errors.New(resp.Status())
 		}

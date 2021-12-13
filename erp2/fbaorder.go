@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"errors"
+	"github.com/hiscaler/tongtool"
 )
 
 // FBAOrder 通途 FBA 订单
@@ -63,8 +64,10 @@ func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLast
 		Post("/openapi/tongtool/fbaOrderQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			items = res.Datas.Array
-			isLastPage = len(items) < params.PageSize
+			if err = tongtool.HasError(res.Code); err == nil {
+				items = res.Datas.Array
+				isLastPage = len(items) < params.PageSize
+			}
 		} else {
 			err = errors.New(resp.Status())
 		}
