@@ -6,33 +6,34 @@ import (
 )
 
 type Supplier struct {
-	AccountName         string  `json:"accountName"`
-	Bank                string  `json:"bank"`
-	BillingCycle        float64 `json:"billingCycle"`
-	BillingCycleUnit    string  `json:"billingCycleUnit"`
-	CityCnName          string  `json:"cityCnName"`
-	ClearingForm        string  `json:"clearingForm"`
-	ClearingRemark      string  `json:"clearingRemark"`
-	CorporationFullName string  `json:"corporationFullname"`
-	CountryCnName       string  `json:"countryCnName"`
-	Description         string  `json:"description"`
-	DetailAddress       string  `json:"detailAddress"`
-	Email               string  `json:"email"`
-	FaxNumber           string  `json:"faxNumber"`
-	FullAddress         string  `json:"fullAddress"`
-	IsDefault           string  `json:"isDefult"`
-	Linkman             string  `json:"linkman"`
-	PayeeAccount        string  `json:"payeeAccount"`
-	PaymentMode         string  `json:"paymentMode"`
-	PostalCode          string  `json:"postalCode"`
-	QqNumber            string  `json:"qqNumber"`
-	StateCnName         string  `json:"stateCnName"`
-	SupplierCode        string  `json:"supplierCode"`
-	SupplierGrade       string  `json:"supplierGrade"`
-	SupplierId          string  `json:"supplierId"`
-	Telephone           string  `json:"telephone"`
-	WwNumber            string  `json:"wwNumber"`
-	ZipCode             string  `json:"zipCode"`
+	AccountName         string  `json:"accountName"`         // 开户名
+	Bank                string  `json:"bank"`                // 开户行
+	BillingCycle        float64 `json:"billingCycle"`        // 结算周期
+	BillingCycleUnit    string  `json:"billingCycleUnit"`    // 结算周期单位
+	CityCnName          string  `json:"cityCnName"`          // 市中文名称
+	ClearingForm        string  `json:"clearingForm"`        // 结算方式 :货到付款、款到发货、快递代收、定期结算
+	ClearingRemark      string  `json:"clearingRemark"`      // 结算方式备注
+	CorporationFullName string  `json:"corporationFullname"` // 企业全称
+	CountryCnName       string  `json:"countryCnName"`       // 国家中文名称
+	Description         string  `json:"description"`         // 经营范围介绍
+	DetailAddress       string  `json:"detailAddress"`       // 详细地址
+	Email               string  `json:"email"`               // Email
+	FaxNumber           string  `json:"faxNumber"`           // 传真号
+	FullAddress         string  `json:"fullAddress"`         // 完整地址
+	IsDefault           string  `json:"isDefult"`            // 是否是默认供应商
+	IsDefaultBoolean    bool    `json:"isDefaultBoolean"`    // 是否是默认供应商布尔值
+	Linkman             string  `json:"linkman"`             // 联系人
+	PayeeAccount        string  `json:"payeeAccount"`        // 收款账号
+	PaymentMode         string  `json:"paymentMode"`         // 支付方式
+	PostalCode          string  `json:"postalCode"`          // 邮编
+	QQNumber            string  `json:"qqNumber"`            // QQ号
+	StateCnName         string  `json:"stateCnName"`         // 省/州中文名称
+	SupplierCode        string  `json:"supplierCode"`        // 供应商代码
+	SupplierGrade       string  `json:"supplierGrade"`       // 供应商等级
+	SupplierId          string  `json:"supplierId"`          // 通途供应商id
+	Telephone           string  `json:"telephone"`           // 联系电话
+	WangWangNumber      string  `json:"wwNumber"`            // 旺旺号
+	ZipCode             string  `json:"zipCode"`             // 电话区号
 }
 
 type SuppliersQueryParams struct {
@@ -68,6 +69,9 @@ func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLas
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					items[i].IsDefaultBoolean = item.IsDefault == "1"
+				}
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {

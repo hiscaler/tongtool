@@ -11,7 +11,7 @@ type Warehouse struct {
 	WarehouseCode string `json:"warehouseCode"` // 仓库代码
 	WarehouseName string `json:"warehouseName"` // 仓库名称
 	Status        string `json:"status"`        // 仓库状态：0-失效1-有效
-	TTEnabled     bool   `json:"tt_enabled"`    // 激活（返回仓库状态布尔值，方便调用者判断）
+	StatusBoolean bool   `json:"StatusBoolean"` // 仓库状态布尔值（返回仓库状态布尔值，方便调用者判断）
 }
 
 type WarehouseQueryParams struct {
@@ -51,7 +51,7 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				for i, item := range items {
-					items[i].TTEnabled = item.Status == "1"
+					items[i].StatusBoolean = item.Status == "1"
 				}
 				isLastPage = len(items) < params.PageSize
 			}
@@ -127,15 +127,15 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 // 物流渠道
 
 type ShippingMethod struct {
-	ShippingMethodId        string `json:"shippingMethodId"`        // 渠道ID
-	ShippingMethodShortname string `json:"shippingMethodShortname"` // 渠道名称
-	ShippingMethodStatus    string `json:"shippingMethodStatus"`    // 渠道状态0-失效1-有效
-	TTShippingMethodStatus  bool   `json:"tt_shippingMethodStatus"` // 渠道状态
-	CarrierName             string `json:"carrierName"`             // 物流商简称
-	CarrierStatus           string `json:"carrierStatus"`           // 物流商状态0-失效1-有效
-	TTCarrierStatus         bool   `json:"tt_carrierStatus"`        // 物流商状态
-	WarehouseId             string `json:"warehouseId"`             // 仓库id
-	WarehouseName           string `json:"warehouseName"`           // 仓库名称
+	ShippingMethodId            string `json:"shippingMethodId"`            // 渠道ID
+	ShippingMethodShortname     string `json:"shippingMethodShortname"`     // 渠道名称
+	ShippingMethodStatus        string `json:"shippingMethodStatus"`        // 渠道状态0-失效1-有效
+	ShippingMethodStatusBoolean bool   `json:"shippingMethodStatusBoolean"` // 渠道状态
+	CarrierName                 string `json:"carrierName"`                 // 物流商简称
+	CarrierStatus               string `json:"carrierStatus"`               // 物流商状态0-失效1-有效
+	CarrierStatusBoolean        bool   `json:"CarrierStatusBoolean"`        // 物流商状态
+	WarehouseId                 string `json:"warehouseId"`                 // 仓库id
+	WarehouseName               string `json:"warehouseName"`               // 仓库名称
 }
 
 type ShippingMethodQueryParams struct {
@@ -173,8 +173,8 @@ func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []Ship
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				for i, item := range items {
-					items[i].TTShippingMethodStatus = item.ShippingMethodStatus == "1"
-					items[i].TTCarrierStatus = item.CarrierStatus == "1"
+					items[i].ShippingMethodStatusBoolean = item.ShippingMethodStatus == "1"
+					items[i].CarrierStatusBoolean = item.CarrierStatus == "1"
 				}
 				isLastPage = len(items) < params.PageSize
 			}

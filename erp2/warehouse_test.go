@@ -8,7 +8,7 @@ import (
 func TestService_Warehouses(t *testing.T) {
 	_, ttService := newTestTongTool()
 	params := WarehouseQueryParams{}
-	warehouses := make([]Warehouse, 9)
+	warehouses := make([]Warehouse, 0)
 	for {
 		pageWarehouses, isLastPage, err := ttService.Warehouses(params)
 		if err != nil {
@@ -24,7 +24,7 @@ func TestService_Warehouses(t *testing.T) {
 
 	enabledCount := 0
 	for _, warehouse := range warehouses {
-		if warehouse.TTEnabled {
+		if warehouse.StatusBoolean {
 			enabledCount++
 		}
 	}

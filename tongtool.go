@@ -17,6 +17,7 @@ const (
 	TokenExpiredError    = 523
 	UnauthorizedError    = 524
 	TooManyRequestsError = 526
+	AccountExpiredError  = 999999
 )
 
 type queryDefaultValues struct {
@@ -117,6 +118,8 @@ func ErrorWrap(code int, defaultMessage string) error {
 		msg = "未授权的请求，请确认应用是否勾选对应接口"
 	case TooManyRequestsError:
 		msg = "接口请求超请求次数限额"
+	case AccountExpiredError:
+		msg = "账号已过期"
 	default:
 		if defaultMessage == "" {
 			msg = fmt.Sprintf("未知的错误：%d", code)
