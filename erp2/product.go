@@ -188,6 +188,14 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 	if params.PageSize <= 0 {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	if len(params.Skus) > 10 {
+		err = errors.New("skus 参数长度不能大于 10 个")
+	} else if len(params.SkuAliases) > 10 {
+		err = errors.New("skuAliases 参数长度不能大于 10 个")
+	}
+	if err != nil {
+		return
+	}
 	items = make([]Product, 0)
 	res := productResult{}
 	resp, err := s.tongTool.Client.R().
@@ -208,8 +216,8 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 }
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
-func (s service) Product(typ int, skus []string, isAlias bool) (item Product, err error) {
-	if len(skus) == 0 {
+func (s service) Product(typ int, sku string, isAlias bool) (item Product, err error) {
+	if len(sku) == 0 {
 		return item, errors.New("invalid param values")
 	}
 
@@ -224,41 +232,46 @@ func (s service) Product(typ int, skus []string, isAlias bool) (item Product, er
 		PageSize:    s.tongTool.QueryDefaultValues.PageSize,
 	}
 	if isAlias {
-		params.SkuAliases = skus
+		params.SkuAliases = []string{sku}
 	} else {
-		params.Skus = skus
+		params.Skus = []string{sku}
 	}
 
-	inFunc := func(v string) bool {
-		for _, sku := range skus {
-			if strings.EqualFold(v, sku) {
-				return true
-			}
-		}
-		return false
-	}
 	exists := false
 	for {
-		products := make([]Product, 0)
+		items := make([]Product, 0)
 		isLastPage := false
-		products, isLastPage, err = s.Products(params)
+		items, isLastPage, err = s.Products(params)
 		if err == nil {
-			for _, p := range products {
-				if isAlias {
-					for _, label := range p.LabelList {
-						if inFunc(label.SKULabel) {
-							item = p
+			if len(items) == 0 {
+				err = errors.New("not found")
+			} else {
+				for _, p := range items {
+					switch typ {
+					case ProductTypeVariable:
+						if strings.EqualFold(sku, p.ProductCode) {
 							exists = true
+							item = p
+						}
+					default:
+						if isAlias {
+							for _, label := range p.LabelList {
+								if strings.EqualFold(sku, label.SKULabel) {
+									exists = true
+									item = p
+								}
+							}
+						} else {
+							if strings.EqualFold(sku, p.SKU) {
+								exists = true
+								item = p
+							}
 						}
 					}
-				} else {
-					if inFunc(p.SKU) {
-						item = p
-						exists = true
+
+					if exists {
+						break
 					}
-				}
-				if exists {
-					break
 				}
 			}
 		}
@@ -276,8 +289,8 @@ func (s service) Product(typ int, skus []string, isAlias bool) (item Product, er
 }
 
 // ProductExists 根据 SKU 或 SKU 别名查询单个商品是否存在
-func (s service) ProductExists(typ int, skus []string, isAlias bool) bool {
-	if _, err := s.Product(typ, skus, isAlias); err == nil {
+func (s service) ProductExists(typ int, sku string, isAlias bool) bool {
+	if _, err := s.Product(typ, sku, isAlias); err == nil {
 		return true
 	} else {
 		return false

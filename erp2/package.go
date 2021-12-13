@@ -76,6 +76,8 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 	if packageNumber != "" {
 		packageNumber = strings.TrimSpace(packageNumber)
 	}
+
+	exists := false
 	for {
 		packages := make([]Package, 0)
 		isLastPage := false
@@ -85,10 +87,12 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 				err = errors.New("not found")
 			} else {
 				if packageNumber == "" {
+					exists = true
 					item = packages[len(packages)-1]
 				} else {
 					for _, p := range packages {
 						if strings.EqualFold(p.PackageId, packageNumber) {
+							exists = true
 							item = p
 							break
 						}
@@ -96,10 +100,14 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 				}
 			}
 		}
-		if err != nil || isLastPage {
+		if isLastPage || exists || err != nil {
 			break
 		}
 		params.PageNo++
+	}
+
+	if err == nil && !exists {
+		err = errors.New("not found")
 	}
 
 	return

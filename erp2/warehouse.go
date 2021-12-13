@@ -83,6 +83,7 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 		return
 	}
 
+	exists := false
 	for {
 		items := make([]Warehouse, 0)
 		isLastPage := false
@@ -91,7 +92,6 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 			if len(items) == 0 {
 				err = errors.New("not found")
 			} else {
-				exists := false
 				for _, warehouse := range items {
 					switch searchBy {
 					case searchByIdAndName:
@@ -103,15 +103,23 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 					}
 					if exists {
 						item = warehouse
-						return
+						break
 					}
+				}
+				if exists {
+					break
 				}
 			}
 		}
-		if err != nil || isLastPage {
+		if isLastPage || exists || err != nil {
 			break
 		}
 		params.PageNo++
 	}
+
+	if err == nil && !exists {
+		err = errors.New("not found")
+	}
+
 	return
 }

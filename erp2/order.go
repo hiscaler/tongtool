@@ -132,6 +132,8 @@ func (s service) Order(id string) (item Order, err error) {
 		PageNo:   1,
 		PageSize: s.tongTool.QueryDefaultValues.PageSize,
 	}
+
+	exists := false
 	for {
 		items := make([]Order, 0)
 		isLastPage := false
@@ -142,16 +144,25 @@ func (s service) Order(id string) (item Order, err error) {
 			} else {
 				for _, order := range items {
 					if strings.EqualFold(order.OrderIdKey, id) {
+						exists = true
 						item = order
-						return
+						break
 					}
+				}
+				if exists {
+					break
 				}
 			}
 		}
-		if err != nil || isLastPage {
+		if isLastPage || exists || err != nil {
 			break
 		}
 		params.PageNo++
 	}
+
+	if err == nil && !exists {
+		err = errors.New("not found")
+	}
+
 	return
 }
