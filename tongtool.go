@@ -23,12 +23,6 @@ type TongTool struct {
 	QueryDefaultValues queryDefaultValues
 }
 
-type Config struct {
-	Debug     bool   `json:"debug"`
-	AppKey    string `json:"app_key"`
-	AppSecret string `json:"app_secret"`
-}
-
 func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 	client := resty.New()
@@ -71,7 +65,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 		))
 
 	if err != nil || !partnerResponse.Success || len(partnerResponse.Datas) == 0 {
-		panic("Get partnerOpenId failed." + err.Error())
+		log.Panicf("Get partnerOpenId failed, error: %s", err.Error())
 	}
 
 	merchantId := partnerResponse.Datas[0].PartnerOpenId
