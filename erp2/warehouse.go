@@ -10,6 +10,7 @@ type Warehouse struct {
 	WarehouseCode string `json:"warehouseCode"` // 仓库代码
 	WarehouseName string `json:"warehouseName"` // 仓库名称
 	Status        string `json:"status"`        // 仓库状态：0-失效1-有效
+	TTEnabled     bool   `json:"tt_enabled"`    // 激活（返回仓库状态布尔值，方便调用者判断）
 }
 
 type WarehouseQueryParams struct {
@@ -46,6 +47,9 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 		if resp.IsSuccess() {
 			if err = tongtool.HasError(res.Code); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					items[i].TTEnabled = item.Status == "1"
+				}
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {

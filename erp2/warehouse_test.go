@@ -21,5 +21,12 @@ func TestService_Warehouses(t *testing.T) {
 		}
 		params.PageNo++
 	}
-	fmt.Println(fmt.Sprintf("Total found %d warehouses", len(warehouses)))
+
+	enabledCount := 0
+	for _, warehouse := range warehouses {
+		if warehouse.TTEnabled {
+			enabledCount++
+		}
+	}
+	fmt.Println(fmt.Sprintf("Total found %d warehouses, enabled warehouses: %d", len(warehouses), enabledCount))
 }
