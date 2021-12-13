@@ -1,7 +1,7 @@
 package erp2
 
 import (
-	"tongtool"
+	"github.com/hiscaler/tongtool"
 )
 
 type service struct {

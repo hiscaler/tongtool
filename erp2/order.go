@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"errors"
+	"github.com/hiscaler/tongtool"
 )
 
 // Order 通途订单
@@ -113,8 +114,10 @@ func (s service) Orders(params OrderQueryParam) (items []Order, isLastPage bool,
 		Post("/openapi/tongtool/ordersQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			items = res.Datas.Array
-			isLastPage = len(items) < params.PageSize
+			if err = tongtool.HasError(res.Code); err == nil {
+				items = res.Datas.Array
+				isLastPage = len(items) < params.PageSize
+			}
 		} else {
 			err = errors.New(resp.Status())
 		}

@@ -19,7 +19,7 @@ func init() {
 		SignError:            "签名错误",
 		TokenExpiredError:    "Token 已过期",
 		UnauthorizedError:    "未授权的请求，请确认应用是否勾选对应接口",
-		TooManyRequestsError: "接口请求超请求次数限额\n",
+		TooManyRequestsError: "接口请求超请求次数限额",
 	}
 }
 
@@ -28,6 +28,14 @@ func CodeText(code int) string {
 		return text
 	} else {
 		return fmt.Sprintf("未知的错误：%d", code)
+	}
+}
+
+func HasError(code int) error {
+	if code == 200 {
+		return nil
+	} else {
+		return errors.New(CodeText(code))
 	}
 }
 
