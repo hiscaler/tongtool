@@ -7,29 +7,30 @@ import (
 
 // FBAOrder 通途 FBA 订单
 type FBAOrder struct {
-	BuyerEmail         string  `json:"buyerEmail"`
-	BuyerName          string  `json:"buyerName"`
-	BuyerPhoneNumber   string  `json:"buyerPhoneNumber"`
-	Currency           string  `json:"currency"`
-	OrderId            string  `json:"orderId"`
-	PageNo             int     `json:"pageNo"`
-	PageSize           int     `json:"pageSize"`
-	PaymentsDate       string  `json:"paymentsDate"`
-	PurchaseDate       int     `json:"purchaseDate"`
-	RecipientName      string  `json:"recipientName"`
-	SalesChannel       string  `json:"salesChannel"`
-	ShipAddress2       string  `json:"shipAddress2"`
-	ShipAddress3       string  `json:"shipAddress3"`
-	ShipCity           string  `json:"shipCity"`
-	ShipCountry        string  `json:"shipCountry"`
-	ShipPhoneNumber    string  `json:"shipPhoneNumber"`
-	ShipPostalCode     string  `json:"shipPostalCode"`
-	ShipServiceLevel   string  `json:"shipServiceLevel"`
-	ShipState          string  `json:"shipState"`
-	TotalItemPrice     float64 `json:"totalItemPrice"`
-	TotalItemTax       string  `json:"totalItemTax"`
-	TotalShippingPrice string  `json:"totalShippingPrice"`
-	TotalShippingTax   string  `json:"totalShippingTax"`
+	BuyerEmail         string  `json:"buyerEmail"`         // 买家邮箱
+	BuyerName          string  `json:"buyerName"`          // 买家姓名
+	BuyerPhoneNumber   string  `json:"buyerPhoneNumber"`   // 买家电话
+	Currency           string  `json:"currency"`           // 币种
+	OrderId            string  `json:"orderId"`            // 订单号
+	PageNo             int     `json:"pageNo"`             // 查询页数
+	PageSize           int     `json:"pageSize"`           // 查询数量
+	PaymentsDate       string  `json:"paymentsDate"`       // 付款时间
+	PurchaseDate       int     `json:"purchaseDate"`       // 购买时间
+	RecipientName      string  `json:"recipientName"`      // 收件人姓名
+	SalesChannel       string  `json:"salesChannel"`       // 销售站点
+	ShipAddress1       string  `json:"shipAddress1"`       // 地址1
+	ShipAddress2       string  `json:"shipAddress2"`       // 地址2
+	ShipAddress3       string  `json:"shipAddress3"`       // 地址3
+	ShipCity           string  `json:"shipCity"`           // 城市
+	ShipCountry        string  `json:"shipCountry"`        // 国家
+	ShipPhoneNumber    string  `json:"shipPhoneNumber"`    // 收件人电话
+	ShipPostalCode     string  `json:"shipPostalCode"`     // 邮编
+	ShipServiceLevel   string  `json:"shipServiceLevel"`   // 物流服务等级
+	ShipState          string  `json:"shipState"`          // 州/省
+	TotalItemPrice     float64 `json:"totalItemPrice"`     // 货品总计
+	TotalItemTax       string  `json:"totalItemTax"`       // 商品税费总计
+	TotalShippingPrice string  `json:"totalShippingPrice"` // 物流费用总计
+	TotalShippingTax   string  `json:"totalShippingTax"`   // 物流税费总计
 }
 
 type FBAOrderQueryParams struct {
@@ -48,6 +49,7 @@ type fbaOrderResult struct {
 	}
 }
 
+// FBAOrders FBA 订单列表
 func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error) {
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
