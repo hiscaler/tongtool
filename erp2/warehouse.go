@@ -123,3 +123,64 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 
 	return
 }
+
+// 物流渠道
+
+type ShippingMethod struct {
+	ShippingMethodId        string `json:"shippingMethodId"`        // 渠道ID
+	ShippingMethodShortname string `json:"shippingMethodShortname"` // 渠道名称
+	ShippingMethodStatus    string `json:"shippingMethodStatus"`    // 渠道状态0-失效1-有效
+	TTShippingMethodStatus  bool   `json:"tt_shippingMethodStatus"` // 渠道状态
+	CarrierName             string `json:"carrierName"`             // 物流商简称
+	CarrierStatus           string `json:"carrierStatus"`           // 物流商状态0-失效1-有效
+	TTCarrierStatus         bool   `json:"tt_carrierStatus"`        // 物流商状态
+	WarehouseId             string `json:"warehouseId"`             // 仓库id
+	WarehouseName           string `json:"warehouseName"`           // 仓库名称
+}
+
+type ShippingMethodQueryParams struct {
+	MerchantId  string `json:"merchantId"`         // 商户ID
+	PageNo      int    `json:"pageNo,omitempty"`   // 查询页数
+	PageSize    int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	WarehouseId string `json:"warehouseId"`        // 仓库id
+}
+
+type shippingMethodsResult struct {
+	result
+	Datas struct {
+		Array    []ShippingMethod `json:"array"`
+		PageNo   int              `json:"pageNo"`
+		PageSize int              `json:"pageSize"`
+	}
+}
+
+func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error) {
+	if params.PageNo <= 0 {
+		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
+	}
+	if params.PageSize <= 0 {
+		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
+	}
+	params.MerchantId = s.tongTool.MerchantId
+	items = make([]ShippingMethod, 0)
+	res := shippingMethodsResult{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(params).
+		SetResult(&res).
+		Post("/openapi/tongtool/getShippingMethod")
+	if err == nil {
+		if resp.IsSuccess() {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+				items = res.Datas.Array
+				for i, item := range items {
+					items[i].TTShippingMethodStatus = item.ShippingMethodStatus == "1"
+					items[i].TTCarrierStatus = item.CarrierStatus == "1"
+				}
+				isLastPage = len(items) < params.PageSize
+			}
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	return
+}
