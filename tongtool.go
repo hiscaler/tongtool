@@ -3,12 +3,20 @@ package tongtool
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"log"
 	"os"
 	"strconv"
 	"time"
+)
+
+const (
+	SignError            = 519
+	TokenExpiredError    = 523
+	UnauthorizedError    = 524
+	TooManyRequestsError = 526
 )
 
 type queryDefaultValues struct {
@@ -91,4 +99,31 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 			PageSize: 100,
 		},
 	}
+}
+
+// ErrorWrap 错误包装
+func ErrorWrap(code int, defaultMessage string) error {
+	if code == 200 {
+		return nil
+	}
+
+	msg := ""
+	switch code {
+	case SignError:
+		msg = "签名错误"
+	case TokenExpiredError:
+		msg = "Token 已过期"
+	case UnauthorizedError:
+		msg = "未授权的请求，请确认应用是否勾选对应接口"
+	case TooManyRequestsError:
+		msg = "接口请求超请求次数限额"
+	default:
+		if defaultMessage == "" {
+			msg = fmt.Sprintf("未知的错误：%d", code)
+		} else {
+			msg = fmt.Sprintf("%d: %s", code, defaultMessage)
+		}
+	}
+	return errors.New(msg)
+
 }

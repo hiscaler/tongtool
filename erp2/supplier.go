@@ -1,6 +1,9 @@
 package erp2
 
-import "errors"
+import (
+	"errors"
+	"github.com/hiscaler/tongtool"
+)
 
 type Supplier struct {
 	AccountName         string  `json:"accountName"`
@@ -63,8 +66,10 @@ func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLas
 		Post("/openapi/tongtool/supplierQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			items = res.Datas.Array
-			isLastPage = len(items) < params.PageSize
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+				items = res.Datas.Array
+				isLastPage = len(items) < params.PageSize
+			}
 		} else {
 			err = errors.New(resp.Status())
 		}

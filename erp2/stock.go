@@ -70,7 +70,7 @@ func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool
 		Post("/openapi/tongtool/stocksQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			if err = tongtool.HasError(res.Code); err == nil {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				isLastPage = len(items) < params.PageSize
 			}

@@ -48,7 +48,7 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 		Post("/openapi/tongtool/warehouseQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			if err = tongtool.HasError(res.Code); err == nil {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				for i, item := range items {
 					items[i].TTEnabled = item.Status == "1"

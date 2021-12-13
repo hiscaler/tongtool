@@ -46,7 +46,7 @@ func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccoun
 		Post("/openapi/tongtool/merchantSaleAccountQuery")
 	if err == nil {
 		if resp.IsSuccess() {
-			if err = tongtool.HasError(res.Code); err == nil {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				isLastPage = len(items) < params.PageSize
 			}
