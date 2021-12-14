@@ -10,6 +10,7 @@ type service struct {
 
 type Service interface {
 	FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error)                   // FBA 订单列表
+	ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyOrder, isLastPage bool, err error)       // Shopify 订单列表
 	Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error)                            // 订单列表
 	Order(id string) (item Order, err error)                                                               // 单个订单
 	Products(params ProductQueryParams) (items []Product, isLastPage bool, err error)                      // 商品列表
