@@ -174,22 +174,31 @@ type CreateProductRequest struct {
 }
 
 type UpdateProductRequest struct {
+	DeclareCnName        string  `json:"declareCnName"`        // 商品中文报关名称
+	DeclareEnName        string  `json:"declareEnName"`        // 商品英文报关名称
+	EnablePackageNum     int     `json:"enablePackageNum"`     // 可包装个数
+	HsCode               string  `json:"hsCode"`               // 海关编码
+	MerchantId           string  `json:"merchantId"`           // 商户ID
+	PackageHeight        float64 `json:"packageHeight"`        // 包裹尺寸(高cm)
+	PackageLength        float64 `json:"packageLength"`        // 包裹尺寸(长cm)
+	PackageWidth         float64 `json:"packageWidth"`         // 包裹尺寸(宽cm)
+	PackagingCost        float64 `json:"packagingCost"`        // 包装成本
+	PackagingWeight      float64 `json:"packagingWeight"`      // 商品包装重量(g)
+	ProductAverageCost   float64 `json:"productAverageCost"`   // 平均成本（CNY），变参销售不支持修改
+	ProductCurrentCost   float64 `json:"productCurrentCost"`   // 当前成本（CNY），变参销售不支持修改
+	ProductFeature       string  `json:"productFeature"`       // 产品特点
+	ProductGuideCost     float64 `json:"productGuideCost"`     // 指导成本（CNY），变参销售不支持修改
+	ProductHeight        float64 `json:"productHeight"`        // 商品尺寸(高cm)
 	ProductId            string  `json:"productId"`            // 商品ID
+	ProductLength        float64 `json:"productLength"`        // 商品尺寸(长cm)
 	ProductName          string  `json:"productName"`          // 商品名
 	ProductPackingEnName string  `json:"productPackingEnName"` // 英文配货名称
 	ProductPackingName   string  `json:"productPackingName"`   // 中文配货名称
-	DeclareCnName        string  `json:"declareCnName"`        // 商品中文报关名称
-	DeclareEnName        string  `json:"declareEnName"`        // 商品英文报关名称
-	HsCode               string  `json:"hsCode"`               // 海关编码
-	MerchantId           string  `json:"merchantId"`           // 商户ID
-	ProductStatus        int     `json:"productStatus"`        // 商品状态；停售：0，在售：1，试卖：2，清仓：4
 	ProductRemark        string  `json:"productRemark"`        // 产品备注
-	SalesType            int     `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
-	ProductWeight        float64 `json:"productWeight"`        // 商品重量
-	ProductCurrentCost   float64 `json:"productCurrentCost"`   // 当前成本
-	PackageLength        float64 `json:"packageLength"`        // 包裹尺寸(长cm)
-	PackageWidth         float64 `json:"packageWidth"`         // 包裹尺寸(宽cm)
-	PackageHeight        float64 `json:"packageHeight"`        // 包裹尺寸(高cm)
+	ProductStatus        string  `json:"productStatus"`        // 商品状态；停售：0，在售：1，试卖：2，清仓：4
+	ProductWeight        int     `json:"productWeight"`        // 商品重量
+	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸(宽cm)
+	SalesType            string  `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
 }
 
 type ProductQueryParams struct {
@@ -215,6 +224,8 @@ type productResult struct {
 	}
 }
 
+// CreateProduct 创建商品
+// https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca
 func (s service) CreateProduct(req CreateProductRequest) error {
 	type createProductResponse struct {
 		Code    int    `json:"code"`
@@ -236,6 +247,8 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 	return err
 }
 
+// UpdateProduct 更新商品
+// https://open.tongtool.com/apiDoc.html#/?docId=a928207c94184649be852b120a9f4044
 func (s service) UpdateProduct(req UpdateProductRequest) error {
 	type updateProductResponse struct {
 		Code    int         `json:"code"`
