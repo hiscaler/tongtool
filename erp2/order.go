@@ -137,6 +137,13 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	if params.StoreFlag > 2 || params.StoreFlag < 0 {
+		// ”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”
+		params.StoreFlag = 0
+	}
+	if params.OrderId != "" {
+		params.AccountCode = ""
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	items = make([]Order, 0)
 	res := orderResult{}
