@@ -33,7 +33,7 @@ type TongTool struct {
 }
 
 func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
-	logger := log.New(os.Stdout, "", log.LstdFlags)
+	logger := log.New(os.Stdout, "TongTool", log.LstdFlags)
 	client := resty.New()
 	if debug {
 		client.SetDebug(true).EnableTrace()

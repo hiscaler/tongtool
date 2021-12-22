@@ -2,7 +2,7 @@ package erp2
 
 import (
 	"fmt"
-	"github.com/hiscaler/tongtool/cast"
+	"github.com/hiscaler/tongtool/pkg/cast"
 	"testing"
 )
 
