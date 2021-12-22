@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+// 包裹状态
+const (
+	PackageStatusWaitPrint   = "waitPrint"   // 等待打印
+	PackageStatusWaitDeliver = "waitDeliver" // 等待发货
+	PackageStatusDelivered   = "delivered"   // 已发货
+	PackageStatusCancel      = "cancel"      // 作废
+)
+
 type Package struct {
 	PackageId             string  `json:"packageId"`             // 包裹id
 	TrackingNumber        string  `json:"trackingNumber"`        // 跟踪号
@@ -68,15 +76,15 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 	return
 }
 
-func (s service) Package(orderNumber, packageNumber string) (item Package, err error) {
+func (s service) Package(orderId, packageId string) (item Package, err error) {
 	params := PackageQueryParams{
 		MerchantId: s.tongTool.MerchantId,
-		OrderId:    strings.TrimSpace(orderNumber),
+		OrderId:    strings.TrimSpace(orderId),
 		PageNo:     1,
 		PageSize:   s.tongTool.QueryDefaultValues.PageSize,
 	}
-	if packageNumber != "" {
-		packageNumber = strings.TrimSpace(packageNumber)
+	if packageId != "" {
+		packageId = strings.TrimSpace(packageId)
 	}
 
 	exists := false
@@ -88,12 +96,12 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 			if len(packages) == 0 {
 				err = errors.New("not found")
 			} else {
-				if packageNumber == "" {
+				if packageId == "" {
 					exists = true
-					item = packages[len(packages)-1]
+					item = packages[len(packages)-1] // last package
 				} else {
 					for _, p := range packages {
-						if strings.EqualFold(p.PackageId, packageNumber) {
+						if strings.EqualFold(p.PackageId, packageId) {
 							exists = true
 							item = p
 							break

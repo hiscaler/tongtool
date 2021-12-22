@@ -9,7 +9,7 @@ func TestService_Orders(t *testing.T) {
 	_, ttService := newTestTongTool()
 	params := OrderQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
-		SaleDateTo:   "2021-12-11 23:59:59",
+		SaleDateTo:   "2021-12-31 23:59:59",
 	}
 	orders := make([]Order, 0)
 	for {
