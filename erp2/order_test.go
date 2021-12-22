@@ -1,7 +1,7 @@
 package erp2
 
 import (
-	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -24,5 +24,15 @@ func TestService_Orders(t *testing.T) {
 		}
 		params.PageNo++
 	}
-	fmt.Println(fmt.Sprintf("Total found %d orders", len(orders)))
+}
+
+func TestService_Order(t *testing.T) {
+	orderNumber := "L-M20211208145011174"
+	_, ttService := newTestTongTool()
+	order, err := ttService.Order(orderNumber)
+	if err != nil {
+		t.Errorf(err.Error())
+	} else if !strings.EqualFold(order.OrderIdCode, orderNumber) {
+		t.Errorf("order.OrderIdKey %s not match %s", order.OrderIdCode, orderNumber)
+	}
 }

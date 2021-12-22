@@ -30,7 +30,7 @@ type OrderPackage struct {
 	PackageId            string `json:"packageId"`            // 包裹号
 	TrackingNumber       string `json:"trackingNumber"`       // 物流跟踪号
 	TrackingNumberStatus string `json:"trackingNumberStatus"` // 物流跟踪号获取状态(00:未就绪 01:就绪 02:处理中 03:处理成功 04:处理失败)
-	TrackingNumberTime   string `json:"trackingNumberTime"`   // 物流跟踪号获取时间
+	TrackingNumberTime   int    `json:"trackingNumberTime"`   // 物流跟踪号获取时间
 }
 
 type TongToolGoodsInfoList struct {
@@ -102,8 +102,8 @@ type Order struct {
 	WarehouseIdKey            string         `json:"warehouseIdKey"`            // 通途仓库id key
 	WarehouseName             string         `json:"warehouseName"`             // 仓库名称
 	WebFinalFee               float64        `json:"webFinalFee"`               // 平台佣金
-	WebStoreOrderId           float64        `json:"webstoreOrderId"`           // 平台交易号
-	WebStoreItemSite          float64        `json:"webstore_item_site"`        // 平台站点id
+	WebStoreOrderId           string         `json:"webstoreOrderId"`           // 平台交易号
+	WebStoreItemSite          string         `json:"webstore_item_site"`        // 平台站点id
 }
 
 type OrderQueryParams struct {
@@ -171,9 +171,14 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	return
 }
 
-func (s service) Order(id string) (item Order, err error) {
+func (s service) Order(orderId string) (item Order, err error) {
+	if len(orderId) == 0 {
+		err = errors.New("orderId params cannot empty")
+		return
+	}
+
 	params := OrderQueryParams{
-		OrderId:  id,
+		OrderId:  orderId,
 		PageNo:   1,
 		PageSize: s.tongTool.QueryDefaultValues.PageSize,
 	}
@@ -188,7 +193,7 @@ func (s service) Order(id string) (item Order, err error) {
 				err = errors.New("not found")
 			} else {
 				for _, order := range items {
-					if strings.EqualFold(order.OrderIdKey, id) {
+					if strings.EqualFold(order.OrderIdCode, orderId) {
 						exists = true
 						item = order
 						break
