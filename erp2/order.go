@@ -3,7 +3,14 @@ package erp2
 import (
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
+)
+
+const (
+	OrderStoreFlagActive   = "0" // 活跃表
+	OrderStoreFlagOneYear  = "1" // 一年表
+	OrderStoreFlagArchived = "2" // 归档表
 )
 
 // OrderDetail 通途订单详情
@@ -114,7 +121,7 @@ type OrderQueryParams struct {
 	RefundedDateTo   string `json:"refundedDateTo,omitempty"`
 	SaleDateFrom     string `json:"saleDateFrom,omitempty"`
 	SaleDateTo       string `json:"saleDateTo,omitempty"`
-	StoreFlag        int    `json:"storeFlag"`
+	StoreFlag        string `json:"storeFlag"`
 	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`
 }
@@ -137,9 +144,9 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	if params.StoreFlag > 2 || params.StoreFlag < 0 {
+	if !in.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
 		// ”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”
-		params.StoreFlag = 0
+		params.StoreFlag = OrderStoreFlagActive
 	}
 	if params.OrderId != "" {
 		params.AccountCode = ""

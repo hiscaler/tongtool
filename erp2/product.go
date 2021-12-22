@@ -11,11 +11,10 @@ import (
 
 // 商品状态
 const (
-	ProductStatusHaltSales     = iota // 0 停售
-	ProductStatusOnSale               // 1 在售
-	ProductStatusTrySale              // 2 试卖
-	_                          = iota // 暂无意义
-	ProductStatusClearanceSale        // 4 清仓
+	ProductStatusHaltSales     = "0" // 0 停售
+	ProductStatusOnSale        = "1" // 1 在售
+	ProductStatusTrySale       = "2" // 2 试卖
+	ProductStatusClearanceSale = "4" // 4 清仓
 )
 
 // 销售类型
@@ -23,6 +22,11 @@ const (
 	ProductTypeNormal   = iota // 0 普通销售
 	ProductTypeVariable        // 1 变参销售
 	ProductTypeBinding         // 2 捆绑销售
+)
+
+const (
+	ProductSaleTypeNormal   = "0" // 普通销售
+	ProductSaleTypeVariable = "1" // 变参销售
 )
 
 // 详细描述语言
