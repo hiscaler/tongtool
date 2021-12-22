@@ -34,6 +34,7 @@ type trackingNumbersResult struct {
 }
 
 // TrackingNumbers 订单物流单号列表
+// 需要注意的是该封装总是返回包含所有查询订单集合的数据，无论是否有物流数据
 func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []TrackingNumber, isLastPage bool, err error) {
 	items = make([]TrackingNumber, 0)
 	if len(params.OrderIds) == 0 {

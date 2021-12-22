@@ -1,14 +1,13 @@
 package erp2
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestService_TrackingNumbers(t *testing.T) {
 	_, ttService := newTestTongTool()
 	params := TrackingNumberQueryParams{}
-	params.OrderIds = []string{"L-M20211221152430918"}
+	params.OrderIds = []string{"bad.order.id"}
 	trackingNumbers := make([]TrackingNumber, 0)
 	for {
 		pageTrackingNumbers, isLastPage, err := ttService.TrackingNumbers(params)
@@ -25,5 +24,10 @@ func TestService_TrackingNumbers(t *testing.T) {
 	if len(trackingNumbers) != len(params.OrderIds) {
 		t.Errorf("order")
 	}
-	fmt.Println(fmt.Sprintf("%#v", trackingNumbers))
+
+	// 未提供订单集合参数
+	_, _, err := ttService.TrackingNumbers(TrackingNumberQueryParams{})
+	if err != nil {
+		t.Errorf("ttService.TrackingNumbers error: %s", err.Error())
+	}
 }
