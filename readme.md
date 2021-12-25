@@ -27,4 +27,5 @@ for {
     }
     params.PageNo++
 }
+fmt.Println(fmt.Sprintf("%#v", orders))
 ```
