@@ -34,7 +34,7 @@ type TongTool struct {
 
 func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 	logger := log.New(os.Stdout, "TongTool", log.LstdFlags)
-	client := resty.New()
+	client := resty.New().SetBaseURL("https://open.tongtool.com/open-platform-service")
 	if debug {
 		client.SetDebug(true).EnableTrace()
 	}
@@ -47,7 +47,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 	}{}
 	_, err := client.R().
 		SetResult(&tokenResponse).
-		Get(fmt.Sprintf("https://open.tongtool.com/open-platform-service/devApp/appToken?accessKey=%s&secretAccessKey=%s", appKey, appSecret))
+		Get(fmt.Sprintf("/devApp/appToken?accessKey=%s&secretAccessKey=%s", appKey, appSecret))
 	if err != nil || !tokenResponse.Success {
 		logger.Panic("Get token failed.")
 	}
@@ -67,7 +67,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 	}{}
 	_, err = client.R().
 		SetResult(&partnerResponse).
-		Get(fmt.Sprintf("https://open.tongtool.com/open-platform-service/partnerOpenInfo/getAppBuyerList?app_token=%s&timestamp=%d&sign=%s",
+		Get(fmt.Sprintf("/partnerOpenInfo/getAppBuyerList?app_token=%s&timestamp=%d&sign=%s",
 			tokenResponse.Datas,
 			timestamp,
 			sign,
