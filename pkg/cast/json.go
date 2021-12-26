@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// ToJson interface data to JSON string
 func ToJson(i interface{}) string {
 	b, err := json.Marshal(i)
 	if err != nil {
