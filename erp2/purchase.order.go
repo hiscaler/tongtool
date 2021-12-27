@@ -11,7 +11,7 @@ import (
 // 采购单状态
 const (
 	PurchaseOrderStatusDelivering        = "0" // 等待到货、未全部到货
-	PurchaseOrderStatuspReceivedAndWaitM = "1" // 部分到货等待剩余
+	PurchaseOrderStatusPReceivedAndWaitM = "1" // 部分到货等待剩余
 	PurchaseOrderStatusPartialReceived   = "2" // 部分到货不等待剩余
 	PurchaseOrderStatusReceived          = "3" // 全部到货
 	PurchaseOrderStatusCancel            = "4" // 作废

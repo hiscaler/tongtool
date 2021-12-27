@@ -5,7 +5,7 @@ func PurchaseOrderStatusNtoS(n string) (s string) {
 	switch n {
 	case PurchaseOrderStatusDelivering:
 		s = "delivering"
-	case PurchaseOrderStatuspReceivedAndWaitM:
+	case PurchaseOrderStatusPReceivedAndWaitM:
 		s = "pReceivedAndWaitM"
 	case PurchaseOrderStatusPartialReceived:
 		s = "partialReceived"
