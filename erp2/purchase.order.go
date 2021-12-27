@@ -18,22 +18,22 @@ const (
 )
 
 type PurchaseOrderGoodDetail struct {
-	GoodsDetailId string  `json:"goodsDetailId"`
-	Quantity      int     `json:"quantity"`
-	UnitPrice     float64 `json:"unitPrice"`
+	GoodsDetailId string  `json:"goodsDetailId"` // 通途货品ID
+	Quantity      int     `json:"quantity"`      // 采购数量
+	UnitPrice     float64 `json:"unitPrice"`     // 采购单价
 }
 
 type CreatePurchaseOrderRequest struct {
-	Currency       string                    `json:"currency"`
-	GoodsDetail    []PurchaseOrderGoodDetail `json:"goodsDetail"`
-	ExternalNumber string                    `json:"externalNumber"`
-	MerchantId     string                    `json:"merchantId"`
-	PurchaseUserId string                    `json:"purchaseUserId"`
-	Remark         string                    `json:"remark"`
-	ShippingFee    float64                   `json:"shippingFee"`
-	SupplierId     string                    `json:"supplierId"`
-	TrackingNumber string                    `json:"trackingNumber"`
-	WarehouseIdKey string                    `json:"warehouseIdKey"`
+	Currency       string                    `json:"currency"`       // 币种
+	GoodsDetail    []PurchaseOrderGoodDetail `json:"goodsDetail"`    // 采购货品信息
+	ExternalNumber string                    `json:"externalNumber"` // 外部流水号
+	MerchantId     string                    `json:"merchantId"`     // 商户ID
+	PurchaseUserId string                    `json:"purchaseUserId"` // 采购员ID
+	Remark         string                    `json:"remark"`         // 采购备注
+	ShippingFee    float64                   `json:"shippingFee"`    // 运费
+	SupplierId     string                    `json:"supplierId"`     // 通途供应商ID
+	TrackingNumber string                    `json:"trackingNumber"` // 跟踪号
+	WarehouseIdKey string                    `json:"warehouseIdKey"` // 通途仓库ID
 }
 
 type PurchaseOrder struct {
