@@ -7,7 +7,6 @@ import (
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
-	"time"
 )
 
 // 商品状态
@@ -72,18 +71,18 @@ type Product struct {
 	ProductImgList      []struct {
 		ImageGroupId string `json:"imageGroupId"` // 图片url
 	} `json:"productImgList"` // 产品图片
-	ProductLength        float64   `json:"productLength"`        // 商品尺寸(长cm)
-	ProductName          string    `json:"productName"`          // 产品名称
-	ProductPackingEnName string    `json:"productPackingEnName"` // 商品英文报关名称
-	ProductPackingName   string    `json:"productPackingName"`   // 中文配货名称
-	ProductWidth         float64   `json:"productWidth"`         // 商品尺寸(宽cm)
-	ProductId            string    `json:"product_id"`           // 产品id
-	PurchaseName         string    `json:"purchaseName"`         // 采购员名称
-	PurchaserId          string    `json:"purchaserId"`          // 采购员id
-	SKU                  string    `json:"sku"`                  // 商品sku
-	Status               string    `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
-	SupplierName         string    `json:"supplier_name"`        // 供应商名称
-	UpdatedDate          time.Time `json:"updatedDate"`          // 产品信息修改时间
+	ProductLength        float64 `json:"productLength"`        // 商品尺寸(长cm)
+	ProductName          string  `json:"productName"`          // 产品名称
+	ProductPackingEnName string  `json:"productPackingEnName"` // 商品英文报关名称
+	ProductPackingName   string  `json:"productPackingName"`   // 中文配货名称
+	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸(宽cm)
+	ProductId            string  `json:"product_id"`           // 产品id
+	PurchaseName         string  `json:"purchaseName"`         // 采购员名称
+	PurchaserId          string  `json:"purchaserId"`          // 采购员id
+	SKU                  string  `json:"sku"`                  // 商品sku
+	Status               string  `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
+	SupplierName         string  `json:"supplier_name"`        // 供应商名称
+	UpdatedDate          int     `json:"updatedDate"`          // 产品信息修改时间
 }
 
 // ProductDetail 通途商品详情
@@ -114,15 +113,15 @@ type ProductQualityMeasure struct {
 
 // ProductSupplier 供应商
 type ProductSupplier struct {
-	SupplierName        string `json:"supplierName"`
-	MinPurchaseQuantity int    `json:"minPurchaseQuantity"`
-	PurchaseRemark      string `json:"purchaseRemark"`
+	SupplierName        string `json:"supplierName"`        // 供应商名称
+	MinPurchaseQuantity int    `json:"minPurchaseQuantity"` // 最小采购量
+	PurchaseRemark      string `json:"purchaseRemark"`      // 采购备注
 }
 
 // ProductGoodsVariation 货品属性
 type ProductGoodsVariation struct {
-	VariationName  string `json:"variationName"` // 规格名称
-	VariationValue string `json:"variationName"` // 规格值
+	VariationName  string `json:"variationName"`  // 规格名称
+	VariationValue string `json:"variationValue"` // 规格值
 }
 
 // ProductAttribute 商品属性
