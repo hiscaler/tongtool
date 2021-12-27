@@ -1,6 +1,7 @@
 package erp2
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
 )
@@ -48,7 +49,7 @@ type supplierResult struct {
 		Array    []Supplier `json:"array"`
 		PageNo   int        `json:"pageNo"`
 		PageSize int        `json:"pageSize"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // Suppliers 供应商列表
@@ -77,7 +78,11 @@ func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLas
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return

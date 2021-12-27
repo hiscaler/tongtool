@@ -1,6 +1,7 @@
 package erp2
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
 	"strings"
@@ -28,7 +29,7 @@ type warehousesResult struct {
 		Array    []Warehouse `json:"array"`
 		PageNo   int         `json:"pageNo"`
 		PageSize int         `json:"pageSize"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // Warehouses 查询仓库列表
@@ -57,7 +58,11 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return
@@ -152,7 +157,7 @@ type shippingMethodsResult struct {
 		Array    []ShippingMethod `json:"array"`
 		PageNo   int              `json:"pageNo"`
 		PageSize int              `json:"pageSize"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // ShippingMethods 仓库物流渠道查询
@@ -182,7 +187,11 @@ func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []Ship
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return

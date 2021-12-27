@@ -1,6 +1,7 @@
 package erp3
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/hiscaler/tongtool"
@@ -222,7 +223,7 @@ type productResult struct {
 		Array    []Product `json:"array"`
 		PageNo   int       `json:"pageNo"`
 		PageSize int       `json:"pageSize"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // CreateProduct 创建商品
@@ -299,7 +300,11 @@ func (s service) Products(params ProductQueryParams) (items []Product, nextToken
 				isLastPage = len(items) <= params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return

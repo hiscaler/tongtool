@@ -1,6 +1,7 @@
 package erp2
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
 )
@@ -46,7 +47,7 @@ type fbaOrderResult struct {
 	result
 	Datas struct {
 		Array []FBAOrder `json:"array"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // FBAOrders FBA 订单列表
@@ -72,7 +73,11 @@ func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLast
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return

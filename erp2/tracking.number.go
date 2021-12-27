@@ -1,6 +1,7 @@
 package erp2
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
 	"strings"
@@ -30,7 +31,7 @@ type trackingNumbersResult struct {
 		Array    []TrackingNumber `json:"array"`
 		PageNo   int              `json:"pageNo"`
 		PageSize int              `json:"pageSize"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // TrackingNumbers 订单物流单号列表
@@ -70,7 +71,11 @@ func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []Trac
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return

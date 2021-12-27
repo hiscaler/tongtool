@@ -1,6 +1,7 @@
 package erp2
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/in"
@@ -132,7 +133,7 @@ type orderResult struct {
 		Array    []Order `json:"array"`
 		PageNo   int     `json:"pageNo"`
 		PageSize int     `json:"pageSize"`
-	}
+	} `json:"datas,omitempty"`
 }
 
 // Orders 订单列表
@@ -165,7 +166,11 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
-			err = errors.New(resp.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 	return
