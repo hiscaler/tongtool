@@ -12,6 +12,8 @@ func TestService_SaleAccounts(t *testing.T) {
 		accounts, isLastPage, err := ttService.SaleAccounts(params)
 		if err == nil {
 			fmt.Println(fmt.Sprintf("%#v", accounts))
+		} else {
+			t.Errorf("ttService.SaleAccounts error: %s", err.Error())
 		}
 		if err != nil || isLastPage {
 			break
