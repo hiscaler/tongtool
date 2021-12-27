@@ -1,10 +1,19 @@
 package erp2
 
 import (
+	"bytes"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/in"
+	"io/ioutil"
+	"math/big"
+	"net/http"
+	"os"
+	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -78,6 +87,81 @@ type Product struct {
 	Status               string          `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
 	SupplierName         string          `json:"supplier_name"`        // 供应商名称
 	UpdatedDate          int             `json:"updatedDate"`          // 产品信息修改时间
+}
+
+// GoodsDetailIndex 商品详情下标值
+func (p Product) GoodsDetailIndex() int {
+	index := -1
+	for i, d := range p.GoodsDetail {
+		if strings.EqualFold(d.GoodsSku, p.SKU) {
+			index = i
+			break
+		}
+	}
+	return index
+}
+
+// Image 商品图片
+func (p Product) Image() (path string) {
+	index := p.GoodsDetailIndex()
+	if index != -1 && len(p.ProductImgList) > 0 && (index+1) <= len(p.ProductImgList) {
+		path = p.ProductImgList[index].ImageGroupId
+	}
+	return
+}
+
+// SaveImage 下载并保存图片
+func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
+	img := p.Image()
+	if img == "" {
+		err = errors.New("image path is empty")
+		return
+	}
+	response, err := http.Get(img)
+	if err == nil {
+		defer response.Body.Close()
+		var b []byte
+		b, err = ioutil.ReadAll(response.Body)
+		if err == nil {
+			var imageExt string
+			switch http.DetectContentType(b) {
+			case "image/jpeg":
+				imageExt = "jpg"
+			default:
+				imageExt = filepath.Ext(img)
+			}
+			sku := strings.ToLower(p.SKU)
+			dirs := []string{saveDir, sku[0:2], sku[2:4]}
+			filename := path.Join(dirs...)
+
+			dirExists := false
+			fi, e := os.Stat(filename)
+			if !os.IsNotExist(e) {
+				dirExists = !fi.IsDir()
+			}
+
+			if !dirExists {
+				if err = os.MkdirAll(filename, os.ModePerm); err != nil {
+					return
+				}
+			}
+
+			randomNumberFunc := func(len int) string {
+				str := "012345678"
+				number := ""
+				bigInt := big.NewInt(int64(bytes.NewBufferString(str).Len()))
+				for i := 0; i < len; i++ {
+					randomInt, _ := rand.Int(rand.Reader, bigInt)
+					number += string(str[randomInt.Int64()])
+				}
+				return number
+			}
+
+			imagePath = path.Join(filename, fmt.Sprintf("%s-%s.%s", sku, randomNumberFunc(8), imageExt))
+			err = os.WriteFile(imagePath, b, 0666)
+		}
+	}
+	return
 }
 
 // ProductImage 商品图片
