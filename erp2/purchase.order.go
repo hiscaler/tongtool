@@ -4,7 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/is"
 	"strings"
+)
+
+// 采购单状态
+const (
+	PurchaseOrderStatusDelivering        = "0" // 等待到货、未全部到货
+	PurchaseOrderStatuspReceivedAndWaitM = "1" // 部分到货等待剩余
+	PurchaseOrderStatusPartialReceived   = "2" // 部分到货不等待剩余
+	PurchaseOrderStatusReceived          = "3" // 全部到货
+	PurchaseOrderStatusCancel            = "4" // 作废
 )
 
 type PurchaseOrderGoodDetail struct {
@@ -82,6 +92,9 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
+	}
+	if is.Number(params.POrderStatus) {
+		params.POrderStatus = PurchaseOrderStatusNtoS(params.POrderStatus)
 	}
 	params.MerchantId = s.tongTool.MerchantId
 	items = make([]PurchaseOrder, 0)

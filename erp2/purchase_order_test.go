@@ -58,10 +58,10 @@ func TestService_CreatePurchaseOrder(t *testing.T) {
 		Currency:       "CNY",
 		GoodsDetail:    details,
 		ExternalNumber: "",
-		PurchaseUserId: "202012180006653303", // 单风
-		Remark:         "接口测试用，可废弃",
+		PurchaseUserId: "202012180006653303",
+		Remark:         "test for purchase order create",
 		ShippingFee:    6.6,
-		SupplierId:     "8309050530202107230004245350", // 星工厂
+		SupplierId:     "8309050530202107230004245350",
 		TrackingNumber: "",
 		WarehouseIdKey: "8151050530202008250000047045",
 	}
