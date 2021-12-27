@@ -128,6 +128,14 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 			switch http.DetectContentType(b) {
 			case "image/jpeg":
 				imageExt = ".jpg"
+			case "image/png":
+				imageExt = ".png"
+			case "image/gif":
+				imageExt = ".gif"
+			case "image/bmp":
+				imageExt = ".bmp"
+			case "image/webp":
+				imageExt = ".webp"
 			default:
 				imageExt = filepath.Ext(img)
 			}
