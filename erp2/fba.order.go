@@ -16,7 +16,7 @@ type FBAOrder struct {
 	PageNo             int     `json:"pageNo"`             // 查询页数
 	PageSize           int     `json:"pageSize"`           // 查询数量
 	PaymentsDate       string  `json:"paymentsDate"`       // 付款时间
-	PurchaseDate       int     `json:"purchaseDate"`       // 购买时间
+	PurchaseDate       string  `json:"purchaseDate"`       // 购买时间
 	RecipientName      string  `json:"recipientName"`      // 收件人姓名
 	SalesChannel       string  `json:"salesChannel"`       // 销售站点
 	ShipAddress1       string  `json:"shipAddress1"`       // 地址1
@@ -29,9 +29,9 @@ type FBAOrder struct {
 	ShipServiceLevel   string  `json:"shipServiceLevel"`   // 物流服务等级
 	ShipState          string  `json:"shipState"`          // 州/省
 	TotalItemPrice     float64 `json:"totalItemPrice"`     // 货品总计
-	TotalItemTax       string  `json:"totalItemTax"`       // 商品税费总计
-	TotalShippingPrice string  `json:"totalShippingPrice"` // 物流费用总计
-	TotalShippingTax   string  `json:"totalShippingTax"`   // 物流税费总计
+	TotalItemTax       float64 `json:"totalItemTax"`       // 商品税费总计
+	TotalShippingPrice float64 `json:"totalShippingPrice"` // 物流费用总计
+	TotalShippingTax   float64 `json:"totalShippingTax"`   // 物流税费总计
 }
 
 type FBAOrderQueryParams struct {
