@@ -12,7 +12,9 @@ import (
 	"time"
 )
 
+// 通途返回代码
 const (
+	OK                   = 200
 	SignError            = 519
 	TokenExpiredError    = 523
 	UnauthorizedError    = 524
@@ -104,7 +106,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 
 // ErrorWrap 错误包装
 func ErrorWrap(code int, defaultMessage string) error {
-	if code == 200 {
+	if code == OK {
 		return nil
 	}
 

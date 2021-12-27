@@ -131,7 +131,7 @@ func (s service) CreatePurchaseOrder(req CreatePurchaseOrderRequest) (number str
 	r, err := s.tongTool.Client.R().SetResult(&cpr).SetBody(req).Post("/openapi/tongtool/purchaseOrderCreate")
 	if err == nil {
 		if r.IsSuccess() {
-			if cpr.Code == 200 {
+			if cpr.Code == tongtool.OK {
 				number = strings.TrimSpace(cpr.Datas)
 				if number == "" {
 					err = errors.New("not found number in http response")

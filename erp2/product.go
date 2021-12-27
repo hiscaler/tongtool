@@ -241,7 +241,7 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 	r, err := s.tongTool.Client.R().SetResult(&cpr).SetBody(req).Post("/openapi/tongtool/createProduct")
 	if err == nil {
 		if r.IsSuccess() {
-			if cpr.Code != 200 {
+			if cpr.Code != tongtool.OK {
 				err = errors.New(cpr.Message)
 			}
 		} else {
@@ -266,7 +266,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 	r, err := s.tongTool.Client.R().SetResult(&cpr).SetBody(req).Post("/openapi/tongtool/updateProduct")
 	if err == nil {
 		if r.IsSuccess() {
-			if cpr.Code != 200 {
+			if cpr.Code != tongtool.OK {
 				msg := strings.TrimSpace(cpr.Message)
 				if msg == "" {
 					msg = fmt.Sprintf("code: %d", cpr.Code)
