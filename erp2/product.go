@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gosimple/slug"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"io/ioutil"
@@ -130,8 +131,14 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 			default:
 				imageExt = filepath.Ext(img)
 			}
-			sku := strings.ToLower(p.SKU)
-			dirs := []string{saveDir, sku[0:2], sku[2:4]}
+			name := slug.Make(p.SKU)
+			dirs := []string{saveDir}
+			for i := 0; i < len(name); i += 2 {
+				dirs = append(dirs, name[i:i+2])
+				if len(dirs) >= 3 {
+					break
+				}
+			}
 			filename := path.Join(dirs...)
 
 			dirExists := false
@@ -147,7 +154,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 			}
 
 			randomNumberFunc := func(len int) string {
-				str := "012345678"
+				str := "0123456789"
 				number := ""
 				bigInt := big.NewInt(int64(bytes.NewBufferString(str).Len()))
 				for i := 0; i < len; i++ {
@@ -157,7 +164,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 				return number
 			}
 
-			imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", sku, randomNumberFunc(8), imageExt))
+			imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", name, randomNumberFunc(8), imageExt))
 			err = os.WriteFile(imagePath, b, 0666)
 		}
 	}
