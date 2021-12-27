@@ -46,3 +46,30 @@ func TestService_PurchaseOrdersByStatus(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+// 创建采购单
+func TestService_CreatePurchaseOrder(t *testing.T) {
+	_, ttService := newTestTongTool()
+	details := []PurchaseOrderGoodDetail{
+		{GoodsDetailId: "8309050530202104270001946885", Quantity: 1, UnitPrice: 1.1},
+		{GoodsDetailId: "8309050530202106100002312298", Quantity: 2, UnitPrice: 2.2},
+	}
+	req := CreatePurchaseOrderRequest{
+		Currency:       "CNY",
+		GoodsDetail:    details,
+		ExternalNumber: "",
+		PurchaseUserId: "202012180006653303", // 单风
+		Remark:         "接口测试用，可废弃",
+		ShippingFee:    6.6,
+		SupplierId:     "8309050530202107230004245350", // 星工厂
+		TrackingNumber: "",
+		WarehouseIdKey: "8151050530202008250000047045",
+	}
+
+	number, err := ttService.CreatePurchaseOrder(req)
+	if err != nil {
+		t.Errorf("create purchase order error: %s", err.Error())
+	} else {
+		fmt.Println(fmt.Sprintf("Purchase number: %s", number))
+	}
+}

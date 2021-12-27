@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hiscaler/tongtool"
-	"strconv"
+	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
 	"time"
 )
@@ -19,9 +19,9 @@ const (
 
 // 销售类型
 const (
-	ProductTypeNormal   = iota // 0 普通销售
-	ProductTypeVariable        // 1 变参销售
-	ProductTypeBinding         // 2 捆绑销售
+	ProductTypeNormal   = "0" // 0 普通销售
+	ProductTypeVariable = "1" // 1 变参销售
+	ProductTypeBinding  = "2" // 2 捆绑销售
 )
 
 const (
@@ -294,6 +294,7 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 	} else if len(params.SkuAliases) > 10 {
 		err = errors.New("skuAliases 参数长度不能大于 10 个")
 	}
+	params.MerchantId = s.tongTool.MerchantId
 	if err != nil {
 		return
 	}
@@ -317,18 +318,18 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 }
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
-func (s service) Product(typ int, sku string, isAlias bool) (item Product, err error) {
+func (s service) Product(typ string, sku string, isAlias bool) (item Product, err error) {
 	if len(sku) == 0 {
 		return item, errors.New("invalid param values")
 	}
 
-	if typ != ProductTypeVariable && typ != ProductTypeBinding {
+	if !in.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
 		typ = ProductTypeNormal
 	}
 
 	params := ProductQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
-		ProductType: strconv.Itoa(typ),
+		ProductType: typ,
 		PageNo:      1,
 		PageSize:    s.tongTool.QueryDefaultValues.PageSize,
 	}
@@ -350,7 +351,7 @@ func (s service) Product(typ int, sku string, isAlias bool) (item Product, err e
 				for _, p := range items {
 					switch typ {
 					case ProductTypeVariable:
-						if strings.EqualFold(sku, p.ProductCode) {
+						if strings.EqualFold(sku, p.SKU) {
 							exists = true
 							item = p
 						}
@@ -390,7 +391,7 @@ func (s service) Product(typ int, sku string, isAlias bool) (item Product, err e
 }
 
 // ProductExists 根据 SKU 或 SKU 别名查询单个商品是否存在
-func (s service) ProductExists(typ int, sku string, isAlias bool) bool {
+func (s service) ProductExists(typ string, sku string, isAlias bool) bool {
 	if _, err := s.Product(typ, sku, isAlias); err == nil {
 		return true
 	} else {
