@@ -120,6 +120,7 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	return
 }
 
+// CreatePurchaseOrder 创建采购单
 func (s service) CreatePurchaseOrder(req CreatePurchaseOrderRequest) (number string, err error) {
 	type createPurchaseOrderResponse struct {
 		Code    int    `json:"code"`
