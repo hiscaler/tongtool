@@ -56,9 +56,9 @@ type Order struct {
 	BuyerCountry              string         `json:"buyerCountry"`              // 买家国家
 	BuyerEmail                string         `json:"buyerEmail"`                // 买家邮箱
 	BuyerMobile               string         `json:"buyerMobile"`               // 买家手机
-	BuyerName                 string         `json:"buyerName"`                 //	买家名称
+	BuyerName                 string         `json:"buyerName"`                 // 买家名称
 	BuyerPassportCode         string         `json:"buyerPassportCode"`         // 收件人识别码（护照等）
-	BuyerPhone                string         `json:"buyerPhone"`                //	买家电话
+	BuyerPhone                string         `json:"buyerPhone"`                // 买家电话
 	BuyerState                string         `json:"buyerState"`                // 买家省份
 	Carrier                   string         `json:"carrier"`                   // 上传物流的carrier
 	CarrierType               string         `json:"carrierType"`               // 物流商类型 ( 0:通途API对接、 1:通途Excel文件导出、 2:通途离线生成跟踪号 3:无对接、 4:自定义Excel对接)
@@ -68,7 +68,7 @@ type Order struct {
 	EbayNotes                 string         `json:"ebayNotes"`                 // 订单备注
 	EbaySiteEnName            string         `json:"ebaySiteEnName"`            // 站点
 	FirstTariff               float64        `json:"firstTariff"`               // 头程运费
-	GoodsInfo                 GoodsInfo      `json:"goodsInfo"`                 //	订单商品信息
+	GoodsInfo                 GoodsInfo      `json:"goodsInfo"`                 // 订单商品信息
 	InsuranceIncome           float64        `json:"insuranceIncome"`           // 买家所付保费
 	InsuranceIncomeCurrency   string         `json:"insuranceIncomeCurrency"`   // 买家所付保费币种
 	IsInvalid                 string         `json:"isInvalid"`                 // 是否作废(0,''，null 未作废，1 手工作废 2 订单任务下载永久作废 3 拆分单主单作废 4 拆分单子单作废)
