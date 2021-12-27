@@ -79,7 +79,6 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 		log.Panicf("Get partnerOpenId failed, error: %s", err.Error())
 	}
 
-	merchantId := partnerResponse.Datas[0].PartnerOpenId
 	client.SetBaseURL("https://open.tongtool.com/api-service").
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
@@ -95,7 +94,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 
 	return &TongTool{
 		Client:     client,
-		MerchantId: merchantId,
+		MerchantId: partnerResponse.Datas[0].PartnerOpenId,
 		Logger:     logger,
 		QueryDefaultValues: queryDefaultValues{
 			PageNo:   1,
