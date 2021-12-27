@@ -126,7 +126,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 			var imageExt string
 			switch http.DetectContentType(b) {
 			case "image/jpeg":
-				imageExt = ".jpg"
+				imageExt = "jpg"
 			default:
 				imageExt = filepath.Ext(img)
 			}
@@ -157,7 +157,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 				return number
 			}
 
-			imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", sku, randomNumberFunc(8), imageExt))
+			imagePath = path.Join(filename, fmt.Sprintf("%s-%s.%s", sku, randomNumberFunc(8), imageExt))
 			err = os.WriteFile(imagePath, b, 0666)
 		}
 	}
