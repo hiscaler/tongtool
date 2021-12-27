@@ -18,5 +18,6 @@ func TestService_SaleAccounts(t *testing.T) {
 		if err != nil || isLastPage {
 			break
 		}
+		params.PageNo++
 	}
 }
