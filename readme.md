@@ -32,7 +32,7 @@ TongTool API 封装
 import "github.com/hiscaler/tongtool"
 
 ttInstance := tongtool.NewTongTool(AppKey, AppSecret, true)
-ttService := NewService(ttInstance)
+ttService := erp2.NewService(ttInstance)
 params := OrderQueryParams{
     SaleDateFrom: "2021-12-01 00:00:00",
     SaleDateTo:   "2021-12-31 23:59:59",
