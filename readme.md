@@ -25,6 +25,7 @@ TongTool API 封装
 - Warehouse(params WarehouseQueryParams) (item Warehouse, err error)                                     // 仓库列表
 - ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error) // 仓库物流渠道列表
 - TrackingNumbers(params TrackingNumberQueryParams) (items []TrackingNumber, isLastPage bool, err error) // 订单物流单号列表
+- Platforms() (items []Platform, err error)                                                              // 平台及站点信息
 
 ## 使用方法
 
