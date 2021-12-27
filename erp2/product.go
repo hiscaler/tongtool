@@ -45,44 +45,45 @@ const (
 
 // Product 通途商品
 type Product struct {
-	BrandName        string          `json:"brandName"`        // 品牌名称
-	CategoryName     string          `json:"categoryName"`     // 分类名称
-	CreatedDate      int             `json:"createdDate"`      // 产品创建时间
-	DeclareCnName    string          `json:"declareCnName"`    // 商品中文报关名称
-	DeclareEnName    string          `json:"declareEnName"`    // 商品英文报关名称
-	DeveloperName    string          `json:"developerName"`    // 业务开发员名称
-	EnablePackageNum int             `json:"enablePackageNum"` // 可包装个数
-	GoodsDetail      []ProductDetail `json:"goodsDetail"`      // 商品明细
-	HsCode           string          `json:"hsCode"`           // 海关编码
-	InquirerName     string          `json:"inquirerName"`     // 采购询价员名称
-	LabelList        []struct {
-		SKULabel string `json:"skuLabel"` // 商品标签
-	} `json:"labelList"` //	产品标签
-	LabelName           string  `json:"labelName"`           // 标签名称
-	PackageCost         float64 `json:"packageCost"`         // 商品包装成本
-	PackageHeight       float64 `json:"packageHeight"`       // 包裹尺寸(高cm)
-	PackageLength       float64 `json:"packageLength"`       // 包裹尺寸(长cm)
-	PackageMaterialName string  `json:"packageMaterialName"` // 包装名称
-	PackageWeight       float64 `json:"packageWeight"`       // 商品包装重量(克)
-	PackageWidth        float64 `json:"packageWidth"`        // 包裹尺寸(宽cm)
-	ProductCode         string  `json:"productCode"`         // 商品编号
-	ProductFeature      string  `json:"productFeature"`      // 产品特点
-	ProductHeight       float64 `json:"productHeight"`       // 商品尺寸(高cm)
-	ProductImgList      []struct {
-		ImageGroupId string `json:"imageGroupId"` // 图片url
-	} `json:"productImgList"` // 产品图片
-	ProductLength        float64 `json:"productLength"`        // 商品尺寸(长cm)
-	ProductName          string  `json:"productName"`          // 产品名称
-	ProductPackingEnName string  `json:"productPackingEnName"` // 商品英文报关名称
-	ProductPackingName   string  `json:"productPackingName"`   // 中文配货名称
-	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸(宽cm)
-	ProductId            string  `json:"product_id"`           // 产品id
-	PurchaseName         string  `json:"purchaseName"`         // 采购员名称
-	PurchaserId          string  `json:"purchaserId"`          // 采购员id
-	SKU                  string  `json:"sku"`                  // 商品sku
-	Status               string  `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
-	SupplierName         string  `json:"supplier_name"`        // 供应商名称
-	UpdatedDate          int     `json:"updatedDate"`          // 产品信息修改时间
+	BrandName            string          `json:"brandName"`            // 品牌名称
+	CategoryName         string          `json:"categoryName"`         // 分类名称
+	CreatedDate          int             `json:"createdDate"`          // 产品创建时间
+	DeclareCnName        string          `json:"declareCnName"`        // 商品中文报关名称
+	DeclareEnName        string          `json:"declareEnName"`        // 商品英文报关名称
+	DeveloperName        string          `json:"developerName"`        // 业务开发员名称
+	EnablePackageNum     int             `json:"enablePackageNum"`     // 可包装个数
+	GoodsDetail          []ProductDetail `json:"goodsDetail"`          // 商品明细
+	HsCode               string          `json:"hsCode"`               // 海关编码
+	InquirerName         string          `json:"inquirerName"`         // 采购询价员名称
+	LabelList            []Label         `json:"labelList"`            // 产品标签
+	LabelName            string          `json:"labelName"`            // 标签名称
+	PackageCost          float64         `json:"packageCost"`          // 商品包装成本
+	PackageHeight        float64         `json:"packageHeight"`        // 包裹尺寸(高cm)
+	PackageLength        float64         `json:"packageLength"`        // 包裹尺寸(长cm)
+	PackageMaterialName  string          `json:"packageMaterialName"`  // 包装名称
+	PackageWeight        float64         `json:"packageWeight"`        // 商品包装重量(克)
+	PackageWidth         float64         `json:"packageWidth"`         // 包裹尺寸(宽cm)
+	ProductCode          string          `json:"productCode"`          // 商品编号
+	ProductFeature       string          `json:"productFeature"`       // 产品特点
+	ProductHeight        float64         `json:"productHeight"`        // 商品尺寸(高cm)
+	ProductImgList       []ProductImage  `json:"productImgList"`       // 产品图片
+	ProductLength        float64         `json:"productLength"`        // 商品尺寸(长cm)
+	ProductName          string          `json:"productName"`          // 产品名称
+	ProductPackingEnName string          `json:"productPackingEnName"` // 商品英文报关名称
+	ProductPackingName   string          `json:"productPackingName"`   // 中文配货名称
+	ProductWidth         float64         `json:"productWidth"`         // 商品尺寸(宽cm)
+	ProductId            string          `json:"product_id"`           // 产品id
+	PurchaseName         string          `json:"purchaseName"`         // 采购员名称
+	PurchaserId          string          `json:"purchaserId"`          // 采购员id
+	SKU                  string          `json:"sku"`                  // 商品sku
+	Status               string          `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
+	SupplierName         string          `json:"supplier_name"`        // 供应商名称
+	UpdatedDate          int             `json:"updatedDate"`          // 产品信息修改时间
+}
+
+// ProductImage 商品图片
+type ProductImage struct {
+	ImageGroupId string `json:"imageGroupId"` // 图片url
 }
 
 // ProductDetail 通途商品详情
@@ -95,7 +96,7 @@ type ProductDetail struct {
 }
 
 type Label struct {
-	SKULabel string `json:"skuLabel"`
+	SKULabel string `json:"skuLabel"` // 商品标签
 }
 
 // ProductAccessory 商品配件
