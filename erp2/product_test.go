@@ -20,7 +20,7 @@ func TestService_Products(t *testing.T) {
 func TestService_ProductByNormalType(t *testing.T) {
 	_, ttService := newTestTongTool()
 	typ := ProductTypeNormal
-	sku := "Lillian201309130002"
+	sku := "tt-sku-a"
 	isAlias := false
 	product, err := ttService.Product(typ, sku, isAlias)
 	if err == nil {
@@ -81,6 +81,7 @@ func TestService_CreateProduct(t *testing.T) {
 		PackageLength:      20,
 		PackageWidth:       120,
 		PackageHeight:      30,
+		EnablePackageNum:   1,
 	}
 	req.MerchantId = ttInstance.MerchantId
 	err := ttService.CreateProduct(req)
