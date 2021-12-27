@@ -127,18 +127,10 @@ type OrderQueryParams struct {
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`
 }
 
-type orderResult struct {
-	result
-	Datas struct {
-		Array    []Order `json:"array"`
-		PageNo   int     `json:"pageNo"`
-		PageSize int     `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // Orders 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
@@ -152,9 +144,15 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	if params.OrderId != "" {
 		params.AccountCode = ""
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]Order, 0)
-	res := orderResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []Order `json:"array"`
+			PageNo   int     `json:"pageNo"`
+			PageSize int     `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

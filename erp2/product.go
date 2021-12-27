@@ -238,7 +238,10 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 	res := struct {
 		result
 	}{}
-	resp, err := s.tongTool.Client.R().SetResult(&res).SetBody(req).Post("/openapi/tongtool/createProduct")
+	resp, err := s.tongTool.Client.R().
+		SetResult(&res).
+		SetBody(req).
+		Post("/openapi/tongtool/createProduct")
 	if err == nil {
 		if resp.IsSuccess() {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
@@ -263,7 +266,10 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 		Datas  string      `json:"datas"`
 		Others interface{} `json:"others"`
 	}{}
-	resp, err := s.tongTool.Client.R().SetResult(&res).SetBody(req).Post("/openapi/tongtool/updateProduct")
+	resp, err := s.tongTool.Client.R().
+		SetResult(&res).
+		SetBody(req).
+		Post("/openapi/tongtool/updateProduct")
 	if err == nil {
 		if resp.IsSuccess() {
 			err = tongtool.ErrorWrap(res.Code, res.Message)

@@ -43,25 +43,23 @@ type FBAOrderQueryParams struct {
 	PurchaseDateTo   string `json:"purchaseDateTo,omitempty"`   // 订单购买时间结束时间
 }
 
-type fbaOrderResult struct {
-	result
-	Datas struct {
-		Array []FBAOrder `json:"array"`
-	} `json:"datas,omitempty"`
-}
-
 // FBAOrders FBA 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=c33e7bd4e73d4d2d9a27de56f794cc82
 func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]FBAOrder, 0)
-	res := fbaOrderResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array []FBAOrder `json:"array"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

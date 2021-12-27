@@ -75,18 +75,10 @@ type PurchaseOrdersQueryParams struct {
 	PageSize          int    `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 }
 
-type purchaseOrdersResult struct {
-	result
-	Datas struct {
-		Array    []PurchaseOrder `json:"array"`
-		PageNo   int             `json:"pageNo"`
-		PageSize int             `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // PurchaseOrders 采购单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0dd564d52ce34ad0afce1f304d6b7824
 func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
@@ -96,9 +88,15 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	if is.Number(params.POrderStatus) {
 		params.POrderStatus = PurchaseOrderStatusNtoS(params.POrderStatus)
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]PurchaseOrder, 0)
-	res := purchaseOrdersResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []PurchaseOrder `json:"array"`
+			PageNo   int             `json:"pageNo"`
+			PageSize int             `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

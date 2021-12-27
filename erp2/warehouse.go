@@ -23,27 +23,25 @@ type WarehouseQueryParams struct {
 	WarehouseId   string `json:"warehouseId,omitempty"`   // 仓库id（通途无此参数）
 }
 
-type warehousesResult struct {
-	result
-	Datas struct {
-		Array    []Warehouse `json:"array"`
-		PageNo   int         `json:"pageNo"`
-		PageSize int         `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // Warehouses 查询仓库列表
 // https://open.tongtool.com/apiDoc.html#/?docId=cdb49c57add3448daf1f4cd0fad40bef
 func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
 	}
 	if params.PageSize <= 0 {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]Warehouse, 0)
-	res := warehousesResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []Warehouse `json:"array"`
+			PageNo   int         `json:"pageNo"`
+			PageSize int         `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

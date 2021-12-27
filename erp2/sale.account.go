@@ -23,27 +23,25 @@ type SaleAccountQueryParams struct {
 	PageSize   int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 }
 
-type accountsResult struct {
-	result
-	Datas struct {
-		Array    []SaleAccount `json:"array"`
-		PageNo   int           `json:"pageNo"`
-		PageSize int           `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // SaleAccounts 商户账号列表
 // https://open.tongtool.com/apiDoc.html#/?docId=1e81e4bbae0b4d60b5f7777fc629ba2a
 func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]SaleAccount, 0)
-	res := accountsResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []SaleAccount `json:"array"`
+			PageNo   int           `json:"pageNo"`
+			PageSize int           `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

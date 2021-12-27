@@ -25,18 +25,10 @@ type TrackingNumberQueryParams struct {
 	PageSize   int      `json:"pageSize,omitempty"` // 每页数量
 }
 
-type trackingNumbersResult struct {
-	result
-	Datas struct {
-		Array    []TrackingNumber `json:"array"`
-		PageNo   int              `json:"pageNo"`
-		PageSize int              `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // TrackingNumbers 订单物流单号列表
 // 需要注意的是该封装总是返回包含所有查询订单集合的数据，无论是否有物流数据
 func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []TrackingNumber, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	items = make([]TrackingNumber, 0)
 	if len(params.OrderIds) == 0 {
 		return
@@ -50,8 +42,14 @@ func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []Trac
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
-	res := trackingNumbersResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []TrackingNumber `json:"array"`
+			PageNo   int              `json:"pageNo"`
+			PageSize int              `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

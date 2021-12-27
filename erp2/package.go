@@ -39,27 +39,25 @@ type PackageQueryParams struct {
 	ShippingMethodName string `json:"shippingMethodName,omitempty"`
 }
 
-type packageResult struct {
-	result
-	Datas struct {
-		Array    []Package `json:"array"`
-		PageNo   int       `json:"pageNo"`
-		PageSize int       `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // Packages 包裹列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0412c0185dce4a9d88714a9eef44932b
 func (s service) Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]Package, 0)
-	res := packageResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []Package `json:"array"`
+			PageNo   int       `json:"pageNo"`
+			PageSize int       `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

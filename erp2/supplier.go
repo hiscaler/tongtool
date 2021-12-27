@@ -43,27 +43,25 @@ type SuppliersQueryParams struct {
 	PageSize   int    `json:"pageSize,omitempty"`
 }
 
-type supplierResult struct {
-	result
-	Datas struct {
-		Array    []Supplier `json:"array"`
-		PageNo   int        `json:"pageNo"`
-		PageSize int        `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // Suppliers 供应商列表
 // https://open.tongtool.com/apiDoc.html#/?docId=1456c221fcbf4632b06d4810e8e0d4e4
 func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]Supplier, 0)
-	res := supplierResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []Supplier `json:"array"`
+			PageNo   int        `json:"pageNo"`
+			PageSize int        `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

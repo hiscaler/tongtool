@@ -46,27 +46,25 @@ type StockQueryParams struct {
 	WarehouseName   string   `json:"warehouseName"`             // 仓库名称
 }
 
-type stocksResult struct {
-	result
-	Datas struct {
-		Array    []Stock `json:"array"`
-		PageNo   int     `json:"pageNo"`
-		PageSize int     `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // Stocks 库存列表
 // https://open.tongtool.com/apiDoc.html#/?docId=9aaf6b145a014060b3b3f669b0487096
 func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]Stock, 0)
-	res := stocksResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []Stock `json:"array"`
+			PageNo   int     `json:"pageNo"`
+			PageSize int     `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).

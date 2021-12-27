@@ -46,27 +46,25 @@ type ShopifyOrderQueryParams struct {
 	ShopifyOrderId      string `json:"shopifyOrderId,omitempty"`
 }
 
-type shopifyOrderResult struct {
-	result
-	Datas struct {
-		Array    []ShopifyOrder `json:"array"`
-		PageNo   int            `json:"pageNo"`
-		PageSize int            `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // ShopifyOrders Shopify 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=e949a88561e7471785cccef86feb3e6d
 func (s service) ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyOrder, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	items = make([]ShopifyOrder, 0)
-	res := shopifyOrderResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []ShopifyOrder `json:"array"`
+			PageNo   int            `json:"pageNo"`
+			PageSize int            `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).
