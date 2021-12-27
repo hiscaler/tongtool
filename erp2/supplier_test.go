@@ -1,8 +1,6 @@
 package erp2
 
 import (
-	"fmt"
-	"github.com/hiscaler/tongtool/pkg/cast"
 	"strings"
 	"testing"
 )
@@ -11,22 +9,27 @@ import (
 func TestService_Suppliers(t *testing.T) {
 	_, ttService := newTestTongTool()
 	params := SuppliersQueryParams{}
-	findName := "栀子花开女装店"
+	name := "栀子花开女装店"
+	found := false
 	for {
 		suppliers, isLastPage, err := ttService.Suppliers(params)
 		if err == nil {
 			for _, supplier := range suppliers {
-				if strings.EqualFold(findName, supplier.CorporationFullName) {
-					fmt.Println(cast.ToJson(supplier))
+				if strings.EqualFold(name, supplier.CorporationFullName) {
+					found = true
+					break
 				}
 			}
 		} else {
 			t.Error(err)
 			break
 		}
-		if isLastPage {
+		if isLastPage || found {
 			break
 		}
 		params.PageNo++
+	}
+	if !found {
+		t.Errorf("%s not found", name)
 	}
 }
