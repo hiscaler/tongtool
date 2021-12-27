@@ -3,7 +3,6 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
@@ -232,32 +231,23 @@ type ProductQueryParams struct {
 	UpdatedDateEnd   string   `json:"updatedDateEnd,omitempty"`
 }
 
-type productResult struct {
-	result
-	Datas struct {
-		Array    []Product `json:"array"`
-		PageNo   int       `json:"pageNo"`
-		PageSize int       `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // CreateProduct 创建商品
 // https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca
 func (s service) CreateProduct(req CreateProductRequest) error {
-	type createProductResponse struct {
-		Code    int    `json:"code"`
-		Message string `json:"message"`
-	}
-	cpr := createProductResponse{}
 	req.MerchantId = s.tongTool.MerchantId
-	r, err := s.tongTool.Client.R().SetResult(&cpr).SetBody(req).Post("/openapi/tongtool/createProduct")
+	res := struct {
+		result
+	}{}
+	resp, err := s.tongTool.Client.R().SetResult(&res).SetBody(req).Post("/openapi/tongtool/createProduct")
 	if err == nil {
-		if r.IsSuccess() {
-			if cpr.Code != tongtool.OK {
-				err = errors.New(cpr.Message)
-			}
+		if resp.IsSuccess() {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			err = errors.New(r.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 
@@ -267,26 +257,22 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 // UpdateProduct 更新商品
 // https://open.tongtool.com/apiDoc.html#/?docId=a928207c94184649be852b120a9f4044
 func (s service) UpdateProduct(req UpdateProductRequest) error {
-	type updateProductResponse struct {
-		Code    int         `json:"code"`
-		Message string      `json:"message"`
-		Datas   string      `json:"datas"`
-		Others  interface{} `json:"others"`
-	}
-	cpr := updateProductResponse{}
 	req.MerchantId = s.tongTool.MerchantId
-	r, err := s.tongTool.Client.R().SetResult(&cpr).SetBody(req).Post("/openapi/tongtool/updateProduct")
+	res := struct {
+		result
+		Datas  string      `json:"datas"`
+		Others interface{} `json:"others"`
+	}{}
+	resp, err := s.tongTool.Client.R().SetResult(&res).SetBody(req).Post("/openapi/tongtool/updateProduct")
 	if err == nil {
-		if r.IsSuccess() {
-			if cpr.Code != tongtool.OK {
-				msg := strings.TrimSpace(cpr.Message)
-				if msg == "" {
-					msg = fmt.Sprintf("code: %d", cpr.Code)
-				}
-				err = errors.New(msg)
-			}
+		if resp.IsSuccess() {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			err = errors.New(r.Status())
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
 		}
 	}
 
@@ -296,6 +282,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 // Products 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
 func (s service) Products(params ProductQueryParams) (items []Product, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
@@ -307,12 +294,19 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 	} else if len(params.SkuAliases) > 10 {
 		err = errors.New("skuAliases 参数长度不能大于 10 个")
 	}
-	params.MerchantId = s.tongTool.MerchantId
 	if err != nil {
 		return
 	}
+
 	items = make([]Product, 0)
-	res := productResult{}
+	res := struct {
+		result
+		Datas struct {
+			Array    []Product `json:"array"`
+			PageNo   int       `json:"pageNo"`
+			PageSize int       `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).
