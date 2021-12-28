@@ -56,8 +56,6 @@ type app struct {
 	CreatedBy          string  `json:"createdBy"`
 	UpdatedDate        int     `json:"updatedDate"`
 	UpdatedBy          string  `json:"updatedBy"`
-	AppKey             string  `json:"appKey"`
-	AppSecret          string  `json:"appSecret"`
 	Timestamp          int     `json:"timestamp"`
 	Sign               string  `json:"sign"`
 	Valid              bool    `json:"valid"`
@@ -142,7 +140,7 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 	if debug {
 		client.SetDebug(true).EnableTrace()
 	}
-	application = app{AppKey: appKey, AppSecret: appSecret}
+	application = app{}
 	tokenResponse := struct {
 		Success bool        `json:"success"`
 		Code    int         `json:"code"`
