@@ -462,7 +462,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 		items, isLastPage, err = s.Products(params)
 		if err == nil {
 			if len(items) == 0 {
-				err = errors.New("not found")
+				err = tongtool.ErrNotFound
 			} else {
 				for _, p := range items {
 					switch typ {
@@ -500,7 +500,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 	}
 
 	if err == nil && !exists {
-		err = errors.New("not found")
+		err = tongtool.ErrNotFound
 	}
 
 	return

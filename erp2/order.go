@@ -193,7 +193,7 @@ func (s service) Order(orderId string) (item Order, err error) {
 		items, isLastPage, err = s.Orders(params)
 		if err == nil {
 			if len(items) == 0 {
-				err = errors.New("not found")
+				err = tongtool.ErrNotFound
 			} else {
 				for _, order := range items {
 					if strings.EqualFold(order.OrderIdCode, orderId) {
@@ -214,7 +214,7 @@ func (s service) Order(orderId string) (item Order, err error) {
 	}
 
 	if err == nil && !exists {
-		err = errors.New("not found")
+		err = tongtool.ErrNotFound
 	}
 
 	return

@@ -97,7 +97,7 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 		packages, isLastPage, err = s.Packages(params)
 		if err == nil {
 			if len(packages) == 0 {
-				err = errors.New("not found")
+				err = tongtool.ErrNotFound
 			} else {
 				if packageId == "" {
 					exists = true
@@ -120,7 +120,7 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 	}
 
 	if err == nil && !exists {
-		err = errors.New("not found")
+		err = tongtool.ErrNotFound
 	}
 
 	return

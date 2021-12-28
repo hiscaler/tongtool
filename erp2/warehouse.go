@@ -94,7 +94,7 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 		items, isLastPage, err = s.Warehouses(params)
 		if err == nil {
 			if len(items) == 0 {
-				err = errors.New("not found")
+				err = tongtool.ErrNotFound
 			} else {
 				for _, warehouse := range items {
 					switch searchBy {
@@ -122,7 +122,7 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 	}
 
 	if err == nil && !exists {
-		err = errors.New("not found")
+		err = tongtool.ErrNotFound
 	}
 
 	return
