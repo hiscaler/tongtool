@@ -68,6 +68,15 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	var cacheKey string
+	if s.tongTool.ActivateCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			}
+		}
+	}
 	items = make([]Package, 0)
 	res := struct {
 		result
@@ -98,6 +107,11 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 			}
 		}
 	}
+	if err == nil && s.tongTool.ActivateCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		}
+	}
 	return
 }
 
@@ -111,14 +125,14 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 	if packageId != "" {
 		packageId = strings.TrimSpace(packageId)
 	}
+
 	var cacheKey string
 	if s.tongTool.ActivateCache {
 		cacheKey = cache.GenerateKey(params, packageId)
-		var b []byte
-		b, e := s.tongTool.Cache.Get(cacheKey)
-		if e == nil {
-			json.Unmarshal(b, &item)
-			return
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &item); e == nil {
+				return
+			}
 		}
 	}
 
