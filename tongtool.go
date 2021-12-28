@@ -125,7 +125,7 @@ func ErrorWrap(code int, defaultMessage string) error {
 		msg = "账号已过期"
 	default:
 		if defaultMessage == "" {
-			msg = fmt.Sprintf("未知的错误：%d", code)
+			msg = fmt.Sprintf("未知的错误代码：%d", code)
 		} else {
 			msg = fmt.Sprintf("%d: %s", code, defaultMessage)
 		}
