@@ -13,11 +13,11 @@ TongTool API 封装
 - Order(id string) (item Order, err error)                                                                                                   // 单个订单
 - Products(params ProductQueryParams) (items []Product, isLastPage bool, err error)                                                          // 商品列表
 - Product(typ string, sku string, isAlias bool) (item Product, err error)                                                                    // 单个商品
-- ProductExists(typ string, sku string, isAlias bool) bool // 商品是否存在
-- CreateProduct(req CreateProductRequest) error // 创建商品
-- UpdateProduct(req UpdateProductRequest) error // 更新商品
+- ProductExists(typ string, sku string, isAlias bool) bool                                                                                   // 商品是否存在
+- CreateProduct(req CreateProductRequest) error                                                                                              // 创建商品
+- UpdateProduct(req UpdateProductRequest) error                                                                                              // 更新商品
 - Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表
-- Package(orderNumber, packageNumber string) (item Package, err error)                                                                       // 单个包裹
+- Package(orderId, packageId string) (item Package, err error)                                                                               // 单个包裹
 - Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                                                      // 供应商列表
 - PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error)                                       // 采购单列表
 - CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                                                          // 创建采购单
