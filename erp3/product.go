@@ -123,7 +123,7 @@ type ProductGoods struct {
 	GoodsAverageCost float64                 `json:"goodsAverageCost"` // 货品平均成本
 	GoodsCurrentCost float64                 `json:"goodsCurrentCost"` // 货品成本(最新成本)
 	GoodsSKU         string                  `json:"goodsSku"`         // 货号(SKU)
-	GoodsWeight      int                     `json:"goodsWeight"`      //	货品重量(克)
+	GoodsWeight      int                     `json:"goodsWeight"`      // 货品重量(克)
 	GoodsVariation   []ProductGoodsVariation `json:"goodsVariation"`   // 货品属性列表
 }
 
