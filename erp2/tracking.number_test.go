@@ -8,8 +8,9 @@ import (
 func TestService_TrackingNumbers(t *testing.T) {
 	_, ttService := newTestTongTool()
 	// 验证返回结果数量
-	params := TrackingNumberQueryParams{}
-	params.OrderIds = []string{"bad.order.id1", "bad.order.id2", "L-M20211221152430918"}
+	params := TrackingNumberQueryParams{
+		OrderIds: []string{"bad.order.id1", "bad.order.id2", "L-M20211221152430918", "US-12345", "US-abcd"},
+	}
 	trackingNumbers := make([]TrackingNumber, 0)
 	for {
 		pageTrackingNumbers, isLastPage, err := ttService.TrackingNumbers(params)
