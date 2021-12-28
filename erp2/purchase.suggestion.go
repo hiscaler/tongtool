@@ -6,8 +6,6 @@ import (
 	"github.com/hiscaler/tongtool"
 )
 
-// https://open.tongtool.com/apiDoc.html#/?docId=8e80fde6a4824b288d17bc04be8f4ef6
-
 // PurchaseSuggestion 采购建议
 type PurchaseSuggestion struct {
 	CaculateDate           string `json:"caculateDate"`           // 采购建议计算时间
@@ -34,6 +32,7 @@ type PurchaseSuggestionQueryParams struct {
 }
 
 // PurchaseSuggestions 采购建议列表
+// https://open.tongtool.com/apiDoc.html#/?docId=8e80fde6a4824b288d17bc04be8f4ef6
 func (s service) PurchaseSuggestions(params PurchaseSuggestionQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {

@@ -6,8 +6,6 @@ import (
 	"github.com/hiscaler/tongtool"
 )
 
-// https://open.tongtool.com/apiDoc.html#/?docId=129858303d494c6b90b552eeb5a7514f
-
 // 模板类型
 const (
 	PurchaseOrderTemplateFBAType   = "fba"
@@ -33,6 +31,7 @@ type PurchaseSuggestionTemplateQueryParams struct {
 }
 
 // PurchaseSuggestionTemplates 采购建议模板列表
+// https://open.tongtool.com/apiDoc.html#/?docId=129858303d494c6b90b552eeb5a7514f
 func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {

@@ -86,6 +86,7 @@ type Product struct {
 	PurchaserId          string          `json:"purchaserId"`          // 采购员id
 	SKU                  string          `json:"sku"`                  // 商品sku
 	Status               string          `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
+	StatusBoolean        bool            `json:"statusBoolean"`        // 商品删除状态布尔值
 	SupplierName         string          `json:"supplier_name"`        // 供应商名称
 	UpdatedDate          int             `json:"updatedDate"`          // 产品信息修改时间
 }
@@ -420,6 +421,9 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					items[i].StatusBoolean = in.StringIn(item.Status, "0", "null", "")
+				}
 				isLastPage = len(items) <= params.PageSize
 			}
 		} else {
@@ -474,13 +478,13 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 					default:
 						if isAlias {
 							for _, label := range p.LabelList {
-								if strings.EqualFold(sku, label.SKULabel) {
+								if strings.EqualFold(sku, label.SKULabel) && p.StatusBoolean {
 									exists = true
 									item = p
 								}
 							}
 						} else {
-							if strings.EqualFold(sku, p.SKU) {
+							if strings.EqualFold(sku, p.SKU) && p.StatusBoolean {
 								exists = true
 								item = p
 							}
