@@ -69,7 +69,7 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
 	var cacheKey string
-	if s.tongTool.ActivateCache {
+	if s.tongTool.EnableCache {
 		cacheKey = cache.GenerateKey(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
@@ -107,7 +107,7 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 			}
 		}
 	}
-	if err == nil && s.tongTool.ActivateCache {
+	if err == nil && s.tongTool.EnableCache {
 		if b, e := json.Marshal(&items); e == nil {
 			s.tongTool.Cache.Set(cacheKey, b)
 		}
@@ -127,7 +127,7 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 	}
 
 	var cacheKey string
-	if s.tongTool.ActivateCache {
+	if s.tongTool.EnableCache {
 		cacheKey = cache.GenerateKey(params, packageId)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &item); e == nil {
@@ -172,7 +172,7 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 	if err == nil && !exists {
 		err = tongtool.ErrNotFound
 	}
-	if err == nil && s.tongTool.ActivateCache {
+	if err == nil && s.tongTool.EnableCache {
 		if b, e := json.Marshal(&item); e == nil {
 			s.tongTool.Cache.Set(cacheKey, b)
 		}

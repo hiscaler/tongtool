@@ -34,15 +34,115 @@ type TongTool struct {
 	Client             *resty.Client
 	MerchantId         string
 	Logger             *log.Logger
+	EnableCache        bool
+	Cache              *bigcache.BigCache
 	QueryDefaultValues queryDefaultValues
+	application        app
+}
+
+type app struct {
+	TokenId            string  `json:"tokenId"`
+	DevId              string  `json:"devId"`
+	DevAppId           string  `json:"devAppId"`
+	AccessKey          string  `json:"accessKey"`
+	AppToken           string  `json:"appToken"`
+	AppTokenExpireDate int64   `json:"appTokenExpireDate"`
+	PartnerOpenId      string  `json:"partnerOpenId"`
+	UserOpenId         string  `json:"userOpenId"`
+	UserName           string  `json:"userName"`
+	BuyDate            int     `json:"buyDate"`
+	Price              float64 `json:"price"`
+	CreatedDate        int     `json:"createdDate"`
+	CreatedBy          string  `json:"createdBy"`
+	UpdatedDate        int     `json:"updatedDate"`
+	UpdatedBy          string  `json:"updatedBy"`
+	AppKey             string  `json:"appKey"`
+	AppSecret          string  `json:"appSecret"`
+	Timestamp          int     `json:"timestamp"`
+	Sign               string  `json:"sign"`
+	Valid              bool    `json:"valid"`
 }
 
 func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 	logger := log.New(os.Stdout, "TongTool", log.LstdFlags)
-	client := resty.New().SetBaseURL("https://open.tongtool.com/open-platform-service")
+	ttInstance := &TongTool{
+		Logger: logger,
+		QueryDefaultValues: queryDefaultValues{
+			PageNo:   1,
+			PageSize: 100,
+		},
+	}
+	if application, e := auth(appKey, appSecret, debug); e == nil {
+		application.AppTokenExpireDate /= 1000
+		ttInstance.application = application
+		ttInstance.MerchantId = application.PartnerOpenId
+	} else {
+		logger.Printf("auth error: %s", e.Error())
+	}
+	client := resty.New().
+		SetBaseURL("https://open.tongtool.com/api-service").
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+			"Accept":       "application/json",
+			"api_version":  "3.0",
+		}).
+		SetTimeout(10 * time.Second)
 	if debug {
 		client.SetDebug(true).EnableTrace()
 	}
+	client.OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
+		if !ttInstance.application.Valid || ttInstance.application.AppTokenExpireDate <= time.Now().Unix()-1800 {
+			application, e := auth(appKey, appSecret, debug)
+			if e != nil {
+				logger.Printf("auth error: %s", e.Error())
+				return e
+			}
+			ttInstance.MerchantId = application.PartnerOpenId
+			application.AppTokenExpireDate /= 1000
+			ttInstance.application = application
+		}
+		client.SetQueryParams(map[string]string{
+			"app_token": ttInstance.application.AppToken,
+			"sign":      ttInstance.application.Sign,
+			"timestamp": strconv.Itoa(ttInstance.application.Timestamp),
+		})
+		return nil
+	})
+	ttInstance.Client = client
+	return ttInstance
+}
+
+// SwitchCache 激活缓存
+func (t *TongTool) SwitchCache(v bool) (err error) {
+	if v {
+		// Active
+		if t.Cache == nil {
+			cache, e := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+			if e == nil {
+				t.EnableCache = true
+				t.Cache = cache
+			} else {
+				t.Logger.Printf("cache: active cache error: %s", e.Error())
+				err = e
+			}
+		} else {
+			t.EnableCache = true
+		}
+	} else {
+		// Close
+		t.EnableCache = false
+	}
+
+	return
+}
+
+func auth(appKey, appSecret string, debug bool) (application app, err error) {
+	client := resty.New().
+		SetBaseURL("https://open.tongtool.com/open-platform-service")
+	if debug {
+		client.SetDebug(true).EnableTrace()
+	}
+	application = app{AppKey: appKey, AppSecret: appSecret}
 	tokenResponse := struct {
 		Success bool        `json:"success"`
 		Code    int         `json:"code"`
@@ -50,83 +150,43 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 		Datas   string      `json:"datas"`
 		Other   interface{} `json:"other"`
 	}{}
-	_, err := client.R().
+	_, err = client.R().
 		SetResult(&tokenResponse).
 		Get(fmt.Sprintf("/devApp/appToken?accessKey=%s&secretAccessKey=%s", appKey, appSecret))
-	if err != nil || !tokenResponse.Success {
-		logger.Panic("Get token failed.")
+	if err != nil {
+		return
+	}
+	if !tokenResponse.Success {
+		err = errors.New("get token failed")
 	}
 
 	timestamp := int(time.Now().UnixNano() / 1e6)
+	appToken := tokenResponse.Datas
 	h := md5.New()
-	h.Write([]byte(fmt.Sprintf("app_token%stimestamp%d%s", tokenResponse.Datas, timestamp, appSecret)))
+	h.Write([]byte(fmt.Sprintf("app_token%stimestamp%d%s", appToken, timestamp, appSecret)))
 	sign := hex.EncodeToString(h.Sum(nil))
-	partnerResponse := struct {
-		Success bool   `json:"success"`
-		Code    int    `json:"code"`
-		Message string `json:"message"`
-		Datas   []struct {
-			PartnerOpenId string `json:"partnerOpenId"`
-		} `json:"datas"`
-		Other interface{} `json:"other"`
+	appResponse := struct {
+		Success bool        `json:"success"`
+		Code    int         `json:"code"`
+		Message string      `json:"message"`
+		Datas   []app       `json:"datas"`
+		Other   interface{} `json:"other"`
 	}{}
 	_, err = client.R().
-		SetResult(&partnerResponse).
-		Get(fmt.Sprintf("/partnerOpenInfo/getAppBuyerList?app_token=%s&timestamp=%d&sign=%s",
-			tokenResponse.Datas,
-			timestamp,
-			sign,
-		))
-
-	if err != nil || !partnerResponse.Success || len(partnerResponse.Datas) == 0 {
-		log.Panicf("Get partnerOpenId failed, error: %s", err.Error())
+		SetResult(&appResponse).
+		Get(fmt.Sprintf("/partnerOpenInfo/getAppBuyerList?app_token=%s&timestamp=%d&sign=%s", appToken, timestamp, sign))
+	if err != nil {
+		return
+	}
+	if !appResponse.Success || len(appResponse.Datas) == 0 {
+		err = errors.New("getAppBuyerList data invalid")
+		return
 	}
 
-	client.SetBaseURL("https://open.tongtool.com/api-service").
-		SetHeaders(map[string]string{
-			"Content-Type": "application/json",
-			"Accept":       "application/json",
-			"api_version":  "3.0",
-		}).
-		SetQueryParams(map[string]string{
-			"app_token": tokenResponse.Datas,
-			"sign":      sign,
-			"timestamp": strconv.Itoa(timestamp),
-		}).
-		SetTimeout(10 * time.Second)
-
-	return &TongTool{
-		Client:     client,
-		MerchantId: partnerResponse.Datas[0].PartnerOpenId,
-		Logger:     logger,
-		QueryDefaultValues: queryDefaultValues{
-			PageNo:   1,
-			PageSize: 100,
-		},
-	}
-}
-
-// WithCache 激活缓存
-func (t *TongTool) WithCache(v bool) (err error) {
-	if v {
-		// Active
-		if t.Cache == nil {
-			cache, e := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
-			if e == nil {
-				t.ActivateCache = true
-				t.Cache = cache
-			} else {
-				t.Logger.Printf("cache: active cache error: %s", e.Error())
-				err = e
-			}
-		} else {
-			t.ActivateCache = true
-		}
-	} else {
-		// Close
-		t.ActivateCache = false
-	}
-
+	application = appResponse.Datas[0]
+	application.Valid = true
+	application.Timestamp = timestamp
+	application.Sign = sign
 	return
 }
 

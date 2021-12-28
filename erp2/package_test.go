@@ -33,7 +33,7 @@ func TestService_Package(t *testing.T) {
 
 func TestService_PackageWithCache(t *testing.T) {
 	tt, ttService := newTestTongTool()
-	tt.WithCache(true)
+	tt.SwitchCache(true)
 	for i := 0; i <= 400; i++ {
 		orderId := "L-M20211221152430918"
 		packageId := "P02914669"
@@ -42,6 +42,8 @@ func TestService_PackageWithCache(t *testing.T) {
 			t.Errorf("ttService.Package error: %s", err.Error())
 		} else if !strings.EqualFold(p.PackageId, packageId) {
 			t.Errorf("package.package id %s not equal %s", p.PackageId, packageId)
+		} else {
+			fmt.Println("ok")
 		}
 	}
 }
