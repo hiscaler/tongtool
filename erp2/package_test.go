@@ -22,8 +22,8 @@ func TestService_Packages(t *testing.T) {
 
 func TestService_Package(t *testing.T) {
 	_, ttService := newTestTongTool()
-	orderNumber := "L-M20211208145011174"
-	packageNumber := "P02914130"
+	orderNumber := "L-M20211221152430918"
+	packageNumber := "P02914669"
 	_, err := ttService.Package(orderNumber, packageNumber)
 	if err != nil {
 		t.Error(err)

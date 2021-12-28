@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
 )
 
@@ -13,17 +14,34 @@ const (
 	PackageStatusWaitDeliver = "waitDeliver" // 等待发货
 	PackageStatusDelivered   = "delivered"   // 已发货
 	PackageStatusCancel      = "cancel"      // 作废
+	PackageStatusOther       = "other"       // 其他
 )
 
+type PackageItem struct {
+	GoodsSKU string `json:"goodsSKU"` // 通途货品sku
+	Quantity int    `json:"quantity"` // 采购数量
+}
+
 type Package struct {
-	PackageId             string  `json:"packageId"`             // 包裹id
-	TrackingNumber        string  `json:"trackingNumber"`        // 跟踪号
-	PackageStatus         string  `json:"packageStatus"`         // 包裹状态
-	ThirdPartyPackageCode string  `json:"thirdPartyPackageCode"` // 物流商单号
-	TongtoolWeight        float64 `json:"tongtoolWeight"`        // 通途包裹重量,单位g
-	TongtoolPostage       float64 `json:"tongtoolPostage"`       // 通途运费
-	CarrierWeight         float64 `json:"carrierWeight"`         // 物流商称重重量,单位g
-	CarrierPostage        float64 `json:"carrierPostage"`        // 物流商运费
+	carrierCurrency       string        `json:"carrierCurrency"`       // 物流商运费币种
+	CarrierPostage        float64       `json:"carrierPostage"`        // 物流商运费
+	CarrierWeight         float64       `json:"carrierWeight"`         // 物流商称重重量,单位g
+	GoodsDetails          []PackageItem `json:"goodsDetails"`          // 包裹商品项目
+	IsChecked             string        `json:"isChecked"`             // 包裹是否校验Y/已校验 、 null or N/未校验
+	IsCheckedBoolean      bool          `json:"isCheckedBoolean"`      // 包裹是否校验布尔值
+	MerchantId            string        `json:"merchantId"`            // 商户id
+	PackageId             string        `json:"packageId"`             // 包裹id
+	PackageStatus         string        `json:"packageStatus"`         // 包裹状态
+	ShippingMethodCode    string        `json:"shippingMethodCode"`    // 邮寄方式代码
+	ShippingMethodName    string        `json:"shippingMethodName"`    // 邮寄方式名称
+	ThirdPartyPackageCode string        `json:"thirdPartyPackageCode"` // 物流商单号
+	TongtoolCurrency      string        `json:"tongtoolCurrency"`      // 通途运费币种
+	TongtoolPostage       float64       `json:"tongtoolPostage"`       // 通途运费
+	TongtoolWeight        float64       `json:"tongtoolWeight"`        // 通途包裹重量,单位g
+	TrackingNumber        string        `json:"trackingNumber"`        // 跟踪号
+	UpdatedDate           string        `json:"updatedDate"`           // 包裹更新时间
+	UploadCarrier         string        `json:"uploadCarrier"`         // 上传包裹的Carrier
+	WarehouseName         string        `json:"warehouseName"`         // 仓库名称
 }
 
 type PackageQueryParams struct {
@@ -66,6 +84,9 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					items[i].IsCheckedBoolean = in.StringIn(item.IsChecked, "Y")
+				}
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
@@ -99,14 +120,18 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 			if len(packages) == 0 {
 				err = tongtool.ErrNotFound
 			} else {
-				if packageId == "" {
-					exists = true
-					item = packages[len(packages)-1] // last package
-				} else {
-					for _, p := range packages {
-						if strings.EqualFold(p.PackageId, packageId) {
+				for _, p := range packages {
+					if p.PackageStatus != PackageStatusCancel {
+						if packageId != "" {
+							if strings.EqualFold(p.PackageId, packageId) {
+								exists = true
+								item = p
+							}
+						} else {
 							exists = true
 							item = p
+						}
+						if exists {
 							break
 						}
 					}
