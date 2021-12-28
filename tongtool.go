@@ -22,6 +22,8 @@ const (
 	AccountExpiredError  = 999999
 )
 
+var ErrNotFound = errors.New("tongtool: not found")
+
 type queryDefaultValues struct {
 	PageNo   int
 	PageSize int
