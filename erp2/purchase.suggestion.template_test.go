@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"fmt"
+	"github.com/hiscaler/tongtool/pkg/cast"
 	"strings"
 	"testing"
 )
@@ -21,7 +22,7 @@ func TestService_PurchaseSuggestionTemplates(t *testing.T) {
 			}
 		}
 		if exists {
-			fmt.Println(fmt.Sprintf("Purchase suggestion templates: %#v", templates))
+			fmt.Println(cast.ToJson(templates))
 		} else {
 			t.Errorf("not found %s", templateId)
 		}

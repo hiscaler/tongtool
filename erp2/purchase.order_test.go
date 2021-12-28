@@ -24,7 +24,7 @@ func TestService_PurchaseOrders(t *testing.T) {
 			}
 		}
 		if exists {
-			fmt.Println(fmt.Sprintf("Orders: %#v", orders))
+			fmt.Println(cast.ToJson(orders))
 		} else {
 			t.Errorf("not found %s", number)
 		}

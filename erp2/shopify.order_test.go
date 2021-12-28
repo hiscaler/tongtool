@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"fmt"
+	"github.com/hiscaler/tongtool/pkg/cast"
 	"testing"
 )
 
@@ -17,7 +18,7 @@ func TestService_ShopifyOrders(t *testing.T) {
 		if err != nil {
 			t.Errorf("ttService.ShopifyOrders error: %s", err.Error())
 		} else {
-			fmt.Println(fmt.Sprintf("%#v", pageOrders))
+			fmt.Println(cast.ToJson(pageOrders))
 			orders = append(orders, pageOrders...)
 		}
 		if isLastPage || err != nil {

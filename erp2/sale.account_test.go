@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"fmt"
+	"github.com/hiscaler/tongtool/pkg/cast"
 	"testing"
 )
 
@@ -11,7 +12,7 @@ func TestService_SaleAccounts(t *testing.T) {
 	for {
 		accounts, isLastPage, err := ttService.SaleAccounts(params)
 		if err == nil {
-			fmt.Println(fmt.Sprintf("%#v", accounts))
+			fmt.Println(cast.ToJson(accounts))
 		} else {
 			t.Errorf("ttService.SaleAccounts error: %s", err.Error())
 		}
