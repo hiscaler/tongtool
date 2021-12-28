@@ -31,6 +31,7 @@ type queryDefaultValues struct {
 }
 
 type TongTool struct {
+	Debug              bool
 	Client             *resty.Client
 	MerchantId         string
 	Logger             *log.Logger
@@ -64,6 +65,7 @@ type app struct {
 func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 	logger := log.New(os.Stdout, "TongTool", log.LstdFlags)
 	ttInstance := &TongTool{
+		Debug:  debug,
 		Logger: logger,
 		QueryDefaultValues: queryDefaultValues{
 			PageNo:   1,
@@ -115,7 +117,25 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 	if v {
 		// Active
 		if t.Cache == nil {
-			cache, e := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+			var config bigcache.Config
+			if t.Debug {
+				config = bigcache.DefaultConfig(10 * time.Minute)
+			} else {
+				config = bigcache.Config{
+					Shards:             1024,
+					LifeWindow:         10 * time.Minute,
+					CleanWindow:        1 * time.Second,
+					MaxEntriesInWindow: 1000 * 10 * 60,
+					MaxEntrySize:       500,
+					StatsEnabled:       false,
+					Verbose:            true,
+					Hasher:             nil,
+					HardMaxCacheSize:   0,
+					Logger:             nil,
+				}
+			}
+			config.Logger = t.Logger
+			cache, e := bigcache.NewBigCache(config)
 			if e == nil {
 				t.EnableCache = true
 				t.Cache = cache
