@@ -1,30 +1,20 @@
 package erp2
 
 import (
-	"fmt"
 	"testing"
 )
 
 // 采购建议查询
 func TestService_PurchaseSuggestions(t *testing.T) {
 	_, ttService := newTestTongTool()
-	number := "6014000007201703150000118544"
+	number := "0007000007201603230000076503"
 	params := PurchaseSuggestionQueryParams{
 		PurchaseTemplateId: number,
 	}
 	suggestions, _, err := ttService.PurchaseSuggestions(params)
 	if err == nil {
-		exists := false
-		//for _, order := range suggestions {
-		//	if strings.EqualFold(number, order.PoNum) {
-		//		exists = true
-		//		break
-		//	}
-		//}
-		if exists {
-			fmt.Println(fmt.Sprintf("Orders: %#v", suggestions))
-		} else {
-			t.Errorf("not found %s", number)
+		if len(suggestions) == 0 {
+			t.Errorf("not found suggestion with %s", number)
 		}
 	} else {
 		t.Error(err)
