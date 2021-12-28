@@ -70,3 +70,37 @@ func (s service) PurchaseSuggestions(params PurchaseSuggestionQueryParams) (item
 	}
 	return
 }
+
+// PurchaseSuggestion 采购建议单个查询
+func (s service) PurchaseSuggestion(templateId string) (item PurchaseSuggestion, err error) {
+	params := PurchaseSuggestionQueryParams{
+		MerchantId:         s.tongTool.MerchantId,
+		PageNo:             1,
+		PageSize:           s.tongTool.QueryDefaultValues.PageSize,
+		PurchaseTemplateId: templateId,
+	}
+	exists := false
+	for {
+		items := make([]PurchaseSuggestion, 0)
+		isLastPage := false
+		items, isLastPage, err = s.PurchaseSuggestions(params)
+		if err == nil {
+			if len(items) == 0 {
+				err = tongtool.ErrNotFound
+			} else {
+				exists = true
+				item = items[0]
+				break
+			}
+		}
+		if isLastPage || exists || err != nil {
+			break
+		}
+		params.PageNo++
+	}
+
+	if err == nil && !exists {
+		err = tongtool.ErrNotFound
+	}
+	return
+}
