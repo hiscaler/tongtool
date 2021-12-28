@@ -29,3 +29,19 @@ func TestService_Package(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestService_PackageWithCache(t *testing.T) {
+	tt, ttService := newTestTongTool()
+	tt.WithCache(true)
+	fmt.Println(fmt.Sprintf("1111 %#v", tt))
+	for i := 0; i <= 400; i++ {
+		orderNumber := "L-M20211221152430918"
+		packageNumber := "P02914669"
+		_, err := ttService.Package(orderNumber, packageNumber)
+		if err != nil {
+			t.Error(err)
+		} else {
+			t.Log("ok")
+		}
+	}
+}

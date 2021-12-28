@@ -1,3 +1,5 @@
+github.com/allegro/bigcache/v3 v3.0.1 h1:Q4Xl3chywXuJNOw7NV+MeySd3zGQDj4KCpkCg0te8mc=
+github.com/allegro/bigcache/v3 v3.0.1/go.mod h1:aPyh7jEvrog9zAwx5N7+JUQX5dZTSGpxF1LAR4dr35I=
 github.com/go-resty/resty/v2 v2.7.0 h1:me+K9p3uhSmXtrBZ4k9jcEAfJmuC8IivWHwaLZwPrFY=
 github.com/go-resty/resty/v2 v2.7.0/go.mod h1:9PWDzw47qPphMRFfhsyk0NnSgvluHcljSMVIq3w7q0I=
 github.com/gosimple/slug v1.12.0 h1:xzuhj7G7cGtd34NXnW/yF0l+AGNfWqwgh/IXgFy7dnc=

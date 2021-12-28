@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/allegro/bigcache/v3"
 	"github.com/go-resty/resty/v2"
 	"log"
 	"os"
@@ -103,6 +104,30 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 			PageSize: 100,
 		},
 	}
+}
+
+// WithCache 激活缓存
+func (t *TongTool) WithCache(v bool) (err error) {
+	if v {
+		// Active
+		if t.Cache == nil {
+			cache, e := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+			if e == nil {
+				t.ActivateCache = true
+				t.Cache = cache
+			} else {
+				t.Logger.Printf("cache: active cache error: %s", e.Error())
+				err = e
+			}
+		} else {
+			t.ActivateCache = true
+		}
+	} else {
+		// Close
+		t.ActivateCache = false
+	}
+
+	return
 }
 
 // ErrorWrap 错误包装

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
 )
@@ -110,6 +111,16 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 	if packageId != "" {
 		packageId = strings.TrimSpace(packageId)
 	}
+	var cacheKey string
+	if s.tongTool.ActivateCache {
+		cacheKey = cache.GenerateKey(params, packageId)
+		var b []byte
+		b, e := s.tongTool.Cache.Get(cacheKey)
+		if e == nil {
+			json.Unmarshal(b, &item)
+			return
+		}
+	}
 
 	exists := false
 	for {
@@ -146,6 +157,11 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 
 	if err == nil && !exists {
 		err = tongtool.ErrNotFound
+	}
+	if err == nil && s.tongTool.ActivateCache {
+		if b, e := json.Marshal(&item); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		}
 	}
 
 	return

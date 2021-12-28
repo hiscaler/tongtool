@@ -3,6 +3,7 @@ module github.com/hiscaler/tongtool
 go 1.17
 
 require (
+	github.com/allegro/bigcache/v3 v3.0.1
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.12.0
 )
