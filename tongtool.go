@@ -3,11 +3,13 @@ package tongtool
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/allegro/bigcache/v3"
 	"github.com/go-resty/resty/v2"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -86,28 +88,42 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 			"Accept":       "application/json",
 			"api_version":  "3.0",
 		}).
-		SetTimeout(10 * time.Second)
+		SetTimeout(10 * time.Second).
+		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
+			if !ttInstance.application.Valid || ttInstance.application.AppTokenExpireDate <= time.Now().Unix()-1800 {
+				application, e := auth(appKey, appSecret, debug)
+				if e != nil {
+					logger.Printf("auth error: %s", e.Error())
+					return e
+				}
+				ttInstance.MerchantId = application.PartnerOpenId
+				application.AppTokenExpireDate /= 1000
+				ttInstance.application = application
+			}
+			client.SetQueryParams(map[string]string{
+				"app_token": ttInstance.application.AppToken,
+				"sign":      ttInstance.application.Sign,
+				"timestamp": strconv.Itoa(ttInstance.application.Timestamp),
+			})
+			return nil
+		}).
+		SetRetryCount(2).
+		SetRetryWaitTime(10 * time.Second).
+		SetRetryMaxWaitTime(20 * time.Second).
+		AddRetryCondition(func(response *resty.Response, err error) bool {
+			retry := (response != nil && response.StatusCode() == http.StatusTooManyRequests) || err != nil
+			if !retry {
+				r := struct{ Code int }{}
+				retry = json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+			}
+			if retry {
+				logger.Printf("Retry request: %s", response.Request.URL)
+			}
+			return retry
+		})
 	if debug {
 		client.SetDebug(true).EnableTrace()
 	}
-	client.OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
-		if !ttInstance.application.Valid || ttInstance.application.AppTokenExpireDate <= time.Now().Unix()-1800 {
-			application, e := auth(appKey, appSecret, debug)
-			if e != nil {
-				logger.Printf("auth error: %s", e.Error())
-				return e
-			}
-			ttInstance.MerchantId = application.PartnerOpenId
-			application.AppTokenExpireDate /= 1000
-			ttInstance.application = application
-		}
-		client.SetQueryParams(map[string]string{
-			"app_token": ttInstance.application.AppToken,
-			"sign":      ttInstance.application.Sign,
-			"timestamp": strconv.Itoa(ttInstance.application.Timestamp),
-		})
-		return nil
-	})
 	ttInstance.Client = client
 	return ttInstance
 }
