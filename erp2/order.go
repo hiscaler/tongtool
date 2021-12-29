@@ -139,6 +139,9 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	}
 	if !in.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
 		// ”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”
+		// 活跃表：3个月内
+		// 1年表：3个月到15个月
+		// 归档表：15个月以前
 		params.StoreFlag = OrderStoreFlagActive
 	}
 	if params.OrderId != "" {
