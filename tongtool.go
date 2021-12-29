@@ -12,17 +12,20 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
 // 通途返回代码
 const (
-	OK                   = 200
-	SignError            = 519
-	TokenExpiredError    = 523
-	UnauthorizedError    = 524
-	TooManyRequestsError = 526
-	AccountExpiredError  = 999999
+	OK                     = 200    // 无错误
+	SignError              = 519    // 签名错误
+	TokenExpiredError      = 523    // Token 已过期
+	UnauthorizedError      = 524    // 未授权的请求，请确认应用是否勾选对应接口
+	InvalidParametersError = 525    // 无效的参数
+	SystemError            = 527    // 系统错误
+	TooManyRequestsError   = 526    // 接口请求超请求次数限额
+	AccountExpiredError    = 999999 // 账号已过期
 )
 
 var ErrNotFound = errors.New("tongtool: not found")
@@ -225,29 +228,32 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 }
 
 // ErrorWrap 错误包装
-func ErrorWrap(code int, defaultMessage string) error {
+func ErrorWrap(code int, message string) error {
 	if code == OK {
 		return nil
 	}
 
-	msg := ""
-	switch code {
-	case SignError:
-		msg = "签名错误"
-	case TokenExpiredError:
-		msg = "Token 已过期"
-	case UnauthorizedError:
-		msg = "未授权的请求，请确认应用是否勾选对应接口"
-	case TooManyRequestsError:
-		msg = "接口请求超请求次数限额"
-	case AccountExpiredError:
-		msg = "账号已过期"
-	default:
-		if defaultMessage == "" {
-			msg = fmt.Sprintf("未知的错误代码：%d", code)
-		} else {
-			msg = fmt.Sprintf("%d: %s", code, defaultMessage)
+	message = strings.TrimSpace(message)
+	if message == "" {
+		switch code {
+		case SignError:
+			message = "签名错误"
+		case TokenExpiredError:
+			message = "Token 已过期"
+		case UnauthorizedError:
+			message = "未授权的请求，请确认应用是否勾选对应接口"
+		case SystemError:
+			message = "系统错误"
+		case InvalidParametersError:
+			message = "无效的参数"
+		case TooManyRequestsError:
+			message = "接口请求超请求次数限额"
+		case AccountExpiredError:
+			message = "账号已过期"
+		default:
+			message = "未知错误"
 		}
 	}
-	return errors.New(msg)
+
+	return errors.New(fmt.Sprintf("%d: %s", code, message))
 }
