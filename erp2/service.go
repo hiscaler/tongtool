@@ -27,7 +27,7 @@ type Service interface {
 	CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                                                          // 创建采购单
 	PurchaseOrderArrival(req PurchaseOrderArrivalRequest) (err error)                                                                          // 采购单到货
 	PurchaseOrderStockIn(req PurchaseOrderStockInRequest) (err error)                                                                          // 采购单入库
-	PurchaseOrderLogs(params PurchaseOrderLogQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error)                               // 采购单入库查询
+	PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error)                        // 采购单入库查询
 	SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error)                                              // 商户账号列表
 	Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                                                                // 库存列表
 	Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error)                                                    // 仓库列表

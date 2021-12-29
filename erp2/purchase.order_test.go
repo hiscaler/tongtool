@@ -73,3 +73,25 @@ func TestService_CreatePurchaseOrder(t *testing.T) {
 		fmt.Println(fmt.Sprintf("Purchase number: %s", number))
 	}
 }
+
+func TestService_PurchaseOrderStockInLogs(t *testing.T) {
+	_, ttService := newTestTongTool()
+	params := PurchaseOrderLogQueryParams{
+		PurchaseOrderCode:   "PO002057",
+		WarehousingDateFrom: "2021-11-01 00:00:00",
+		WarehousingDateTo:   "2021-12-31 23:59:59",
+	}
+	orders := make([]PurchaseOrderLog, 0)
+	for {
+		pageOrders, isLastPage, err := ttService.PurchaseOrderStockInLogs(params)
+		if err != nil {
+			t.Errorf("ttService.PurchaseOrderStockInLogs error: %s", err.Error())
+		} else {
+			orders = append(orders, pageOrders...)
+		}
+		if isLastPage || err != nil {
+			break
+		}
+		params.PageNo++
+	}
+}
