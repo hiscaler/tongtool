@@ -228,11 +228,21 @@ func (s service) PackageDeliver(req PackageDeliverRequest) (err error) {
 	if resp.IsSuccess() {
 		if res.Code == tongtool.OK {
 			if len(res.Datas.ErrorList) != 0 {
-				messages := make([]string, 0)
+				errorMessageNumbers := make(map[string][]string, 0)
 				for _, item := range res.Datas.ErrorList {
-					messages = append(messages, fmt.Sprintf("%s: %s", item.RelatedNo, strings.TrimSpace(item.Message)))
+					msg := strings.TrimSpace(item.Message)
+					if numbers, ok := errorMessageNumbers[msg]; ok {
+						numbers = append(numbers, item.RelatedNo)
+						errorMessageNumbers[msg] = numbers
+					} else {
+						errorMessageNumbers[msg] = []string{item.RelatedNo}
+					}
 				}
-				err = errors.New(strings.Join(messages, "; "))
+				errorMessages := make([]string, 0)
+				for msg, numbers := range errorMessageNumbers {
+					errorMessages = append(errorMessages, fmt.Sprintf("%s: %s", strings.Join(numbers, ","), msg))
+				}
+				err = errors.New(strings.Join(errorMessages, "; "))
 			}
 		} else {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
