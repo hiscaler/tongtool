@@ -167,7 +167,7 @@ type PurchaseOrderStockInRequest struct {
 }
 
 // PurchaseOrderStockIn 采购单入库
-func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) (err error) {
+func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error {
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
@@ -188,7 +188,7 @@ func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) (err erro
 			}
 		}
 	}
-	return
+	return err
 }
 
 // 采购单入库记录查询

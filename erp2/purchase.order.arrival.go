@@ -29,7 +29,7 @@ type PurchaseOrderArrivalRequest struct {
 
 // PurchaseOrderArrival 采购单到货
 // https://open.tongtool.com/apiDoc.html#/?docId=ee942453af114a7686d0c8d5187988f2
-func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) (err error) {
+func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) error {
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
@@ -51,5 +51,5 @@ func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) (err erro
 		}
 	}
 
-	return
+	return err
 }

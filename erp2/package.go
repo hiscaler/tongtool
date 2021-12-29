@@ -206,7 +206,7 @@ type PackageDeliverRequest struct {
 
 // PackageDeliver 执行包裹发货
 // https://open.tongtool.com/apiDoc.html#/?docId=3493953e628b4f0ca5d32d3f6ac9d545
-func (s service) PackageDeliver(req PackageDeliverRequest) (err error) {
+func (s service) PackageDeliver(req PackageDeliverRequest) error {
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
@@ -222,7 +222,7 @@ func (s service) PackageDeliver(req PackageDeliverRequest) (err error) {
 		SetResult(&res).
 		Post("/openapi/tongtool/packageDeliver")
 	if err != nil {
-		return
+		return err
 	}
 
 	if resp.IsSuccess() {
@@ -254,5 +254,5 @@ func (s service) PackageDeliver(req PackageDeliverRequest) (err error) {
 			err = errors.New(resp.Status())
 		}
 	}
-	return
+	return err
 }

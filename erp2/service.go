@@ -21,12 +21,12 @@ type Service interface {
 	UpdateProduct(req UpdateProductRequest) error                                                                                              // 更新商品
 	Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表
 	Package(orderId, packageId string) (item Package, err error)                                                                               // 单个包裹
-	PackageDeliver(req PackageDeliverRequest) (err error)                                                                                      // 执行包裹发货
+	PackageDeliver(req PackageDeliverRequest) error                                                                                            // 执行包裹发货
 	Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                                                      // 供应商列表
 	PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error)                                       // 采购单列表
 	CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                                                          // 创建采购单
-	PurchaseOrderArrival(req PurchaseOrderArrivalRequest) (err error)                                                                          // 采购单到货
-	PurchaseOrderStockIn(req PurchaseOrderStockInRequest) (err error)                                                                          // 采购单入库
+	PurchaseOrderArrival(req PurchaseOrderArrivalRequest) error                                                                                // 采购单到货
+	PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error                                                                                // 采购单入库
 	PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error)                        // 采购单入库查询
 	SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error)                                              // 商户账号列表
 	Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                                                                // 库存列表
