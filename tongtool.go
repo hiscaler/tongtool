@@ -32,19 +32,19 @@ const (
 var ErrNotFound = errors.New("tongtool: not found")
 
 type queryDefaultValues struct {
-	PageNo   int
-	PageSize int
+	PageNo   int // 当前页
+	PageSize int // 每页数据量
 }
 
 type TongTool struct {
-	Debug              bool
-	Client             *resty.Client
-	MerchantId         string
-	Logger             *log.Logger
-	EnableCache        bool
-	Cache              *bigcache.BigCache
-	QueryDefaultValues queryDefaultValues
-	application        app
+	Debug              bool               // 是否调试模式
+	Client             *resty.Client      // HTTP 客户端
+	MerchantId         string             // 商户 ID
+	Logger             *log.Logger        //  日志
+	EnableCache        bool               // 是否激活缓存
+	Cache              *bigcache.BigCache // 缓存
+	QueryDefaultValues queryDefaultValues // 查询默认值
+	application        app                // 认证后的应用数据
 }
 
 type app struct {
