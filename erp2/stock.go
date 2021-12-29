@@ -20,13 +20,13 @@ type GoodsShelfStockItem struct {
 type Stock struct {
 	AvailableStockQuantity       int                   `json:"availableStockQuantity"`       // 可用库存数
 	CargoSpace                   string                `json:"cargoSpace"`                   // 货位
-	DefectsStockQuantity         int                   `json:"cargoSpace"`                   // 故障品库存数
+	DefectsStockQuantity         int                   `json:"defectsStockQuantity"`         // 故障品库存数
 	FirstShippingFeeUnit         float64               `json:"firstShippingFeeUnit"`         // 头程运费
 	FirstTariff                  float64               `json:"firstTariff"`                  // 头程报关费
 	GoodsAvgCost                 float64               `json:"goodsAvgCost"`                 // 货品平均成本
 	GoodsCurCost                 float64               `json:"goodsCurCost"`                 // 货品当前成本
 	GoodsIdKey                   float64               `json:"goodsIdKey"`                   // 通途商品id key
-	goodsShelfStockList          []GoodsShelfStockItem `json:"goodsShelfStockList"`          // 货位库存列表，多货位才会有值
+	GoodsShelfStockList          []GoodsShelfStockItem `json:"goodsShelfStockList"`          // 货位库存列表，多货位才会有值
 	GoodsSKU                     string                `json:"goodsSku"`                     // 商品sku
 	IntransitStockQuantity       string                `json:"intransitStockQuantity"`       // 在途库存数
 	OtherFee                     float64               `json:"otherFee"`                     // 头程其他费用

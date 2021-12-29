@@ -25,7 +25,7 @@ type PackageItem struct {
 }
 
 type Package struct {
-	carrierCurrency       string        `json:"carrierCurrency"`       // 物流商运费币种
+	CarrierCurrency       string        `json:"carrierCurrency"`       // 物流商运费币种
 	CarrierPostage        float64       `json:"carrierPostage"`        // 物流商运费
 	CarrierWeight         float64       `json:"carrierWeight"`         // 物流商称重重量,单位g
 	GoodsDetails          []PackageItem `json:"goodsDetails"`          // 包裹商品项目
