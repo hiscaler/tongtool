@@ -86,6 +86,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 		logger.Printf("auth error: %s", e.Error())
 	}
 	client := resty.New().
+		SetDebug(debug).
 		SetBaseURL("https://open.tongtool.com/api-service").
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
@@ -126,7 +127,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 			return retry
 		})
 	if debug {
-		client.SetDebug(true).EnableTrace()
+		client.EnableTrace()
 	}
 	ttInstance.Client = client
 	return ttInstance
@@ -176,9 +177,11 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 
 func auth(appKey, appSecret string, debug bool) (application app, err error) {
 	client := resty.New().
+		SetDebug(debug).
 		SetBaseURL("https://open.tongtool.com/open-platform-service")
+
 	if debug {
-		client.SetDebug(true).EnableTrace()
+		client.EnableTrace()
 	}
 	application = app{}
 	tokenResponse := struct {
