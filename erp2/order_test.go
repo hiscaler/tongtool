@@ -55,3 +55,71 @@ func TestService_OrderNotFound(t *testing.T) {
 		}
 	}
 }
+
+func TestService_CreateOrder(t *testing.T) {
+	_, ttService := newTestTongTool()
+	req := CreateOrderRequest{
+		BuyerInfo: OrderBuyer{
+			BuyerAccount:     "test",
+			BuyerAddress1:    "test address1",
+			BuyerAddress2:    "test address2",
+			BuyerAddress3:    "test address3",
+			BuyerCity:        "深圳",
+			BuyerCountryCode: "CN",
+			BuyerEmail:       "happy__snow@126.com",
+			BuyerMobilePhone: "15211111111",
+			BuyerName:        "张三",
+			BuyerPhone:       "15211111113",
+			BuyerPostalCode:  "510000",
+			BuyerState:       "test",
+		},
+		Currency:                "CNY",
+		InsuranceIncome:         0,
+		InsuranceIncomeCurrency: "CNY",
+		NeedReturnOrderId:       "1",
+		Notes:                   "test notes",
+		OrderCurrency:           "CNY",
+		PaymentInfos: []OrderPayment{
+			{
+				OrderAmount:           0,
+				OrderAmountCurrency:   "CNY",
+				PaymentAccount:        "abc",
+				PaymentDate:           "2021-12-29 16:53:08",
+				PaymentMethod:         "",
+				PaymentNotes:          "text",
+				PaymentTransactionNum: "132456798",
+				RecipientAccount:      "cba",
+				URL:                   "https://www.example.com",
+			},
+		},
+		PlatformCode:       "ebay_api",
+		Remarks:            "",
+		SaleRecordNum:      "O123456",
+		SellerAccountCode:  "test",
+		ShippingMethodId:   "",
+		TaxIncome:          0,
+		TaxIncomeCurrency:  "CNY",
+		TotalPrice:         0,
+		TotalPriceCurrency: "CNY",
+		Transactions: []OrderTransaction{
+			{
+				GoodsDetailId:              "",
+				GoodsDetailRemark:          "",
+				ProductsTotalPrice:         0,
+				ProductsTotalPriceCurrency: "CNY",
+				Quantity:                   1,
+				ShipType:                   "速卖通线上发货",
+				ShippingFeeIncome:          0,
+				ShippingFeeIncomeCurrency:  "CNY",
+				SKU:                        "sku-abc",
+			},
+		},
+		WarehouseId: "test",
+	}
+	orderId, orderNumber, err := ttService.CreateOrder(req)
+	if err != nil {
+		t.Errorf("ttService.CreateOrder error: %s", err.Error())
+	} else {
+		t.Logf("orderId: %s, orderNumber: %s", orderId, orderNumber)
+	}
+}

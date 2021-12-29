@@ -222,3 +222,141 @@ func (s service) Order(orderId string) (item Order, err error) {
 
 	return
 }
+
+// OrderBuyer 订单买家
+type OrderBuyer struct {
+	BuyerAccount     string `json:"buyerAccount"`     // 买家账号
+	BuyerAddress1    string `json:"buyerAddress1"`    // 地址1
+	BuyerAddress2    string `json:"buyerAddress2"`    // 地址2
+	BuyerAddress3    string `json:"buyerAddress3"`    // 地址3
+	BuyerCity        string `json:"buyerCity"`        // 城市
+	BuyerCountryCode string `json:"buyerCountryCode"` // 国家(名称或代码)
+	BuyerEmail       string `json:"buyerEmail"`       // 买家邮箱
+	BuyerMobilePhone string `json:"buyerMobilePhone"` // 手机
+	BuyerName        string `json:"buyerName"`        // 买家名称
+	BuyerPhone       string `json:"buyerPhone"`       // 电话
+	BuyerPostalCode  string `json:"buyerPostalCode"`  // 邮编
+	BuyerState       string `json:"buyerState"`       // 州
+}
+
+// OrderPayment 订单付款信息
+type OrderPayment struct {
+	OrderAmount           float64 `json:"orderAmount"`           // 订单金额
+	OrderAmountCurrency   string  `json:"orderAmountCurrency"`   // 订单金额币种
+	PaymentAccount        string  `json:"paymentAccount"`        // 支付账号
+	PaymentDate           string  `json:"paymentDate"`           // 付款时间（yyyy-MM-dd HH:mm:ss）
+	PaymentMethod         string  `json:"paymentMethod"`         // 付款方式
+	PaymentNotes          string  `json:"paymentNotes"`          // 备注
+	PaymentTransactionNum string  `json:"paymentTransactionNum"` // 交易流水号
+	RecipientAccount      string  `json:"recipientAccount"`      // 收款账号
+	URL                   string  `json:"url"`                   // 相关链接
+}
+
+// OrderTransaction 订单交易信息
+type OrderTransaction struct {
+	GoodsDetailId              string  `json:"goodsDetailId"`              // 货品ID,与SKU二传一即可;如果与SKU都传值了，以这个字段值为准
+	GoodsDetailRemark          string  `json:"goodsDetailRemark"`          // 货品备注
+	ProductsTotalPrice         float64 `json:"productsTotalPrice"`         // 商品总金额
+	ProductsTotalPriceCurrency string  `json:"productsTotalPriceCurrency"` // 商品总金额币种
+	Quantity                   int     `json:"quantity"`                   // 数量
+	ShipType                   string  `json:"shipType"`                   // 买家选择的运输方式
+	ShippingFeeIncome          float64 `json:"shippingFeeIncome"`          // 买家所支付的运费
+	ShippingFeeIncomeCurrency  string  `json:"shippingFeeIncomeCurrency"`  // 买家所支付的运费币种
+	SKU                        string  `json:"sku"`                        // 商品 sku
+}
+
+type CreateOrderRequest struct {
+	BuyerInfo               OrderBuyer         `json:"buyerInfo"`               // 买家信息
+	Currency                string             `json:"currency"`                // 币种
+	InsuranceIncome         float64            `json:"insuranceIncome"`         // 买家支付的保险
+	InsuranceIncomeCurrency string             `json:"insuranceIncomeCurrency"` // 买家支付的保险币种
+	NeedReturnOrderId       string             `json:"needReturnOrderId"`       // 是否需要返回通途订单ID,0-不需要1-需要 默认0不需要;如果需要返回订单ID那么返回结果集是一个Object:{"orderId":"","saleRecordNum":""},否则返回一个字符串，内容是saleRecordNum
+	Notes                   string             `json:"notes"`                   // 买家留言
+	OrderCurrency           string             `json:"ordercurrency"`           // 订单币种
+	PaymentInfos            []OrderPayment     `json:"paymentInfos"`            // 付款信息
+	PlatformCode            string             `json:"platformCode"`            // 订单平台代码
+	Remarks                 string             `json:"remarks"`                 // 订单备注,只能新增
+	SaleRecordNum           string             `json:"saleRecordNum"`           // 订单号
+	SellerAccountCode       string             `json:"sellerAccountCode"`       // 卖家账号代码
+	ShippingMethodId        string             `json:"shippingMethodId"`        // 渠道ID
+	TaxIncome               float64            `json:"taxIncome"`               // 买家支付的税金
+	TaxIncomeCurrency       string             `json:"taxIncomeCurrency"`       // 买家支付的税金币种
+	TotalPrice              float64            `json:"totalPrice"`              // 订单总额
+	TotalPriceCurrency      string             `json:"totalPriceCurrency"`      // 订单总额币种
+	Transactions            []OrderTransaction `json:"transactions"`            // 交易信息
+	WarehouseId             string             `json:"warehouseId"`             // 仓库ID
+}
+
+// CreateOrder 手工创建订单
+// https://open.tongtool.com/apiDoc.html#/?docId=908e49d8bf62487aa870335ef6951567
+func (s service) CreateOrder(req CreateOrderRequest) (id, number string, err error) {
+	orderReq := struct {
+		MerchantId string             `json:"merchantId"` // 商户ID
+		Order      CreateOrderRequest `json:"order"`      // 订单信息
+	}{
+		MerchantId: s.tongTool.MerchantId,
+		Order:      req,
+	}
+	resNoOrderId := struct {
+		result
+		Datas string `json:"datas"`
+	}{}
+	resWithOrderId := struct {
+		result
+		Datas struct {
+			OrderId     string `json:"orderId"`
+			OrderNumber string `json:"saleRecordNum"`
+		} `json:"datas"`
+	}{}
+	needOrderId := orderReq.Order.NeedReturnOrderId == "1"
+	r := s.tongTool.Client.R()
+	if needOrderId {
+		r.SetResult(&resWithOrderId)
+	} else {
+		r.SetResult(&resNoOrderId)
+	}
+	resp, err := r.SetBody(orderReq).Post("/openapi/tongtool/orderImport")
+	if err == nil {
+		code := 0
+		message := ""
+		if resp.IsSuccess() {
+			if needOrderId {
+				code = resWithOrderId.Code
+				message = resWithOrderId.Message
+			} else {
+				code = resNoOrderId.Code
+				message = resNoOrderId.Message
+			}
+			err = tongtool.ErrorWrap(code, message)
+			if err == nil {
+				if needOrderId {
+					id = resWithOrderId.Datas.OrderId
+					number = resWithOrderId.Datas.OrderNumber
+				} else {
+					number = resNoOrderId.Datas
+				}
+			}
+		} else {
+			var res interface{}
+			if needOrderId {
+				res = resWithOrderId
+			} else {
+				res = resNoOrderId
+			}
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				if needOrderId {
+					code = resWithOrderId.Code
+					message = resWithOrderId.Message
+				} else {
+					code = resNoOrderId.Code
+					message = resNoOrderId.Message
+				}
+				err = tongtool.ErrorWrap(code, message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+
+	return
+}
