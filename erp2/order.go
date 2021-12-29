@@ -17,7 +17,7 @@ const (
 // OrderDetail 通途订单详情
 type OrderDetail struct {
 	GoodsMatchedQuantity int     `json:"goodsMatchedQuantity"`
-	GoodsMatchedSku      string  `json:"goodsMatchedSku"`
+	GoodsMatchedSKU      string  `json:"goodsMatchedSku"`
 	OrderDetailsId       string  `json:"orderDetailsId"`
 	Quantity             int     `json:"quantity"`
 	TransactionPrice     float64 `json:"transaction_price"`
@@ -35,7 +35,7 @@ type OrderPackage struct {
 }
 
 type TongToolGoodsInfoList struct {
-	GoodsSku           string  `json:"goodsSku"`
+	GoodsSKU           string  `json:"goodsSku"`
 	ProductCurrentCost float64 `json:"productCurrentCost"`
 	GoodsCurrentCost   float64 `json:"goodsCurrentCost"`
 	GoodsAverageCost   float64 `json:"goodsAverageCost"`

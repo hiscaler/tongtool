@@ -75,7 +75,7 @@ type Product struct {
 
 // ProductDetail 通途商品详情
 type ProductDetail struct {
-	GoodsSku      string  `json:"goodsSku"`
+	GoodsSKU      string  `json:"goodsSku"`
 	GoodsWeight   float64 `json:"goodsWeight"`
 	GoodsAveCost  float64 `json:"goodsAveCost"`
 	GoodsCurCost  float64 `json:"goodsCurCost"`

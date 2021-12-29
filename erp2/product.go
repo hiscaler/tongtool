@@ -95,7 +95,7 @@ type Product struct {
 func (p Product) GoodsDetailIndex() int {
 	index := -1
 	for i, d := range p.GoodsDetail {
-		if strings.EqualFold(d.GoodsSku, p.SKU) {
+		if strings.EqualFold(d.GoodsSKU, p.SKU) {
 			index = i
 			break
 		}
@@ -190,7 +190,7 @@ type ProductDetail struct {
 	GoodsAveCost  float64 `json:"goodsAveCost"`  // 商品平均成本
 	GoodsCurCost  float64 `json:"goodsCurCost"`  // 商品当前成本
 	GoodsDetailId string  `json:"goodsDetailId"` // 货品ID
-	GoodsSku      string  `json:"goodsSku"`      // 商品sku
+	GoodsSKU      string  `json:"goodsSku"`      // 商品sku
 	GoodsWeight   float64 `json:"goodsWeight"`   // 货品重量(克)
 }
 
@@ -324,8 +324,8 @@ type ProductQueryParams struct {
 	PageSize         int      `json:"pageSize"`
 	ProductStatus    string   `json:"productStatus,omitempty"`
 	ProductType      string   `json:"productType"`
-	SkuAliases       []string `json:"skuAliases,omitempty"`
-	Skus             []string `json:"skus,omitempty"`
+	SKUAliases       []string `json:"skuAliases,omitempty"`
+	SKUs             []string `json:"skus,omitempty"`
 	SupplierName     string   `json:"supplierName,omitempty"`
 	UpdatedDateBegin string   `json:"updatedDateBegin,omitempty"`
 	UpdatedDateEnd   string   `json:"updatedDateEnd,omitempty"`
@@ -395,9 +395,9 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	if len(params.Skus) > 10 {
+	if len(params.SKUs) > 10 {
 		err = errors.New("skus 参数长度不能大于 10 个")
-	} else if len(params.SkuAliases) > 10 {
+	} else if len(params.SKUAliases) > 10 {
 		err = errors.New("skuAliases 参数长度不能大于 10 个")
 	}
 	if err != nil {
@@ -454,9 +454,9 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 		PageSize:    s.tongTool.QueryDefaultValues.PageSize,
 	}
 	if isAlias {
-		params.SkuAliases = []string{sku}
+		params.SKUAliases = []string{sku}
 	} else {
-		params.Skus = []string{sku}
+		params.SKUs = []string{sku}
 	}
 
 	exists := false

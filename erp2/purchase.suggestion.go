@@ -13,7 +13,7 @@ type PurchaseSuggestion struct {
 	DailySales             int    `json:"dailySales"`             // 日均销量
 	DevliveryDays          int    `json:"devliveryDays"`          // 安全交期
 	GoodsIdKey             string `json:"goodsIdKey"`             // 商品id key
-	GoodsSku               string `json:"goodsSku"`               // 商品sku
+	GoodsSKU               string `json:"goodsSku"`               // 商品sku
 	IntransitStockQuantity int    `json:"intransitStockQuantity"` // 在途库存数
 	ProposalQuantity       int    `json:"proposalQuantity"`       // 采购建议数量
 	SaleAvg15              int    `json:"saleAvg15"`              // 15天销量
