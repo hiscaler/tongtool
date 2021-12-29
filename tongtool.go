@@ -119,10 +119,17 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 			retry := (response != nil && response.StatusCode() == http.StatusTooManyRequests) || err != nil
 			if !retry {
 				r := struct{ Code int }{}
-				retry = json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+				retry = response != nil && json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
 			}
 			if retry {
-				logger.Printf("Retry request: %s", response.Request.URL)
+				text := ""
+				if response != nil {
+					text = response.Request.URL
+				}
+				if err != nil {
+					text += fmt.Sprintf(", error: %s", err.Error())
+				}
+				logger.Printf("Retry request: %s", text)
 			}
 			return retry
 		})
