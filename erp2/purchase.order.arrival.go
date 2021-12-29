@@ -27,6 +27,8 @@ type PurchaseOrderArrivalRequest struct {
 	PurchaseArrivalList []PurchaseOrderArrivalItem `json:"purchaseArrivalList"` // 采购到货列表
 }
 
+// PurchaseOrderArrival 采购单到货
+// https://open.tongtool.com/apiDoc.html#/?docId=ee942453af114a7686d0c8d5187988f2
 func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) (err error) {
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
