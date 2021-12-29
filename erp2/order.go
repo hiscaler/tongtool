@@ -290,6 +290,10 @@ type CreateOrderRequest struct {
 // CreateOrder 手工创建订单
 // https://open.tongtool.com/apiDoc.html#/?docId=908e49d8bf62487aa870335ef6951567
 func (s service) CreateOrder(req CreateOrderRequest) (id, number string, err error) {
+	req.NeedReturnOrderId = strings.TrimSpace(req.NeedReturnOrderId)
+	if req.NeedReturnOrderId == "" || !in.StringIn(req.NeedReturnOrderId, "1", "0") {
+		req.NeedReturnOrderId = "0"
+	}
 	orderReq := struct {
 		MerchantId string             `json:"merchantId"` // 商户ID
 		Order      CreateOrderRequest `json:"order"`      // 订单信息
