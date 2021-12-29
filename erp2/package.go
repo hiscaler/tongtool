@@ -215,7 +215,7 @@ func (s service) PackageDeliver(req PackageDeliverRequest) (err error) {
 				RelatedNo string `json:"relatedNo"`
 				Message   string `json:"msg"`
 			} `json:"errorList"`
-		} `json:"datas"`
+		} `json:"datas,omitempty"`
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(req).
