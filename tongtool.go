@@ -17,6 +17,7 @@ import (
 )
 
 // 通途返回代码
+// https://open.tongtool.com/apiDoc.html#/?docId=72398ba411bd11eab4c00050568e1e6a
 const (
 	OK                     = 200    // 无错误
 	SignError              = 519    // 签名错误
