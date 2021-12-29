@@ -15,12 +15,13 @@ func GenerateKey(values ...interface{}) string {
 		v := reflect.ValueOf(value)
 		switch v.Kind() {
 		case reflect.String:
-			sb.WriteString(value.(string))
+			sb.WriteString(v.String())
 		case reflect.Bool:
 			sb.WriteString(strconv.FormatBool(v.Bool()))
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			sb.WriteString(fmt.Sprintf("%d", value))
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			sb.WriteString(fmt.Sprintf("%d", v.Int()))
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			sb.WriteString(fmt.Sprintf("%d", v.Uint()))
 		case reflect.Float32, reflect.Float64:
 			sb.WriteString(strconv.FormatFloat(v.Float(), 'f', 2, 64))
 		case reflect.Map:
