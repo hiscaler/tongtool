@@ -284,7 +284,7 @@ type CreateProductRequest struct {
 	ProductRemark        string                     `json:"productRemark"`        // 产品备注
 	ProductStatus        string                     `json:"productStatus"`        // 商品状态；停售：0，在售：1，试卖：2，清仓：4
 	ProductWeight        int                        `json:"productWeight"`        // 商品重量
-	ProductWidth         float64                    `json:"ProductWidth"`         // 商品尺寸(宽cm)
+	ProductWidth         float64                    `json:"productWidth"`         // 商品尺寸(宽cm)
 	PurchaserName        string                     `json:"purchaserName"`        // 采购员,请输入通途erp中存在的用户名称，不存在的将不保存
 	SalesType            string                     `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
 }

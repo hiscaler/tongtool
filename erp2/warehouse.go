@@ -12,7 +12,7 @@ type Warehouse struct {
 	WarehouseCode string `json:"warehouseCode"` // 仓库代码
 	WarehouseName string `json:"warehouseName"` // 仓库名称
 	Status        string `json:"status"`        // 仓库状态：0-失效1-有效
-	StatusBoolean bool   `json:"StatusBoolean"` // 仓库状态布尔值（返回仓库状态布尔值，方便调用者判断）
+	StatusBoolean bool   `json:"statusBoolean"` // 仓库状态布尔值（返回仓库状态布尔值，方便调用者判断）
 }
 
 type WarehouseQueryParams struct {
@@ -133,7 +133,7 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 type ShippingMethod struct {
 	CarrierName                 string `json:"carrierName"`                 // 物流商简称
 	CarrierStatus               string `json:"carrierStatus"`               // 物流商状态0-失效1-有效
-	CarrierStatusBoolean        bool   `json:"CarrierStatusBoolean"`        // 物流商状态
+	CarrierStatusBoolean        bool   `json:"carrierStatusBoolean"`        // 物流商状态
 	ShippingMethodId            string `json:"shippingMethodId"`            // 渠道ID
 	ShippingMethodShortname     string `json:"shippingMethodShortname"`     // 渠道名称
 	ShippingMethodStatus        string `json:"shippingMethodStatus"`        // 渠道状态0-失效1-有效

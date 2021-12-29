@@ -13,7 +13,7 @@ type ShopifyOrderItem struct {
 	PriceValue    float64 `json:"priceValue"`    // 价格
 	ProductId     string  `json:"productId"`     // 产品ID
 	Quantity      string  `json:"quantity"`      // 产品数量
-	QuantityValue int     `json:"QuantityValue"` // 产品数量
+	QuantityValue int     `json:"quantityValue"` // 产品数量
 	SKU           string  `json:"sku"`           // SKU
 	Title         string  `json:"title"`         // 产品名称
 	Weight        string  `json:"weight"`        // 重量
