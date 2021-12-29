@@ -289,7 +289,7 @@ type CreateOrderRequest struct {
 
 // CreateOrder 手工创建订单
 // https://open.tongtool.com/apiDoc.html#/?docId=908e49d8bf62487aa870335ef6951567
-func (s service) CreateOrder(req CreateOrderRequest) (id, number string, err error) {
+func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error) {
 	req.NeedReturnOrderId = strings.TrimSpace(req.NeedReturnOrderId)
 	if req.NeedReturnOrderId == "" || !in.StringIn(req.NeedReturnOrderId, "1", "0") {
 		req.NeedReturnOrderId = "0"
@@ -301,60 +301,38 @@ func (s service) CreateOrder(req CreateOrderRequest) (id, number string, err err
 		MerchantId: s.tongTool.MerchantId,
 		Order:      req,
 	}
-	resNoOrderId := struct {
+	res := struct {
 		result
-		Datas string `json:"datas"`
+		Datas interface{} `json:"datas"`
 	}{}
-	resWithOrderId := struct {
-		result
-		Datas struct {
-			OrderId     string `json:"orderId"`
-			OrderNumber string `json:"saleRecordNum"`
-		} `json:"datas"`
-	}{}
-	needOrderId := orderReq.Order.NeedReturnOrderId == "1"
-	r := s.tongTool.Client.R()
-	if needOrderId {
-		r.SetResult(&resWithOrderId)
-	} else {
-		r.SetResult(&resNoOrderId)
-	}
-	resp, err := r.SetBody(orderReq).Post("/openapi/tongtool/orderImport")
+	resp, err := s.tongTool.Client.R().
+		SetBody(orderReq).
+		SetResult(&res).
+		Post("/openapi/tongtool/orderImport")
 	if err == nil {
 		code := 0
 		message := ""
 		if resp.IsSuccess() {
-			if needOrderId {
-				code = resWithOrderId.Code
-				message = resWithOrderId.Message
-			} else {
-				code = resNoOrderId.Code
-				message = resNoOrderId.Message
-			}
-			err = tongtool.ErrorWrap(code, message)
+			err = tongtool.ErrorWrap(res.Code, res.Message)
 			if err == nil {
-				if needOrderId {
-					id = resWithOrderId.Datas.OrderId
-					number = resWithOrderId.Datas.OrderNumber
+				if orderReq.Order.NeedReturnOrderId == "1" {
+					withOrderIdValue := struct {
+						OrderId     string `json:"orderId"`
+						OrderNumber string `json:"saleRecordNum"`
+					}{}
+					var b []byte
+					if b, err = json.Marshal(res.Datas); err == nil {
+						if err = json.Unmarshal(b, &withOrderIdValue); err == nil {
+							orderId = withOrderIdValue.OrderId
+							orderNumber = withOrderIdValue.OrderNumber
+						}
+					}
 				} else {
-					number = resNoOrderId.Datas
+					orderNumber = res.Datas.(string)
 				}
 			}
 		} else {
-			var res interface{}
-			if needOrderId {
-				res = resWithOrderId
-			} else {
-				res = resNoOrderId
-			}
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				if needOrderId {
-					code = resWithOrderId.Code
-					message = resWithOrderId.Message
-				} else {
-					code = resNoOrderId.Code
-					message = resNoOrderId.Message
-				}
 				err = tongtool.ErrorWrap(code, message)
 			} else {
 				err = errors.New(resp.Status())
