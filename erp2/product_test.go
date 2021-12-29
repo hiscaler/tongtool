@@ -56,10 +56,8 @@ func TestService_ProductByVariableType(t *testing.T) {
 
 func TestService_CreateProduct(t *testing.T) {
 	ttInstance, ttService := newTestTongTool()
-	labels := make([]Label, 0)
-	labels = append(labels, Label{SKULabel: "tt-sku-a"})
 	req := CreateProductRequest{
-		ProductCode:          "tt-sku-a",
+		ProductCode:          "tt-sku-c",
 		ProductName:          "NETGEAR 路由器",
 		ProductPackingEnName: "NETGEAR 4-Stream WiFi 6 Router (R6700AXS) – with 1-Year Armor Cybersecurity Subscription - AX1800 Wireless Speed (Up to 1.8 Gbps) | Coverage up to 1,500 sq. ft., 20+ devices, AX WiFi 6 w/ 1yr Security",
 		ProductPackingName:   "NETGEAR 4-Stream WiFi 6 Router (R6700AXS) – with 1-Year Armor Cybersecurity Subscription - AX1800 Wireless Speed (Up to 1.8 Gbps) | Coverage up to 1,500 sq. ft., 20+ devices, AX WiFi 6 w/ 1yr Security",
@@ -77,7 +75,7 @@ func TestService_CreateProduct(t *testing.T) {
 		ProductCurrentCost: 12,
 		ProductWeight:      100,
 		CategoryCode:       "未分类",
-		ProductLabelIds:    []string{},
+		ProductLabelIds:    []string{"a", "b"},
 		PackageLength:      20,
 		PackageWidth:       120,
 		PackageHeight:      30,
