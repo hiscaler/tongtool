@@ -18,6 +18,7 @@ TongTool API 封装
 - UpdateProduct(req UpdateProductRequest) error                                                                                              // 更新商品
 - Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表
 - Package(orderId, packageId string) (item Package, err error)                                                                               // 单个包裹
+- PackageDeliver(req PackageDeliverRequest) (err error)                                                                                      // 执行包裹发货
 - Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                                                      // 供应商列表
 - PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error)                                       // 采购单列表
 - CreatePurchaseOrder(params CreatePurchaseOrderRequest) (number string, err error)                                                          // 创建采购单

@@ -10,8 +10,9 @@ import (
 func TestService_Packages(t *testing.T) {
 	_, ttService := newTestTongTool()
 	params := PackageQueryParams{
-		AssignTimeFrom: "2021-12-01 00:00:00",
-		AssignTimeTo:   "2021-12-11 23:59:59",
+		AssignTimeFrom: "2021-10-01 00:00:00",
+		AssignTimeTo:   "2021-12-30 23:59:59",
+		PackageStatus:  PackageStatusWaitDeliver,
 	}
 	packages, _, err := ttService.Packages(params)
 	if err == nil {
@@ -41,9 +42,30 @@ func TestService_PackageWithCache(t *testing.T) {
 		if err != nil {
 			t.Errorf("ttService.Package error: %s", err.Error())
 		} else if !strings.EqualFold(p.PackageId, packageId) {
-			t.Errorf("package.package id %s not equal %s", p.PackageId, packageId)
+			t.Errorf("package.PackageId %s not equal %s", p.PackageId, packageId)
 		} else {
 			fmt.Println("ok")
 		}
+	}
+}
+
+func TestService_PackageDeliver(t *testing.T) {
+	_, ttService := newTestTongTool()
+	req := PackageDeliverRequest{
+		DeliverInfos: []PackageDeliverItem{
+			{
+				RelatedNo: "P02912767",
+				Volume:    PackageDeliverItemVolume{1, 2, 3},
+			},
+			{
+				RelatedNo: "P02913843",
+				Volume:    PackageDeliverItemVolume{4, 5, 6},
+			},
+		},
+		WarehouseName: "test",
+	}
+	err := ttService.PackageDeliver(req)
+	if err != nil {
+		t.Error(err)
 	}
 }
