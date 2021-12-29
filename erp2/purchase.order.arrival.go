@@ -40,13 +40,11 @@ func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) (err erro
 		SetResult(&res).
 		Post("/openapi/tongtool/purchaseArrival")
 	if err == nil {
-		code := 0
-		message := ""
 		if resp.IsSuccess() {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(code, message)
+				err = tongtool.ErrorWrap(res.Code, res.Message)
 			} else {
 				err = errors.New(resp.Status())
 			}

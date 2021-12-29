@@ -17,25 +17,6 @@ const (
 	PurchaseOrderStatusCancel            = "4" // 作废
 )
 
-type PurchaseOrderGoodDetail struct {
-	GoodsDetailId string  `json:"goodsDetailId"` // 通途货品ID
-	Quantity      int     `json:"quantity"`      // 采购数量
-	UnitPrice     float64 `json:"unitPrice"`     // 采购单价
-}
-
-type CreatePurchaseOrderRequest struct {
-	Currency       string                    `json:"currency"`       // 币种
-	GoodsDetail    []PurchaseOrderGoodDetail `json:"goodsDetail"`    // 采购货品信息
-	ExternalNumber string                    `json:"externalNumber"` // 外部流水号
-	MerchantId     string                    `json:"merchantId"`     // 商户ID
-	PurchaseUserId string                    `json:"purchaseUserId"` // 采购员ID
-	Remark         string                    `json:"remark"`         // 采购备注
-	ShippingFee    float64                   `json:"shippingFee"`    // 运费
-	SupplierId     string                    `json:"supplierId"`     // 通途供应商ID
-	TrackingNumber string                    `json:"trackingNumber"` // 跟踪号
-	WarehouseIdKey string                    `json:"warehouseIdKey"` // 通途仓库ID
-}
-
 type PurchaseOrder struct {
 	ActualPayments      float64 `json:"actual_payments"`      // 实际已付款金额
 	Amount              float64 `json:"amount"`               // 采购金额
@@ -118,6 +99,28 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	return
 }
 
+// 采购单创建
+// https://open.tongtool.com/apiDoc.html#/?docId=bcfd5d50a664486298b7fb0c1d08f714
+
+type PurchaseOrderGoodDetail struct {
+	GoodsDetailId string  `json:"goodsDetailId"` // 通途货品ID
+	Quantity      int     `json:"quantity"`      // 采购数量
+	UnitPrice     float64 `json:"unitPrice"`     // 采购单价
+}
+
+type CreatePurchaseOrderRequest struct {
+	Currency       string                    `json:"currency"`       // 币种
+	GoodsDetail    []PurchaseOrderGoodDetail `json:"goodsDetail"`    // 采购货品信息
+	ExternalNumber string                    `json:"externalNumber"` // 外部流水号
+	MerchantId     string                    `json:"merchantId"`     // 商户ID
+	PurchaseUserId string                    `json:"purchaseUserId"` // 采购员ID
+	Remark         string                    `json:"remark"`         // 采购备注
+	ShippingFee    float64                   `json:"shippingFee"`    // 运费
+	SupplierId     string                    `json:"supplierId"`     // 通途供应商ID
+	TrackingNumber string                    `json:"trackingNumber"` // 跟踪号
+	WarehouseIdKey string                    `json:"warehouseIdKey"` // 通途仓库ID
+}
+
 // CreatePurchaseOrder 创建采购单
 func (s service) CreatePurchaseOrder(req CreatePurchaseOrderRequest) (number string, err error) {
 	type createPurchaseOrderResponse struct {
@@ -145,3 +148,46 @@ func (s service) CreatePurchaseOrder(req CreatePurchaseOrderRequest) (number str
 
 	return
 }
+
+// 采购单入库处理
+// https://open.tongtool.com/apiDoc.html#/?docId=21d1c988af2d4dc5940d1faf105d5a46
+
+// PurchaseOrderStockInItem 采购单入库项
+type PurchaseOrderStockInItem struct {
+	GoodsDetailId string `json:"goodsDetailId"` // 通途货品 ID
+	Quantity      int    `json:"quantity"`      // 采购数量
+}
+
+// PurchaseOrderStockInRequest 采购单入库
+type PurchaseOrderStockInRequest struct {
+	ArrivalInfoList []PurchaseOrderStockInItem `json:"arrivalInfoList"` // 到货货品信息
+	Freight         float64                    `json:"freight"`         // 运费
+	MerchantId      string                     `json:"merchantId"`      // 商家 ID
+	PurchaseOrderId string                     `json:"purchaseOrderId"` // 采购单 ID
+}
+
+// PurchaseOrderStockIn 采购单入库
+func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) (err error) {
+	req.MerchantId = s.tongTool.MerchantId
+	res := struct {
+		result
+		Datas interface{} `json:"datas,omitempty"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/purchaseOrderStockIn")
+	if err == nil {
+		if resp.IsSuccess() {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+	return
+}
+
