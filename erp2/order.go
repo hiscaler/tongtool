@@ -342,3 +342,56 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 
 	return
 }
+
+// 作废订单处理
+
+type CancelOrderRequest struct {
+	MerchantId  string   `json:"merchantId"`  // 商戶 ID
+	OrderIdKeys []string `json:"orderIdKeys"` // 通途订单id key
+}
+
+type OrderCancelResult struct {
+	OrderId string `json:"order_id"` // OrderId
+	Result  string `json:"result"`   // 结果
+}
+
+// CancelOrder 作废订单
+// https://open.tongtool.com/apiDoc.html#/?docId=9ba0ea5da90740f28a0345aa1990c007
+func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error) {
+	req.MerchantId = s.tongTool.MerchantId
+	res := struct {
+		result
+		Datas struct {
+			Array []struct {
+				OrderId string `json:"order_id"`
+				Result  string `json:"result"`
+			} `json:"array"`
+		} `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/orderCancel")
+	if err == nil {
+		code := 0
+		message := ""
+		if resp.IsSuccess() {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+				for _, item := range res.Datas.Array {
+					results = append(results, OrderCancelResult{
+						OrderId: item.OrderId,
+						Result:  strings.TrimSpace(item.Result),
+					})
+				}
+			}
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(code, message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+
+	return
+}

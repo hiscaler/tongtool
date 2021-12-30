@@ -14,6 +14,7 @@ type Service interface {
 	CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                               // 手工创建订单
 	Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
 	Order(id string) (item Order, err error)                                                                                                   // 单个订单
+	CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                               // 作废订单
 	Products(params ProductQueryParams) (items []Product, isLastPage bool, err error)                                                          // 商品列表
 	Product(typ string, sku string, isAlias bool) (item Product, err error)                                                                    // 单个商品
 	ProductExists(typ string, sku string, isAlias bool) bool                                                                                   // 商品是否存在
