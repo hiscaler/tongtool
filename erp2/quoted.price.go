@@ -10,7 +10,7 @@ import (
 
 type QuotedPrice struct {
 	Currency        string  `json:"currency"`        // 币种
-	GoodsSKU        string  `json:"currency"`        // 商品sku
+	GoodsSKU        string  `json:"goodsSku"`        // 商品sku
 	Price           float64 `json:"price"`           // 供应商最新报价
 	PurchaseLink    string  `json:"purchaseLink"`    // 采购链接
 	QuotedPriceDate string  `json:"quotedPriceDate"` // 报价时间
@@ -18,9 +18,9 @@ type QuotedPrice struct {
 }
 
 type QuotedPriceQueryParams struct {
-	MerchantId           string `json:"merchantId"` // 商家 ID
-	PageNo               int    `json:"pageNo"`
-	PageSize             int    `json:"pageSize"`
+	MerchantId           string `json:"merchantId"`           // 商家 ID
+	PageNo               int    `json:"pageNo"`               // 当前页
+	PageSize             int    `json:"pageSize"`             // 每页数量
 	QuotedPriceDateBegin string `json:"quotedPriceDateBegin"` // 报价起始时间
 	QuotedPriceDateEnd   string `json:"quotedPriceDateEnd"`   // 报价结束时间
 	SKU                  string `json:"sku"`                  // 商品 SKU
