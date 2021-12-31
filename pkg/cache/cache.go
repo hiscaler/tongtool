@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"fmt"
 	"reflect"
 	"sort"
 	"strconv"
@@ -19,9 +18,9 @@ func GenerateKey(values ...interface{}) string {
 		case reflect.Bool:
 			sb.WriteString(strconv.FormatBool(v.Bool()))
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			sb.WriteString(fmt.Sprintf("%d", v.Int()))
+			sb.WriteString(strconv.FormatInt(v.Int(), 10))
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			sb.WriteString(fmt.Sprintf("%d", v.Uint()))
+			sb.WriteString(strconv.FormatUint(v.Uint(), 10))
 		case reflect.Float32, reflect.Float64:
 			sb.WriteString(strconv.FormatFloat(v.Float(), 'f', 2, 64))
 		case reflect.Map:

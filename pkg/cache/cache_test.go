@@ -35,3 +35,12 @@ func TestGenerateKey(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkGenerateKey(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		GenerateKey([]interface{}{struct {
+			Username string
+			Age      int
+		}{"John", 12}})
+	}
+}
