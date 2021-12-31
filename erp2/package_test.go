@@ -46,7 +46,6 @@ func TestService_PackageWithCache(t *testing.T) {
 		} else if !strings.EqualFold(p.PackageId, packageId) {
 			t.Errorf("package.PackageId %s not equal %s", p.PackageId, packageId)
 		} else {
-			t.Logf("get from cache")
 			n++
 		}
 	}
