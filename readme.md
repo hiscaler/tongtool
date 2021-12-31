@@ -29,6 +29,7 @@ TongTool API 封装
 - PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error)                        // 采购单入库查询
 - SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error)                                              // 商户账号列表
 - Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                                                                // 库存列表
+- StockChangeLogs(params StockChangeLogQueryParams) (items []StockChangeLog, isLastPage bool, err error)                                     //  库存变动查询
 - Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error)                                                    // 仓库列表
 - Warehouse(params WarehouseQueryParams) (item Warehouse, err error)                                                                         // 仓库列表
 - ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error)                                     // 仓库物流渠道列表

@@ -85,3 +85,60 @@ func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool
 	}
 	return
 }
+
+// 库存变动日志查询
+
+type StockChangeLog struct {
+	AvailableStockQuantity int    `json:"availableStockQuantity"` // 当前可用库存
+	ChangeQuantity         int    `json:"changeQuantity"`         // 变动数量；正数增加，负数减少
+	GoodsSKU               string `json:"goodsSku"`               // 商品sku
+}
+
+type StockChangeLogQueryParams struct {
+	MerchantId      string   `json:"merchantId"`                // 商户 ID
+	PageNo          int      `json:"pageNo,omitempty"`          // 查询页数
+	PageSize        int      `json:"pageSize,omitempty"`        // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	SKUs            []string `json:"skus,omitempty"`                      // SKU 列表
+	UpdatedDateFrom string   `json:"updatedDateFrom"` //	变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
+	WarehouseName   string   `json:"warehouseName,omitempty"`   // 仓库名称
+}
+
+// StockChangeLogs 库存变动查询
+// https://open.tongtool.com/apiDoc.html#/?docId=bd0971f61f2449eaa9752c7be779afa0
+func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []StockChangeLog, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
+	if params.PageNo <= 0 {
+		params.PageNo = 1
+	}
+	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
+		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
+	}
+	items = make([]StockChangeLog, 0)
+	res := struct {
+		result
+		Datas struct {
+			Array    []StockChangeLog `json:"array"`
+			PageNo   int              `json:"pageNo"`
+			PageSize int              `json:"pageSize"`
+		} `json:"datas,omitempty"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(params).
+		SetResult(&res).
+		Post("/openapi/tongtool/stocksChangeQuery")
+	if err == nil {
+		if resp.IsSuccess() {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+				items = res.Datas.Array
+				isLastPage = len(items) < params.PageSize
+			}
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+	return
+}
