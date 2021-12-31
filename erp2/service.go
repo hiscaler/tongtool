@@ -9,6 +9,7 @@ type service struct {
 }
 
 type Service interface {
+	AmazonAccountSites(params AmazonAccountSiteQueryParams) (items []string, isLastPage bool, err error)                                       // 查询亚马逊账号对应的站点
 	FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error)                                                       // FBA 订单列表
 	ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyOrder, isLastPage bool, err error)                                           // Shopify 订单列表
 	CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                               // 手工创建订单
