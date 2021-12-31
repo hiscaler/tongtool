@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
 )
@@ -147,6 +148,22 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	if params.OrderId != "" {
 		params.AccountCode = ""
 	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]Order, 0)
 	res := struct {
 		result
@@ -172,6 +189,13 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache error: %s", e.Error())
 		}
 	}
 	return

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/gosimple/slug"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"io/ioutil"
 	"math/big"
@@ -404,6 +405,22 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 		return
 	}
 
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]Product, 0)
 	res := struct {
 		result
@@ -432,6 +449,13 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache error: %s", e.Error())
 		}
 	}
 	return
