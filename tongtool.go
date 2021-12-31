@@ -70,7 +70,7 @@ type app struct {
 }
 
 func NewTongTool(config config.Config) *TongTool {
-	logger := log.New(os.Stdout, "TongTool", log.LstdFlags)
+	logger := log.New(os.Stdout, "[ TongTool ] ", log.LstdFlags|log.Llongfile)
 	ttInstance := &TongTool{
 		Debug:  config.Debug,
 		Logger: logger,
