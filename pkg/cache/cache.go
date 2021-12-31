@@ -14,7 +14,9 @@ func GenerateKey(values ...interface{}) string {
 		v := reflect.ValueOf(value)
 		switch v.Kind() {
 		case reflect.String:
-			sb.WriteString(v.String())
+			if v.Len() != 0 {
+				sb.WriteString(v.String())
+			}
 		case reflect.Bool:
 			sb.WriteString(strconv.FormatBool(v.Bool()))
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
