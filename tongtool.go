@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/allegro/bigcache/v3"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/tongtool/config"
 	"log"
 	"net/http"
 	"os"
@@ -68,17 +69,17 @@ type app struct {
 	Valid              bool    `json:"valid"`
 }
 
-func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
+func NewTongTool(config config.Config) *TongTool {
 	logger := log.New(os.Stdout, "TongTool", log.LstdFlags)
 	ttInstance := &TongTool{
-		Debug:  debug,
+		Debug:  config.Debug,
 		Logger: logger,
 		QueryDefaultValues: queryDefaultValues{
 			PageNo:   1,
 			PageSize: 100,
 		},
 	}
-	if application, e := auth(appKey, appSecret, debug); e == nil {
+	if application, e := auth(config.AppKey, config.AppSecret, config.Debug); e == nil {
 		application.AppTokenExpireDate /= 1000
 		ttInstance.application = application
 		ttInstance.MerchantId = application.PartnerOpenId
@@ -86,7 +87,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 		logger.Printf("auth error: %s", e.Error())
 	}
 	client := resty.New().
-		SetDebug(debug).
+		SetDebug(config.Debug).
 		SetBaseURL("https://open.tongtool.com/api-service").
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
@@ -96,7 +97,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 		SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			if !ttInstance.application.Valid || ttInstance.application.AppTokenExpireDate <= time.Now().Unix()-1800 {
-				application, e := auth(appKey, appSecret, debug)
+				application, e := auth(config.AppKey, config.AppSecret, config.Debug)
 				if e != nil {
 					logger.Printf("auth error: %s", e.Error())
 					return e
@@ -133,7 +134,7 @@ func NewTongTool(appKey, appSecret string, debug bool) *TongTool {
 			}
 			return retry
 		})
-	if debug {
+	if config.Debug {
 		client.EnableTrace()
 	}
 	ttInstance.Client = client
