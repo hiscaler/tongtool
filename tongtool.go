@@ -160,7 +160,7 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 					MaxEntriesInWindow: 1000 * 10 * 60,
 					MaxEntrySize:       500,
 					StatsEnabled:       false,
-					Verbose:            true,
+					Verbose:            false,
 					Hasher:             nil,
 					HardMaxCacheSize:   0,
 					Logger:             nil,
