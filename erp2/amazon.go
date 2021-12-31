@@ -9,7 +9,7 @@ import (
 // 亚马逊账号对应的站点
 
 type AmazonAccountSiteQueryParams struct {
-	Account    string `json:"account,omitempty"`  // 帐号
+	Account    string `json:"account,omitempty"`  // 账号
 	MerchantId string `json:"merchantId"`         // 商户 ID
 	PageNo     int    `json:"pageNo,omitempty"`   // 查询页数
 	PageSize   int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
