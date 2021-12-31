@@ -82,7 +82,7 @@ ERROR: %s
 `, string(b), e.Error())
 			}
 		} else {
-			s.tongTool.Logger.Printf("get cache error: %s", e.Error())
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	items = make([]Package, 0)

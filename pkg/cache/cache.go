@@ -46,6 +46,9 @@ func GenerateKey(values ...interface{}) string {
 		case reflect.Struct:
 			kv := map[string]interface{}{}
 			t := reflect.TypeOf(value)
+			if t.Name() != "" {
+				sb.WriteString(t.Name() + ":")
+			}
 			for k := 0; k < t.NumField(); k++ {
 				kv[t.Field(k).Name] = v.Field(k).Interface()
 			}

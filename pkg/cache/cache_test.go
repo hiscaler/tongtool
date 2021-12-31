@@ -3,6 +3,10 @@ package cache
 import "testing"
 
 func TestGenerateKey(t *testing.T) {
+	type User struct {
+		ID   int
+		Name string
+	}
 	type testCase struct {
 		Number int
 		Values []interface{}
@@ -27,6 +31,10 @@ func TestGenerateKey(t *testing.T) {
 			Username string
 			Age      int
 		}{"John", 12}}, "Age12UsernameJohn"},
+		{12, []interface{}{User{
+			ID:   1,
+			Name: "John",
+		}}, "User:ID1NameJohn"},
 	}
 	for _, tc := range testCases {
 		key := GenerateKey(tc.Values...)
