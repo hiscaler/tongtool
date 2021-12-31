@@ -137,6 +137,9 @@ func NewTongTool(config config.Config) *TongTool {
 	if config.Debug {
 		client.EnableTrace()
 	}
+	if config.EnableCache {
+		ttInstance.SwitchCache(true)
+	}
 	ttInstance.Client = client
 	return ttInstance
 }

@@ -115,11 +115,12 @@ ERROR: %s
 			}
 		}
 	}
+
 	if err == nil && s.tongTool.EnableCache {
 		if b, e := json.Marshal(&items); e == nil {
 			s.tongTool.Cache.Set(cacheKey, b)
 		} else {
-			s.tongTool.Logger.Printf("set cache error: %s", e.Error())
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	return

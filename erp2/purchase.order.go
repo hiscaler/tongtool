@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/is"
 	"strings"
 )
@@ -69,6 +70,22 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	if is.Number(params.POrderStatus) {
 		params.POrderStatus = PurchaseOrderStatusNtoS(params.POrderStatus)
 	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]PurchaseOrder, 0)
 	res := struct {
 		result
@@ -94,6 +111,14 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	return
@@ -233,6 +258,22 @@ func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (i
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]PurchaseOrderLog, 0)
 	res := struct {
 		result
@@ -258,6 +299,14 @@ func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (i
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	return

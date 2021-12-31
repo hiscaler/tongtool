@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 )
 
 // 库存查询
@@ -56,6 +57,22 @@ func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]Stock, 0)
 	res := struct {
 		result
@@ -83,6 +100,14 @@ func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool
 			}
 		}
 	}
+
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	return
 }
 
@@ -95,12 +120,12 @@ type StockChangeLog struct {
 }
 
 type StockChangeLogQueryParams struct {
-	MerchantId      string   `json:"merchantId"`                // 商户 ID
-	PageNo          int      `json:"pageNo,omitempty"`          // 查询页数
-	PageSize        int      `json:"pageSize,omitempty"`        // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
-	SKUs            []string `json:"skus,omitempty"`                      // SKU 列表
-	UpdatedDateFrom string   `json:"updatedDateFrom"` //	变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
-	WarehouseName   string   `json:"warehouseName,omitempty"`   // 仓库名称
+	MerchantId      string   `json:"merchantId"`              // 商户 ID
+	PageNo          int      `json:"pageNo,omitempty"`        // 查询页数
+	PageSize        int      `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	SKUs            []string `json:"skus,omitempty"`          // SKU 列表
+	UpdatedDateFrom string   `json:"updatedDateFrom"`         //	变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
+	WarehouseName   string   `json:"warehouseName,omitempty"` // 仓库名称
 }
 
 // StockChangeLogs 库存变动查询
@@ -112,6 +137,22 @@ func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []Stoc
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
+	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
 	}
 	items = make([]StockChangeLog, 0)
 	res := struct {
@@ -138,6 +179,14 @@ func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []Stoc
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	return

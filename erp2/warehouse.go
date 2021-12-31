@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 	"strings"
 )
 
@@ -33,6 +34,22 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 	if params.PageSize <= 0 {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]Warehouse, 0)
 	res := struct {
 		result
@@ -61,6 +78,14 @@ func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isL
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	return
@@ -152,13 +177,29 @@ type ShippingMethodQueryParams struct {
 // ShippingMethods 仓库物流渠道查询
 // https://open.tongtool.com/apiDoc.html#/?docId=9ed7d6c3e7c44e498c0d43329d5a443b
 func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
 	}
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	params.MerchantId = s.tongTool.MerchantId
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]ShippingMethod, 0)
 	res := struct {
 		result
@@ -188,6 +229,14 @@ func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []Ship
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+
+	if err == nil && s.tongTool.EnableCache {
+		if b, e := json.Marshal(&items); e == nil {
+			s.tongTool.Cache.Set(cacheKey, b)
+		} else {
+			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 		}
 	}
 	return
