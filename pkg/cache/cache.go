@@ -29,7 +29,7 @@ func GenerateKey(values ...interface{}) string {
 			mapValue := value.(map[string]interface{})
 			keys := make([]string, len(mapValue))
 			i := 0
-			for k, _ := range mapValue {
+			for k := range mapValue {
 				keys[i] = k
 				i++
 			}

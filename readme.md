@@ -44,9 +44,18 @@ TongTool API 封装
 ## 使用方法
 
 ```go
-import "github.com/hiscaler/tongtool"
+import (
+    "github.com/hiscaler/tongtool"
+    ttConfig "github.com/hiscaler/tongtool/config"
+    "github.com/hiscaler/tongtool/erp2"
+)
 
-ttInstance := tongtool.NewTongTool(appKey, appSecret, true)
+ttInstance := tongtool.NewTongTool(ttConfig.Config{
+    Debug:       false,
+    AppKey:      "",
+    AppSecret:   "",
+    EnableCache: true,
+})
 ttService := erp2.NewService(ttInstance)
 params := OrderQueryParams{
     SaleDateFrom: "2021-12-01 00:00:00",
