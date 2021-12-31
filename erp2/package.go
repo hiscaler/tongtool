@@ -37,9 +37,9 @@ type Package struct {
 	ShippingMethodCode    string        `json:"shippingMethodCode"`    // 邮寄方式代码
 	ShippingMethodName    string        `json:"shippingMethodName"`    // 邮寄方式名称
 	ThirdPartyPackageCode string        `json:"thirdPartyPackageCode"` // 物流商单号
-	TongtoolCurrency      string        `json:"tongtoolCurrency"`      // 通途运费币种
-	TongtoolPostage       float64       `json:"tongtoolPostage"`       // 通途运费
-	TongtoolWeight        float64       `json:"tongtoolWeight"`        // 通途包裹重量,单位g
+	TongToolCurrency      string        `json:"tongtoolCurrency"`      // 通途运费币种
+	TongToolPostage       float64       `json:"tongtoolPostage"`       // 通途运费
+	TongToolWeight        float64       `json:"tongtoolWeight"`        // 通途包裹重量,单位g
 	TrackingNumber        string        `json:"trackingNumber"`        // 跟踪号
 	UpdatedDate           string        `json:"updatedDate"`           // 包裹更新时间
 	UploadCarrier         string        `json:"uploadCarrier"`         // 上传包裹的Carrier
@@ -118,9 +118,12 @@ ERROR: %s
 
 	if err == nil && s.tongTool.EnableCache {
 		if b, e := json.Marshal(&items); e == nil {
-			s.tongTool.Cache.Set(cacheKey, b)
+			e = s.tongTool.Cache.Set(cacheKey, b)
+			if e != nil {
+				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+			}
 		} else {
-			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+			s.tongTool.Logger.Printf("items marshal error: %s", err.Error())
 		}
 	}
 	return
@@ -135,16 +138,6 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 	}
 	if packageId != "" {
 		packageId = strings.TrimSpace(packageId)
-	}
-
-	var cacheKey string
-	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params, packageId)
-		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
-			if e = json.Unmarshal(b, &item); e == nil {
-				return
-			}
-		}
 	}
 
 	exists := false
@@ -182,11 +175,6 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 
 	if err == nil && !exists {
 		err = tongtool.ErrNotFound
-	}
-	if err == nil && s.tongTool.EnableCache {
-		if b, e := json.Marshal(&item); e == nil {
-			s.tongTool.Cache.Set(cacheKey, b)
-		}
 	}
 
 	return

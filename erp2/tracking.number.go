@@ -96,9 +96,12 @@ ERROR: %s
 
 	if err == nil && s.tongTool.EnableCache {
 		if b, e := json.Marshal(&items); e == nil {
-			s.tongTool.Cache.Set(cacheKey, b)
+			e = s.tongTool.Cache.Set(cacheKey, b)
+			if e != nil {
+				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+			}
 		} else {
-			s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+			s.tongTool.Logger.Printf("items marshal error: %s", err.Error())
 		}
 	}
 	return
