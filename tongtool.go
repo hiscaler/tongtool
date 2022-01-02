@@ -167,8 +167,7 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 				}
 			}
 			config.Logger = t.Logger
-			cache, e := bigcache.NewBigCache(config)
-			if e == nil {
+			if cache, e := bigcache.NewBigCache(config); e == nil {
 				t.EnableCache = true
 				t.Cache = cache
 			} else {
