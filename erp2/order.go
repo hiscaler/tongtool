@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
@@ -126,6 +127,58 @@ type OrderQueryParams struct {
 	StoreFlag        string `json:"storeFlag"`
 	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`
+}
+
+// StoreCountryCode 获取订单店铺国家代码
+func (o Order) StoreCountryCode() string {
+	code := ""
+	if o.WebStoreItemSite != "" {
+		switch o.WebStoreItemSite {
+		case "100002":
+			code = constant.CountryUS
+		case "100003":
+			code = constant.CountryGB
+		case "100004":
+			code = constant.CountryCA
+		case "100005":
+			code = constant.CountryDE
+		case "100006":
+			code = constant.CountryES
+		case "100007":
+			code = constant.CountryFR
+		case "100008":
+			code = constant.CountryIT
+		case "100009":
+			code = constant.CountryJP
+		case "100010":
+			code = constant.CountryMX
+		case "100011":
+			code = constant.CountryAU
+		case "100012":
+			code = constant.CountryIN
+		case "100013":
+			code = constant.CountryAE
+		case "100014":
+			code = constant.CountryTR
+		case "100015":
+			code = constant.CountrySG
+		case "100016":
+			code = constant.CountryNL
+		case "100017":
+			code = constant.CountryBR
+		case "100018":
+			code = constant.CountrySA
+		case "100019":
+			code = constant.CountrySE
+		case "100020":
+			code = constant.CountryPL
+		}
+	} else {
+		// Todo 美国的买家买的加拿大站点的怎么办？
+		code = o.BuyerCountry
+	}
+
+	return code
 }
 
 // Orders 订单列表
