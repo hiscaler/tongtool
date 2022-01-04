@@ -157,6 +157,7 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 								item = p
 							}
 						} else {
+							// todo 需要考虑一个订单多个包裹的情况
 							exists = true
 							item = p
 						}
