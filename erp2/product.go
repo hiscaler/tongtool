@@ -16,6 +16,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -112,6 +113,22 @@ func (p Product) Image() (path string) {
 		path = p.ProductImgList[index].ImageGroupId
 	}
 	return
+}
+
+// ImageIsNormalized 图片地址是否规范
+// 判断依据：必须为网络地址（不会判断地址的有效性），且后续的地址中只能包含大小写字母、数字、点、横杠、左斜线
+// 作用：通途的图片地址中可能包含中文和其他一些特殊字符，导致在数据在某些场景下不能正确地使用，所以如果地址不是规范的，可能使用 SaveImage 方法下载下来后保存到本地再试用
+func (p Product) ImageIsNormalized() bool {
+	s := p.Image()
+	if s != "" {
+		re, _ := regexp.Compile(`^(?i)http[s]?://[a-zA-Z0-9.-/]+$`)
+		if re.MatchString(s) {
+			return true
+		} else {
+			return false
+		}
+	}
+	return false
 }
 
 // SaveImage 下载并保存图片

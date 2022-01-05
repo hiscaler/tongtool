@@ -89,3 +89,76 @@ func TestService_CreateProduct(t *testing.T) {
 		t.Errorf("Create product failed, error: %s", err.Error())
 	}
 }
+
+func TestProduct_ImageIsNormalized(t *testing.T) {
+	type testCase struct {
+		Number     int
+		Product    Product
+		Normalized bool
+	}
+	testCases := []testCase{
+		{1, Product{}, false},
+		{2, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "a.jpg"}},
+		}, false},
+		{3, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "http://a.com/a.jpg"}},
+		}, true},
+		{4, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "https://a.com/a.jpg"}},
+		}, true},
+		{5, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "https://a.com/中文.jpg"}},
+		}, false},
+		{6, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "https://a.com/a、.jpg"}},
+		}, false},
+		{7, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "https://a.com/a:jpg"}},
+		}, false},
+		{8, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "HTTP://a.com/a.jpg"}},
+		}, true},
+		{9, Product{
+			SKU: "a",
+			GoodsDetail: []ProductDetail{
+				{GoodsSKU: "a"},
+			},
+			ProductImgList: []ProductImage{{ImageGroupId: "HTTP://a.com/A1.2.b.jpg"}},
+		}, true},
+	}
+	for _, tc := range testCases {
+		b := tc.Product.ImageIsNormalized()
+		if b != tc.Normalized {
+			t.Errorf("%d 期待：%v，实际：%v", tc.Number, tc.Normalized, b)
+		}
+	}
+}
