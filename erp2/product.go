@@ -347,6 +347,15 @@ type UpdateProductRequest struct {
 	SalesType            string  `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
 }
 
+func (m UpdateProductRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
+		validation.Field(&m.EnablePackageNum, validation.Min(1).Error("可包装数量不能小于 1")),
+		validation.Field(&m.ProductStatus, validation.Required.Error("商品状态不可为空"), validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态")),
+		validation.Field(&m.SalesType, validation.Required.Error("销售类型不可为空"), validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型")),
+	)
+}
+
 type ProductQueryParams struct {
 	CategoryName     string   `json:"category_name,omitempty"`
 	MerchantId       string   `json:"merchantId"`
@@ -393,6 +402,9 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 // UpdateProduct 更新商品
 // https://open.tongtool.com/apiDoc.html#/?docId=a928207c94184649be852b120a9f4044
 func (s service) UpdateProduct(req UpdateProductRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
