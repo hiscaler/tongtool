@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
@@ -203,9 +204,19 @@ type PackageDeliverRequest struct {
 	WarehouseName string               `json:"warehouseName"` // 仓库名称
 }
 
+func (m PackageDeliverRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.WarehouseName, validation.Required.Error("仓库名称不能为空")),
+		validation.Field(&m.DeliverInfos, validation.Required.Error("发货信息不能为空")),
+	)
+}
+
 // PackageDeliver 执行包裹发货
 // https://open.tongtool.com/apiDoc.html#/?docId=3493953e628b4f0ca5d32d3f6ac9d545
 func (s service) PackageDeliver(req PackageDeliverRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result

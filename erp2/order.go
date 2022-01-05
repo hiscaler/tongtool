@@ -3,6 +3,7 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
@@ -439,6 +440,12 @@ type CancelOrderRequest struct {
 	OrderIdKeys []string `json:"orderIdKeys"` // 通途订单id key
 }
 
+func (m CancelOrderRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.OrderIdKeys, validation.Required.Error("订单 ID 不能为空")),
+	)
+}
+
 type OrderCancelResult struct {
 	OrderId string `json:"order_id"` // OrderId
 	Result  string `json:"result"`   // 结果
@@ -447,6 +454,9 @@ type OrderCancelResult struct {
 // CancelOrder 作废订单
 // https://open.tongtool.com/apiDoc.html#/?docId=9ba0ea5da90740f28a0345aa1990c007
 func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error) {
+	if err = req.Validate(); err != nil {
+		return
+	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
