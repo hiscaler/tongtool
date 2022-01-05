@@ -153,7 +153,21 @@ type CreatePurchaseOrderRequest struct {
 func (m CreatePurchaseOrderRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Currency, validation.Required.Error("币种不能为空")),
-		validation.Field(&m.GoodsDetail, validation.Required.Error("采购货品信息不能为空")),
+		validation.Field(&m.GoodsDetail, validation.Required.Error("采购货品信息不能为空"), validation.By(func(value interface{}) error {
+			items, ok := value.([]PurchaseOrderGoodDetail)
+			if !ok {
+				return errors.New("无效的采购货品信息")
+			}
+			for _, item := range items {
+				if item.GoodsDetailId == "" {
+					return errors.New("采购货品中通途货品 ID 不能为空")
+				}
+				if item.Quantity <= 0 {
+					return errors.New("采购货品中采购数量不能小于 1")
+				}
+			}
+			return nil
+		})),
 		validation.Field(&m.PurchaseUserId, validation.Required.Error("采购员 ID 不能为空")),
 		validation.Field(&m.SupplierId, validation.Required.Error("通途供应商 ID 不能为空")),
 		validation.Field(&m.WarehouseIdKey, validation.Required.Error("通途仓库 ID 不能为空")),
