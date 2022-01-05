@@ -107,6 +107,9 @@ type Order struct {
 	WebFinalFee               float64        `json:"webFinalFee"`               // 平台佣金
 	WebStoreOrderId           string         `json:"webstoreOrderId"`           // 平台交易号
 	WebStoreItemSite          string         `json:"webstore_item_site"`        // 平台站点id
+	// 自定义字段
+	IsInvalidBoolean   bool `json:"isInvalidBoolean"`   // 是否作废布尔值
+	IsSuspendedBoolean bool `json:"isSuspendedBoolean"` // 是否需要人工审核布尔值
 }
 
 type OrderQueryParams struct {
@@ -234,6 +237,11 @@ ERROR: %s
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					item.IsInvalidBoolean = !in.StringIn(item.IsInvalid, "0", "", "null")
+					item.IsSuspendedBoolean = item.IsSuspended == "1"
+					items[i] = item
+				}
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
