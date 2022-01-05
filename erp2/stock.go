@@ -127,7 +127,7 @@ type StockChangeLogQueryParams struct {
 	PageNo          int      `json:"pageNo,omitempty"`        // 查询页数
 	PageSize        int      `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	SKUs            []string `json:"skus,omitempty"`          // SKU 列表
-	UpdatedDateFrom string   `json:"updatedDateFrom"`         //	变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
+	UpdatedDateFrom string   `json:"updatedDateFrom"`         // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
 	WarehouseName   string   `json:"warehouseName,omitempty"` // 仓库名称
 }
 
