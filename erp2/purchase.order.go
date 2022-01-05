@@ -3,6 +3,7 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/is"
@@ -131,7 +132,7 @@ ERROR: %s
 // https://open.tongtool.com/apiDoc.html#/?docId=bcfd5d50a664486298b7fb0c1d08f714
 
 type PurchaseOrderGoodDetail struct {
-	GoodsDetailId string  `json:"goodsDetailId"` // 通途货品ID
+	GoodsDetailId string  `json:"goodsDetailId"` // 通途货品 ID
 	Quantity      int     `json:"quantity"`      // 采购数量
 	UnitPrice     float64 `json:"unitPrice"`     // 采购单价
 }
@@ -140,17 +141,30 @@ type CreatePurchaseOrderRequest struct {
 	Currency       string                    `json:"currency"`       // 币种
 	GoodsDetail    []PurchaseOrderGoodDetail `json:"goodsDetail"`    // 采购货品信息
 	ExternalNumber string                    `json:"externalNumber"` // 外部流水号
-	MerchantId     string                    `json:"merchantId"`     // 商户ID
-	PurchaseUserId string                    `json:"purchaseUserId"` // 采购员ID
+	MerchantId     string                    `json:"merchantId"`     // 商户 ID
+	PurchaseUserId string                    `json:"purchaseUserId"` // 采购员 ID
 	Remark         string                    `json:"remark"`         // 采购备注
 	ShippingFee    float64                   `json:"shippingFee"`    // 运费
-	SupplierId     string                    `json:"supplierId"`     // 通途供应商ID
+	SupplierId     string                    `json:"supplierId"`     // 通途供应商 ID
 	TrackingNumber string                    `json:"trackingNumber"` // 跟踪号
-	WarehouseIdKey string                    `json:"warehouseIdKey"` // 通途仓库ID
+	WarehouseIdKey string                    `json:"warehouseIdKey"` // 通途仓库 ID
+}
+
+func (m CreatePurchaseOrderRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Currency, validation.Required.Error("币种不能为空")),
+		validation.Field(&m.GoodsDetail, validation.Required.Error("采购货品信息不能为空")),
+		validation.Field(&m.PurchaseUserId, validation.Required.Error("采购员 ID 不能为空")),
+		validation.Field(&m.SupplierId, validation.Required.Error("通途供应商 ID 不能为空")),
+		validation.Field(&m.WarehouseIdKey, validation.Required.Error("通途仓库 ID 不能为空")),
+	)
 }
 
 // CreatePurchaseOrder 创建采购单
 func (s service) CreatePurchaseOrder(req CreatePurchaseOrderRequest) (number string, err error) {
+	if err = req.Validate(); err != nil {
+		return
+	}
 	type createPurchaseOrderResponse struct {
 		Code    int    `json:"code"`
 		Message string `json:"message"`
