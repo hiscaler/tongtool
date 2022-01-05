@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/gosimple/slug"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/cache"
@@ -308,6 +309,16 @@ type CreateProductRequest struct {
 	SalesType            string                     `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
 }
 
+func (m CreateProductRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
+		validation.Field(&m.ProductCode, validation.Required.Error("商品 SKU 不能为空")),
+		validation.Field(&m.EnablePackageNum, validation.Min(1).Error("可包装数量不能小于 1")),
+		validation.Field(&m.ProductStatus, validation.Required.Error("商品状态不可为空"), validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态")),
+		validation.Field(&m.SalesType, validation.Required.Error("销售类型不可为空"), validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型")),
+	)
+}
+
 type UpdateProductRequest struct {
 	DeclareCnName        string  `json:"declareCnName"`        // 商品中文报关名称
 	DeclareEnName        string  `json:"declareEnName"`        // 商品英文报关名称
@@ -353,6 +364,9 @@ type ProductQueryParams struct {
 // CreateProduct 创建商品
 // https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca
 func (s service) CreateProduct(req CreateProductRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
