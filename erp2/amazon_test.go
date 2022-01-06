@@ -8,7 +8,9 @@ import (
 
 func TestService_AmazonAccountSites(t *testing.T) {
 	_, ttService := newTestTongTool()
-	params := AmazonAccountSiteQueryParams{}
+	params := AmazonAccountSiteQueryParams{
+		Account: "a",
+	}
 	logs := make([]string, 0)
 	for {
 		pageLogs, isLastPage, err := ttService.AmazonAccountSites(params)

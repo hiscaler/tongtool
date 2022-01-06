@@ -3,6 +3,7 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/cache"
 )
@@ -10,15 +11,24 @@ import (
 // 亚马逊账号对应的站点
 
 type AmazonAccountSiteQueryParams struct {
-	Account    string `json:"account,omitempty"`  // 账号
+	Account    string `json:"account"`            // 账号
 	MerchantId string `json:"merchantId"`         // 商户 ID
 	PageNo     int    `json:"pageNo,omitempty"`   // 查询页数
 	PageSize   int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 }
 
+func (m AmazonAccountSiteQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Account, validation.Required.Error("帐号不能为空")),
+	)
+}
+
 // AmazonAccountSites 查询亚马逊账号对应的站点
 // https://open.tongtool.com/apiDoc.html#/?docId=4dd54cb61d6c4719860bec1d875f48af
 func (s service) AmazonAccountSites(params AmazonAccountSiteQueryParams) (items []string, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
@@ -56,7 +66,7 @@ ERROR: %s
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).
-		Post("/openapi/tongtool/stocksChangeQuery")
+		Post("/openapi/tongtool/queryAmazonAccountSiteId")
 	if err == nil {
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
