@@ -6,6 +6,7 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
@@ -48,21 +49,33 @@ type Package struct {
 }
 
 type PackageQueryParams struct {
-	AssignTimeFrom     string `json:"assignTimeFrom,omitempty"`
-	AssignTimeTo       string `json:"assignTimeTo,omitempty"`
-	DespatchTimeFrom   string `json:"despatchTimeFrom,omitempty"`
-	DespatchTimeTo     string `json:"despatchTimeTo,omitempty"`
-	MerchantId         string `json:"merchantId"`
-	OrderId            string `json:"orderId,omitempty"`
-	PackageStatus      string `json:"packageStatus,omitempty"`
-	PageNo             int    `json:"pageNo"`
-	PageSize           int    `json:"pageSize"`
-	ShippingMethodName string `json:"shippingMethodName,omitempty"`
+	AssignTimeFrom     string `json:"assignTimeFrom,omitempty"`     // 配货开始时间
+	AssignTimeTo       string `json:"assignTimeTo,omitempty"`       // 配货结束时间
+	DespatchTimeFrom   string `json:"despatchTimeFrom,omitempty"`   // 发货开始时间
+	DespatchTimeTo     string `json:"despatchTimeTo,omitempty"`     // 发货结束时间
+	MerchantId         string `json:"merchantId"`                   // 商户ID
+	OrderId            string `json:"orderId,omitempty"`            // 订单号
+	PackageStatus      string `json:"packageStatus,omitempty"`      // 包裹状态： waitPrint 等待打印 waitDeliver 等待发货 delivered 已发货 cancel 作废
+	PageNo             int    `json:"pageNo"`                       // 查询页数
+	PageSize           int    `json:"pageSize"`                     // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	ShippingMethodName string `json:"shippingMethodName,omitempty"` // 邮寄方式名称
+}
+
+func (m PackageQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.AssignTimeFrom, validation.When(m.DespatchTimeFrom == "", validation.Required.Error("配货开始时间和发货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("配货开始时间格式有误"))),
+		validation.Field(&m.AssignTimeTo, validation.When(m.DespatchTimeTo == "", validation.Required.Error("配货开始时间和发货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("配货结束时间格式有误"))),
+		validation.Field(&m.DespatchTimeFrom, validation.When(m.AssignTimeFrom == "", validation.Required.Error("发货开始时间和配货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("发货开始时间格式有误"))),
+		validation.Field(&m.DespatchTimeTo, validation.When(m.AssignTimeTo == "", validation.Required.Error("发货开始时间和配货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("发货结束时间格式有误"))),
+	)
 }
 
 // Packages 包裹列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0412c0185dce4a9d88714a9eef44932b
 func (s service) Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
