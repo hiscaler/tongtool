@@ -40,7 +40,6 @@ type Service interface {
 	Platforms() (items []Platform, err error)                                                                                                  // 平台及站点信息
 	PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) // 采购建议模板列表
 	PurchaseSuggestions(params PurchaseSuggestionQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error)                         // 采购建议列表
-	PurchaseSuggestion(templateId string) (item PurchaseSuggestion, err error)                                                                 // 单个采购建议查询
 	QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 采购商报价查询
 }
 

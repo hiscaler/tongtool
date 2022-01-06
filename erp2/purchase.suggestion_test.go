@@ -1,6 +1,7 @@
 package erp2
 
 import (
+	"github.com/hiscaler/tongtool/pkg/cast"
 	"testing"
 )
 
@@ -10,13 +11,20 @@ func TestService_PurchaseSuggestions(t *testing.T) {
 	number := "0007000007201603230000076503"
 	params := PurchaseSuggestionQueryParams{
 		PurchaseTemplateId: number,
+		SKUs:               []string{"abc"},
 	}
-	suggestions, _, err := ttService.PurchaseSuggestions(params)
-	if err == nil {
-		if len(suggestions) == 0 {
-			t.Errorf("not found suggestion with %s", number)
+	suggestions := make([]PurchaseSuggestion, 0)
+	for {
+		pageSuggestions, isLastPage, err := ttService.PurchaseSuggestions(params)
+		if err != nil {
+			t.Errorf("ttService.PurchaseSuggestions error: %s", err.Error())
+		} else {
+			suggestions = append(suggestions, pageSuggestions...)
 		}
-	} else {
-		t.Error(err)
+		if isLastPage || err != nil {
+			break
+		}
+		params.PageNo++
 	}
+	t.Log(cast.ToJson(suggestions))
 }
