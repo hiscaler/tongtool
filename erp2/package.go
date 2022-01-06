@@ -6,7 +6,6 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
-	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
@@ -54,28 +53,16 @@ type PackageQueryParams struct {
 	DespatchTimeFrom   string `json:"despatchTimeFrom,omitempty"`   // 发货开始时间
 	DespatchTimeTo     string `json:"despatchTimeTo,omitempty"`     // 发货结束时间
 	MerchantId         string `json:"merchantId"`                   // 商户ID
-	OrderId            string `json:"orderId,omitempty"`            // 订单号
+	OrderNumber        string `json:"orderId,omitempty"`            // 订单号
 	PackageStatus      string `json:"packageStatus,omitempty"`      // 包裹状态： waitPrint 等待打印 waitDeliver 等待发货 delivered 已发货 cancel 作废
 	PageNo             int    `json:"pageNo"`                       // 查询页数
 	PageSize           int    `json:"pageSize"`                     // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	ShippingMethodName string `json:"shippingMethodName,omitempty"` // 邮寄方式名称
 }
 
-func (m PackageQueryParams) Validate() error {
-	return validation.ValidateStruct(&m,
-		validation.Field(&m.AssignTimeFrom, validation.When(m.DespatchTimeFrom == "", validation.Required.Error("配货开始时间和发货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("配货开始时间格式有误"))),
-		validation.Field(&m.AssignTimeTo, validation.When(m.DespatchTimeTo == "", validation.Required.Error("配货开始时间和发货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("配货结束时间格式有误"))),
-		validation.Field(&m.DespatchTimeFrom, validation.When(m.AssignTimeFrom == "", validation.Required.Error("发货开始时间和配货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("发货开始时间格式有误"))),
-		validation.Field(&m.DespatchTimeTo, validation.When(m.AssignTimeTo == "", validation.Required.Error("发货开始时间和配货开始时间必填其一"), validation.Date(constant.DatetimeFormat).Error("发货结束时间格式有误"))),
-	)
-}
-
 // Packages 包裹列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0412c0185dce4a9d88714a9eef44932b
 func (s service) Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error) {
-	if err = params.Validate(); err != nil {
-		return
-	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
@@ -143,17 +130,22 @@ ERROR: %s
 	return
 }
 
-func (s service) Package(orderId, packageId string) (item Package, err error) {
+// Package 获取订单指定包裹
+// 必须提供订单号和包裹号（因为一个订单可能存在多个包裹号），返回的是一个有效的包裹信息（取消的包裹不会返回）
+// 如果需要查询一个订单所有的包裹，请使用 Packages 方法并提供 OrderNumber 参数值
+func (s service) Package(orderNumber, packageNumber string) (item Package, err error) {
+	orderNumber = strings.TrimSpace(orderNumber)
+	packageNumber = strings.TrimSpace(packageNumber)
+	if orderNumber == "" || packageNumber == "" {
+		err = errors.New("订单号和包裹号不能为空")
+		return
+	}
 	params := PackageQueryParams{
-		MerchantId: s.tongTool.MerchantId,
-		OrderId:    strings.TrimSpace(orderId),
-		PageNo:     1,
-		PageSize:   s.tongTool.QueryDefaultValues.PageSize,
+		MerchantId:  s.tongTool.MerchantId,
+		OrderNumber: strings.TrimSpace(orderNumber),
+		PageNo:      1,
+		PageSize:    s.tongTool.QueryDefaultValues.PageSize,
 	}
-	if packageId != "" {
-		packageId = strings.TrimSpace(packageId)
-	}
-
 	exists := false
 	for {
 		packages := make([]Package, 0)
@@ -165,17 +157,9 @@ func (s service) Package(orderId, packageId string) (item Package, err error) {
 			} else {
 				for _, p := range packages {
 					if p.PackageStatus != PackageStatusCancel {
-						if packageId != "" {
-							if strings.EqualFold(p.PackageId, packageId) {
-								exists = true
-								item = p
-							}
-						} else {
-							// todo 需要考虑一个订单多个包裹的情况
+						if strings.EqualFold(p.PackageId, packageNumber) {
 							exists = true
 							item = p
-						}
-						if exists {
 							break
 						}
 					}
