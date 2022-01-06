@@ -316,6 +316,22 @@ func (m CreateProductRequest) Validate() error {
 		validation.Field(&m.EnablePackageNum, validation.Min(1).Error("可包装数量不能小于 1")),
 		validation.Field(&m.ProductStatus, validation.Required.Error("商品状态不可为空"), validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态")),
 		validation.Field(&m.SalesType, validation.Required.Error("销售类型不可为空"), validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型")),
+		validation.Field(&m.Goods, validation.When(m.SalesType == ProductSaleTypeVariable, validation.Required.Error("变参货品不能为空"))),
+		validation.Field(&m.Accessories, validation.When(len(m.Accessories) > 0, validation.By(func(value interface{}) error {
+			items, ok := value.([]ProductAccessory)
+			if !ok {
+				return errors.New("无效的商品配件")
+			}
+			for i, item := range items {
+				if item.AccessoriesName == "" {
+					return errors.New(fmt.Sprintf("数据 %d 中配件名称不能为空", i+1))
+				}
+				if item.AccessoriesQuantity <= 0 {
+					return errors.New(fmt.Sprintf("数据 %d 中配件数量不能小于 1", i+1))
+				}
+			}
+			return nil
+		}))),
 	)
 }
 
@@ -543,9 +559,17 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 				for _, p := range items {
 					switch typ {
 					case ProductTypeVariable:
-						if strings.EqualFold(sku, p.SKU) {
+						if strings.EqualFold(sku, p.ProductCode) || strings.EqualFold(sku, p.SKU) {
 							exists = true
 							item = p
+						} else {
+							for _, detail := range p.GoodsDetail {
+								if strings.EqualFold(sku, detail.GoodsSKU) {
+									exists = true
+									item = p
+									break
+								}
+							}
 						}
 					default:
 						if !p.IsDeleted {
