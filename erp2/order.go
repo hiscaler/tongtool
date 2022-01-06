@@ -3,6 +3,7 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
@@ -379,8 +380,35 @@ type CreateOrderRequest struct {
 
 func (m CreateOrderRequest) Validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.BuyerInfo, validation.Required.Error("买家信息不能为空"), validation.By(func(value interface{}) error {
+			buyer, ok := value.(OrderBuyer)
+			if !ok {
+				return errors.New("无效的买家信息")
+			}
+			return validation.ValidateStruct(&buyer,
+				validation.Field(&buyer.BuyerName, validation.Required.Error("买家名称不能为空")),
+				validation.Field(&buyer.BuyerAddress1, validation.Required.Error("买家地址1不能为空")),
+				validation.Field(&buyer.BuyerCity, validation.Required.Error("买家城市不能为空")),
+				validation.Field(&buyer.BuyerCountryCode, validation.Required.Error("买家国家不能为空")),
+			)
+		})),
 		validation.Field(&m.WarehouseId, validation.Required.Error("仓库 ID 不能为空")),
 		validation.Field(&m.NeedReturnOrderId, validation.Required.Error("请填写订单返回值设置"), validation.In("0", "1").Error("无效的订单返回值设置")),
+		validation.Field(&m.Transactions, validation.Required.Error("交易信息不能为空"), validation.By(func(value interface{}) error {
+			items, ok := value.([]OrderTransaction)
+			if !ok {
+				return errors.New("无效的交易信息")
+			}
+			for i, item := range items {
+				if item.GoodsDetailId == "" && item.SKU == "" {
+					return errors.New(fmt.Sprintf("数据 %d 中货品 ID与 SKU 必传其中一个", i+1))
+				}
+				if item.Quantity <= 0 {
+					return errors.New(fmt.Sprintf("数据 %d 中数量必须大于 1", i+1))
+				}
+			}
+			return nil
+		})),
 	)
 }
 
