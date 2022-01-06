@@ -3,7 +3,9 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 )
 
@@ -19,17 +21,27 @@ type QuotedPrice struct {
 }
 
 type QuotedPriceQueryParams struct {
-	MerchantId           string `json:"merchantId"`           // 商家 ID
-	PageNo               int    `json:"pageNo"`               // 当前页
-	PageSize             int    `json:"pageSize"`             // 每页数量
-	QuotedPriceDateBegin string `json:"quotedPriceDateBegin"` // 报价起始时间
-	QuotedPriceDateEnd   string `json:"quotedPriceDateEnd"`   // 报价结束时间
-	SKU                  string `json:"sku"`                  // 商品 SKU
+	MerchantId           string `json:"merchantId"`                     // 商家 ID
+	PageNo               int    `json:"pageNo"`                         // 当前页
+	PageSize             int    `json:"pageSize"`                       // 每页数量
+	QuotedPriceDateBegin string `json:"quotedPriceDateBegin,omitempty"` // 报价起始时间
+	QuotedPriceDateEnd   string `json:"quotedPriceDateEnd,omitempty"`   // 报价结束时间
+	SKU                  string `json:"sku,omitempty"`                  // 商品 SKU
+}
+
+func (m QuotedPriceQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.QuotedPriceDateBegin, validation.When(m.SKU == "", validation.Required.Error("报价起始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("报价起始时间格式有误"))),
+		validation.Field(&m.QuotedPriceDateEnd, validation.When(m.SKU == "", validation.Required.Error("报价结束时间不能为空"), validation.Date(constant.DatetimeFormat).Error("报价结束时间格式有误"))),
+	)
 }
 
 // QuotePrices 供应商报价查询
 // https://open.tongtool.com/apiDoc.html#/?docId=0a508970886f4c7596b064f3b37987c9
 func (s service) QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
