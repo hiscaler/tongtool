@@ -3,7 +3,9 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 )
 
@@ -17,7 +19,7 @@ type FBAOrder struct {
 	PageNo             int     `json:"pageNo"`             // 查询页数
 	PageSize           int     `json:"pageSize"`           // 查询数量
 	PaymentsDate       string  `json:"paymentsDate"`       // 付款时间
-	PurchaseDate       string  `json:"purchaseDate"`       // 购买时间
+	PurchaseDate       int     `json:"purchaseDate"`       // 购买时间
 	RecipientName      string  `json:"recipientName"`      // 收件人姓名
 	SalesChannel       string  `json:"salesChannel"`       // 销售站点
 	ShipAddress1       string  `json:"shipAddress1"`       // 地址1
@@ -44,9 +46,20 @@ type FBAOrderQueryParams struct {
 	PurchaseDateTo   string `json:"purchaseDateTo,omitempty"`   // 订单购买时间结束时间
 }
 
+func (m FBAOrderQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.PurchaseDateFrom, validation.Required.Error("订单购买开始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("无效的订单购买开始时间格式")),
+		validation.Field(&m.PurchaseDateTo, validation.Required.Error("订单购买结束时间不能为空"), validation.Date(constant.DatetimeFormat).Error("无效的订单购买结束时间格式")),
+	)
+}
+
 // FBAOrders FBA 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=c33e7bd4e73d4d2d9a27de56f794cc82
 func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
