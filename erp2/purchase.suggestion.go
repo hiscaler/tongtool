@@ -11,10 +11,10 @@ import (
 
 // PurchaseSuggestion 采购建议
 type PurchaseSuggestion struct {
-	CaculateDate           string  `json:"caculateDate"`           // 采购建议计算时间
+	CalcuateDate           string  `json:"caculateDate"`           // 采购建议计算时间
 	CurrStockQuantity      int     `json:"currStockQuantity"`      // 可用库存数
 	DailySales             float64 `json:"dailySales"`             // 日均销量
-	DevliveryDays          int     `json:"devliveryDays"`          // 安全交期
+	DeliveryDays           int     `json:"devliveryDays"`          // 安全交期
 	GoodsIdKey             string  `json:"goodsIdKey"`             // 商品id key
 	GoodsSKU               string  `json:"goodsSku"`               // 商品sku
 	IntransitStockQuantity int     `json:"intransitStockQuantity"` // 在途库存数
