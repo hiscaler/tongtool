@@ -2,6 +2,7 @@ package in
 
 import "strings"
 
+// StringIn 判断 s 是否在 ss 中（忽略大小写）
 func StringIn(s string, ss ...string) bool {
 	if len(ss) == 0 {
 		return false
