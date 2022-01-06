@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/in"
 )
 
 // 模板类型
 const (
-	PurchaseOrderTemplateFBAType   = "fba"
-	PurchaseOrderTemplateOtherType = "other"
+	PurchaseSuggestionTemplateFBAType   = "fba"
+	PurchaseSuggestionTemplateOtherType = "other"
 )
 
 // PurchaseSuggestionTemplate 采购建议模板
@@ -25,9 +26,10 @@ type PurchaseSuggestionTemplate struct {
 }
 
 type PurchaseSuggestionTemplateQueryParams struct {
-	MerchantId string `json:"merchantId"`                   // 商户ID
-	PageNo     int    `json:"pageNo,omitempty,omitempty"`   // 查询页数
-	PageSize   int    `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	MerchantId string   `json:"merchantId"`                   // 商户ID
+	PageNo     int      `json:"pageNo,omitempty,omitempty"`   // 查询页数
+	PageSize   int      `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	Names      []string `json:"names,omitempty"`              // 采购建议模板名称（扩展）
 }
 
 // PurchaseSuggestionTemplates 采购建议模板列表
@@ -56,8 +58,17 @@ func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQu
 	if err == nil {
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Datas.Array
-				isLastPage = len(items) < params.PageSize
+
+				if len(params.Names) == 0 {
+					items = res.Datas.Array
+				} else {
+					for _, d := range res.Datas.Array {
+						if in.StringIn(d.PurchaseTemplateName, params.Names...) {
+							items = append(items, d)
+						}
+					}
+				}
+				isLastPage = len(res.Datas.Array) < params.PageSize
 			}
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
