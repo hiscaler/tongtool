@@ -117,7 +117,7 @@ func NewTongTool(config config.Config) *TongTool {
 		SetRetryWaitTime(10 * time.Second).
 		SetRetryMaxWaitTime(20 * time.Second).
 		AddRetryCondition(func(response *resty.Response, err error) bool {
-			retry := (response != nil && response.StatusCode() == http.StatusTooManyRequests) || err != nil
+			retry := response != nil && response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
 				r := struct{ Code int }{}
 				retry = response != nil && json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
