@@ -1,9 +1,9 @@
 package erp2
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
@@ -394,21 +394,16 @@ func (m CreateOrderRequest) Validate() error {
 		})),
 		validation.Field(&m.WarehouseId, validation.Required.Error("仓库 ID 不能为空")),
 		validation.Field(&m.NeedReturnOrderId, validation.Required.Error("请填写订单返回值设置"), validation.In("0", "1").Error("无效的订单返回值设置")),
-		validation.Field(&m.Transactions, validation.Required.Error("交易信息不能为空"), validation.By(func(value interface{}) error {
-			items, ok := value.([]OrderTransaction)
+		validation.Field(&m.Transactions, validation.Required.Error("交易信息不能为空"), validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			item, ok := value.(OrderTransaction)
 			if !ok {
 				return errors.New("无效的交易信息")
 			}
-			for i, item := range items {
-				if item.GoodsDetailId == "" && item.SKU == "" {
-					return errors.New(fmt.Sprintf("数据 %d 中货品 ID与 SKU 必传其中一个", i+1))
-				}
-				if item.Quantity <= 0 {
-					return errors.New(fmt.Sprintf("数据 %d 中数量必须大于 1", i+1))
-				}
-			}
-			return nil
-		})),
+			return validation.ValidateStruct(&item,
+				validation.Field(&item.SKU, validation.When(item.GoodsDetailId == "", validation.Required.Error("货品 ID 与 SKU 必传其中一个"))),
+				validation.Field(&item.Quantity, validation.Min(1).Error("数量必须大于 1")),
+			)
+		}))),
 	)
 }
 
