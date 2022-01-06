@@ -207,7 +207,18 @@ type PackageDeliverRequest struct {
 func (m PackageDeliverRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.WarehouseName, validation.Required.Error("仓库名称不能为空")),
-		validation.Field(&m.DeliverInfos, validation.Required.Error("发货信息不能为空")),
+		validation.Field(&m.DeliverInfos, validation.Required.Error("发货信息不能为空"), validation.By(func(value interface{}) error {
+			items, ok := value.([]PackageDeliverItem)
+			if !ok {
+				return errors.New("无效的发货信息")
+			}
+			for i, item := range items {
+				if item.RelatedNo == "" {
+					return errors.New(fmt.Sprintf("数据 %d 中识别号不能为空", i+1))
+				}
+			}
+			return nil
+		})),
 	)
 }
 
