@@ -93,8 +93,8 @@ func TestService_CreateOrder(t *testing.T) {
 			},
 		},
 		PlatformCode:       "ebay_api",
-		Remarks:            "",
-		SaleRecordNum:      "O123456",
+		Remarks:            []string{},
+		SaleRecordNum:      "O1234567",
 		SellerAccountCode:  "test",
 		ShippingMethodId:   "",
 		TaxIncome:          0,
@@ -104,17 +104,17 @@ func TestService_CreateOrder(t *testing.T) {
 		Transactions: []OrderTransaction{
 			{
 				GoodsDetailId:              "",
-				GoodsDetailRemark:          "",
-				ProductsTotalPrice:         0,
+				GoodsDetailRemark:          "货品备注",
+				ProductsTotalPrice:         2,
 				ProductsTotalPriceCurrency: "CNY",
-				Quantity:                   1,
+				Quantity:                   2,
 				ShipType:                   "速卖通线上发货",
-				ShippingFeeIncome:          0,
+				ShippingFeeIncome:          2,
 				ShippingFeeIncomeCurrency:  "CNY",
-				SKU:                        "sku-abc",
+				SKU:                        "goods_sku",
 			},
 		},
-		WarehouseId: "test",
+		WarehouseId: "0001000007201303040000013106",
 	}
 	orderId, orderNumber, err := ttService.CreateOrder(req)
 	if err != nil {

@@ -365,7 +365,7 @@ type CreateOrderRequest struct {
 	OrderCurrency           string             `json:"ordercurrency"`           // 订单币种
 	PaymentInfos            []OrderPayment     `json:"paymentInfos"`            // 付款信息
 	PlatformCode            string             `json:"platformCode"`            // 订单平台代码
-	Remarks                 string             `json:"remarks"`                 // 订单备注,只能新增
+	Remarks                 []string           `json:"remarks"`                 // 订单备注,只能新增
 	SaleRecordNum           string             `json:"saleRecordNum"`           // 订单号
 	SellerAccountCode       string             `json:"sellerAccountCode"`       // 卖家账号代码
 	ShippingMethodId        string             `json:"shippingMethodId"`        // 渠道ID
@@ -377,9 +377,19 @@ type CreateOrderRequest struct {
 	WarehouseId             string             `json:"warehouseId"`             // 仓库ID
 }
 
+func (m CreateOrderRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.WarehouseId, validation.Required.Error("仓库 ID 不能为空")),
+		validation.Field(&m.NeedReturnOrderId, validation.Required.Error("请填写订单返回值设置"), validation.In("0", "1").Error("无效的订单返回值设置")),
+	)
+}
+
 // CreateOrder 手工创建订单
 // https://open.tongtool.com/apiDoc.html#/?docId=908e49d8bf62487aa870335ef6951567
 func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error) {
+	if err = req.Validate(); err != nil {
+		return
+	}
 	req.NeedReturnOrderId = strings.TrimSpace(req.NeedReturnOrderId)
 	if req.NeedReturnOrderId == "" || !in.StringIn(req.NeedReturnOrderId, "1", "0") {
 		req.NeedReturnOrderId = "0"
