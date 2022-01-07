@@ -414,10 +414,6 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 	if err = req.Validate(); err != nil {
 		return
 	}
-	req.NeedReturnOrderId = strings.TrimSpace(req.NeedReturnOrderId)
-	if req.NeedReturnOrderId == "" || !in.StringIn(req.NeedReturnOrderId, "1", "0") {
-		req.NeedReturnOrderId = "0"
-	}
 	orderReq := struct {
 		MerchantId string             `json:"merchantId"` // 商户ID
 		Order      CreateOrderRequest `json:"order"`      // 订单信息
