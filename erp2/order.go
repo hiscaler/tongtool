@@ -409,6 +409,7 @@ func (m CreateOrderRequest) Validate() error {
 
 // CreateOrder 手工创建订单
 // https://open.tongtool.com/apiDoc.html#/?docId=908e49d8bf62487aa870335ef6951567
+// 在 err 为 nil 的情况下，orderNumber 一定会有值返回，而 orderId 是否有值则取决于是否在查询参数中传递 NeedReturnOrderId 为 1 的值
 func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error) {
 	if err = req.Validate(); err != nil {
 		return
