@@ -45,6 +45,8 @@ type Package struct {
 	UpdatedDate           string        `json:"updatedDate"`           // 包裹更新时间
 	UploadCarrier         string        `json:"uploadCarrier"`         // 上传包裹的Carrier
 	WarehouseName         string        `json:"warehouseName"`         // 仓库名称
+	// 自定义属性
+	IsValid bool `json:"isValid"` // 是否有效
 }
 
 type PackageQueryParams struct {
@@ -104,6 +106,7 @@ ERROR: %s
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				for i, item := range items {
+					items[i].IsValid = !in.StringIn(item.PackageStatus, PackageStatusCancel)
 					items[i].IsCheckedBoolean = in.StringIn(item.IsChecked, "Y")
 				}
 				isLastPage = len(items) < params.PageSize
