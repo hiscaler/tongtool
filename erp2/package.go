@@ -159,7 +159,7 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 				err = tongtool.ErrNotFound
 			} else {
 				for _, p := range packages {
-					if p.PackageStatus != PackageStatusCancel && strings.EqualFold(p.PackageId, packageNumber) {
+					if p.IsValid && strings.EqualFold(p.PackageId, packageNumber) {
 						exists = true
 						item = p
 						break
