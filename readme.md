@@ -20,7 +20,7 @@ TongTool API 封装
 - CreateProduct(req CreateProductRequest) error                                                                                              // 创建商品
 - UpdateProduct(req UpdateProductRequest) error                                                                                              // 更新商品
 - Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表
-- Package(orderId, packageId string) (item Package, err error)                                                                               // 单个包裹
+- Package(orderNumber, packageNumber string) (item Package, err error)                                                                       // 单个包裹
 - PackageDeliver(req PackageDeliverRequest) error                                                                                            // 执行包裹发货
 - Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                                                      // 供应商列表
 - PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error)                                       // 采购单列表
@@ -32,7 +32,7 @@ TongTool API 封装
 - Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error)                                                                // 库存列表
 - StockChangeLogs(params StockChangeLogQueryParams) (items []StockChangeLog, isLastPage bool, err error)                                     //  库存变动查询
 - Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error)                                                    // 仓库列表
-- Warehouse(params WarehouseQueryParams) (item Warehouse, err error)                                                                         // 仓库列表
+- Warehouse(id string) (item Warehouse, err error)                                                                                           // 仓库列表
 - ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error)                                     // 仓库物流渠道列表
 - TrackingNumbers(params TrackingNumberQueryParams) (items []TrackingNumber, isLastPage bool, err error)                                     // 订单物流单号列表
 - Platforms() (items []Platform, err error)                                                                                                  // 平台及站点信息
