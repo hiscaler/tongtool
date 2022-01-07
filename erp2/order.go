@@ -109,7 +109,7 @@ type Order struct {
 	WebFinalFee               float64        `json:"webFinalFee"`               // 平台佣金
 	WebStoreOrderId           string         `json:"webstoreOrderId"`           // 平台交易号
 	WebStoreItemSite          string         `json:"webstore_item_site"`        // 平台站点id
-	// 自定义字段
+	// 自定义属性
 	IsInvalidBoolean   bool `json:"isInvalidBoolean"`   // 是否作废布尔值
 	IsSuspendedBoolean bool `json:"isSuspendedBoolean"` // 是否需要人工审核布尔值
 }
