@@ -3,8 +3,11 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
+	"time"
 )
 
 // 库存查询
@@ -26,10 +29,10 @@ type Stock struct {
 	FirstTariff                  float64               `json:"firstTariff"`                  // 头程报关费
 	GoodsAvgCost                 float64               `json:"goodsAvgCost"`                 // 货品平均成本
 	GoodsCurCost                 float64               `json:"goodsCurCost"`                 // 货品当前成本
-	GoodsIdKey                   float64               `json:"goodsIdKey"`                   // 通途商品id key
+	GoodsIdKey                   string                `json:"goodsIdKey"`                   // 通途商品id key
 	GoodsShelfStockList          []GoodsShelfStockItem `json:"goodsShelfStockList"`          // 货位库存列表，多货位才会有值
 	GoodsSKU                     string                `json:"goodsSku"`                     // 商品sku
-	IntransitStockQuantity       string                `json:"intransitStockQuantity"`       // 在途库存数
+	IntransitStockQuantity       int                   `json:"intransitStockQuantity"`       // 在途库存数
 	OtherFee                     float64               `json:"otherFee"`                     // 头程其他费用
 	SafetyStock                  int                   `json:"safetyStock"`                  // 安全库存数
 	WaitingShipmentStockQuantity int                   `json:"waitingShipmentStockQuantity"` // 待发库存数
@@ -123,17 +126,36 @@ type StockChangeLog struct {
 }
 
 type StockChangeLogQueryParams struct {
-	MerchantId      string   `json:"merchantId"`              // 商户 ID
-	PageNo          int      `json:"pageNo,omitempty"`        // 查询页数
-	PageSize        int      `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
-	SKUs            []string `json:"skus,omitempty"`          // SKU 列表
-	UpdatedDateFrom string   `json:"updatedDateFrom"`         // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
-	WarehouseName   string   `json:"warehouseName,omitempty"` // 仓库名称
+	MerchantId      string   `json:"merchantId"`         // 商户 ID
+	PageNo          int      `json:"pageNo,omitempty"`   // 查询页数
+	PageSize        int      `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	SKUs            []string `json:"skus,omitempty"`     // SKU 列表
+	UpdatedDateFrom string   `json:"updatedDateFrom"`    // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
+	WarehouseName   string   `json:"warehouseName"`      // 仓库名称
+}
+
+func (m StockChangeLogQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.UpdatedDateFrom, validation.Required.Error("变动起始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("变动起始时间格式错误"), validation.By(func(value interface{}) error {
+			t, err := time.Parse(constant.DatetimeFormat, value.(string))
+			if err != nil {
+				return err
+			}
+			if time.Now().Sub(t).Hours() > 24*7 {
+				return errors.New("变动起始时间只能输入距当前时间 7 天内的值")
+			}
+			return nil
+		})),
+		validation.Field(&m.WarehouseName, validation.Required.Error("仓库名称不能为空")),
+	)
 }
 
 // StockChangeLogs 库存变动查询
 // https://open.tongtool.com/apiDoc.html#/?docId=bd0971f61f2449eaa9752c7be779afa0
 func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []StockChangeLog, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1

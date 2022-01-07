@@ -6,6 +6,26 @@ import (
 	"testing"
 )
 
+func TestService_Stocks(t *testing.T) {
+	_, ttService := newTestTongTool()
+	params := StockQueryParams{}
+	stocks := make([]Stock, 0)
+	for {
+		pageItems, isLastPage, err := ttService.Stocks(params)
+		if err != nil {
+			t.Errorf("ttService.Stocks error: %s", err.Error())
+		} else {
+			fmt.Println(cast.ToJson(pageItems))
+			stocks = append(stocks, pageItems...)
+		}
+		if isLastPage || err != nil {
+			break
+		}
+		params.PageNo++
+	}
+	fmt.Println(fmt.Sprintf("Total found %d stocks", len(stocks)))
+}
+
 func TestService_StockChangeLogs(t *testing.T) {
 	_, ttService := newTestTongTool()
 	params := StockChangeLogQueryParams{
@@ -18,7 +38,6 @@ func TestService_StockChangeLogs(t *testing.T) {
 		if err != nil {
 			t.Errorf("ttService.StockChangeLogs error: %s", err.Error())
 		} else {
-			fmt.Println(cast.ToJson(pageLogs))
 			logs = append(logs, pageLogs...)
 		}
 		if isLastPage || err != nil {
