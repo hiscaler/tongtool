@@ -15,7 +15,8 @@ type TrackingNumber struct {
 	ShippingMethodCode string `json:"shippingMethodCode"` // 邮寄方式代码
 	ShippingMethodName string `json:"shippingMethodName"` // 邮寄方式名称
 	TrackingNumber     string `json:"trackingNumber"`     // 跟踪号
-	IsMatched          bool   `json:"isMatched"`          // 是否匹配（自加）
+	// 扩展属性
+	IsMatched bool `json:"isMatched"` // 是否匹配
 }
 
 type TrackingNumberQueryParams struct {
