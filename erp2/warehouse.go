@@ -21,7 +21,6 @@ type WarehouseQueryParams struct {
 	PageNo        int    `json:"pageNo,omitempty"`        // 查询页数
 	PageSize      int    `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
-	WarehouseId   string `json:"warehouseId,omitempty"`   // 仓库id（通途无此参数）
 }
 
 // Warehouses 查询仓库列表
@@ -95,26 +94,13 @@ ERROR: %s
 }
 
 // Warehouse 查询指定仓库
-func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err error) {
-	const (
-		searchById        = "id"
-		searchByName      = "name"
-		searchByIdAndName = "id.name"
-	)
-	searchBy := ""
-	if params.WarehouseId != "" && params.WarehouseName != "" {
-		searchBy = searchByIdAndName
-	} else if params.WarehouseId != "" {
-		searchBy = searchById
-	} else if params.WarehouseName != "" {
-		searchBy = searchByName
-	}
-
-	if searchBy == "" {
-		err = errors.New("invalid query params")
+func (s service) Warehouse(id string) (item Warehouse, err error) {
+	if id == "" {
+		err = errors.New("invalid id params value")
 		return
 	}
 
+	params := WarehouseQueryParams{}
 	exists := false
 	for {
 		items := make([]Warehouse, 0)
@@ -125,21 +111,11 @@ func (s service) Warehouse(params WarehouseQueryParams) (item Warehouse, err err
 				err = tongtool.ErrNotFound
 			} else {
 				for _, warehouse := range items {
-					switch searchBy {
-					case searchByIdAndName:
-						exists = strings.EqualFold(warehouse.WarehouseId, params.WarehouseId) && strings.EqualFold(warehouse.WarehouseName, params.WarehouseName)
-					case searchById:
-						exists = strings.EqualFold(warehouse.WarehouseId, params.WarehouseId)
-					case searchByName:
-						exists = strings.EqualFold(warehouse.WarehouseName, params.WarehouseName)
-					}
-					if exists {
+					if strings.EqualFold(warehouse.WarehouseId, id) {
+						exists = true
 						item = warehouse
 						break
 					}
-				}
-				if exists {
-					break
 				}
 			}
 		}
