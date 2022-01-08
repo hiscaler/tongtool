@@ -279,7 +279,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 }
 
 // Products 根据指定参数查询商品列表
-// https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
+// https://open.tongtool.com/apiDoc.html#/?docId=c55a65d27322400a84996ea79bb23f92
 func (s service) Products(params ProductQueryParams) (items []Product, nextToken string, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {

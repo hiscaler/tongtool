@@ -13,5 +13,6 @@ type Service interface {
 }
 
 func NewService(tt *tongtool.TongTool) Service {
+	tt.QueryDefaultValues.PageSize = 500
 	return service{tt}
 }
