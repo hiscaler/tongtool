@@ -148,7 +148,8 @@ ERROR: %s
 }
 
 // Package 获取订单指定包裹
-// 必须提供订单号和包裹号（因为一个订单可能存在多个包裹号），返回的是一个有效的包裹信息（取消的包裹不会返回）
+// 必须同时提供订单号和包裹号（因为一个订单可能存在多个包裹号），返回的是一个有效的包裹信息（取消的包裹不会返回）
+// 返回的 err 不为 nil 的情况下可以使用 errors.Is(err, tongtool.ErrNotFound) 来判断是通途中不存在还是其他错误引起没有查到，返回 true 的则表示通途系统中不存在，否则为其他错误。
 // 如果需要查询一个订单所有的包裹，请使用 Packages 方法并提供 OrderNumber 参数值
 func (s service) Package(orderNumber, packageNumber string) (item Package, err error) {
 	orderNumber = strings.TrimSpace(orderNumber)
