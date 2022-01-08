@@ -115,23 +115,23 @@ type Order struct {
 }
 
 type OrderQueryParams struct {
-	AccountCode      string `json:"accountCode"`
-	BuyerEmail       string `json:"buyerEmail,omitempty"`
-	MerchantId       string `json:"merchantId"`
-	OrderId          string `json:"orderId,omitempty"`
-	OrderStatus      string `json:"orderStatus,omitempty"`
-	PageNo           int    `json:"pageNo,omitempty"`
-	PageSize         int    `json:"pageSize,omitempty"`
-	PayDateFrom      string `json:"payDateFrom,omitempty"`
-	PayDateTo        string `json:"payDateTo,omitempty"`
-	PlatformCode     string `json:"platformCode,omitempty"`
-	RefundedDateFrom string `json:"refundedDateFrom,omitempty"`
-	RefundedDateTo   string `json:"refundedDateTo,omitempty"`
-	SaleDateFrom     string `json:"saleDateFrom,omitempty"`
-	SaleDateTo       string `json:"saleDateTo,omitempty"`
-	StoreFlag        string `json:"storeFlag"`
-	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`
-	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`
+	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
+	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
+	MerchantId       string `json:"merchantId"`                 // 商户ID
+	OrderId          string `json:"orderId,omitempty"`          // 订单号
+	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态 waitPacking/等待配货 ,waitPrinting/等待打印,waitingDespatching/等待发货 ,despatched/已发货,unpaid/未付款,payed/已付款,
+	PageNo           int    `json:"pageNo,omitempty"`           // 查询页数
+	PageSize         int    `json:"pageSize,omitempty"`         // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
+	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
+	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
+	RefundedDateFrom string `json:"refundedDateFrom,omitempty"` // 退款起始时间
+	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
+	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
+	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
+	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”）
+	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
+	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
 
 // StoreCountryCode 获取订单店铺国家代码
