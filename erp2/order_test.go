@@ -123,3 +123,37 @@ func TestService_CreateOrder(t *testing.T) {
 		t.Logf("orderId: %s, orderNumber: %s", orderId, orderNumber)
 	}
 }
+
+func TestService_UpdateOrder(t *testing.T) {
+	_, ttService := newTestTongTool()
+	req := UpdateOrderRequest{
+		OrderId: "abc",
+		BuyerInfo: OrderBuyer{
+			BuyerAccount:     "test",
+			BuyerAddress1:    "test address1",
+			BuyerAddress2:    "test address2",
+			BuyerAddress3:    "test address3",
+			BuyerCity:        "深圳",
+			BuyerCountryCode: "CN",
+			BuyerEmail:       "happy__snow@126.com",
+			BuyerMobilePhone: "15211111111",
+			BuyerName:        "张三",
+			BuyerPhone:       "15211111113",
+			BuyerPostalCode:  "510000",
+			BuyerState:       "test",
+		},
+		Remarks:          []string{},
+		ShippingMethodId: "",
+		Transactions: []UpdateOrderTransaction{
+			{
+				GoodsDetailId: "",
+				Quantity:      2,
+			},
+		},
+		WarehouseId: "0001000007201303040000013106",
+	}
+	err := ttService.UpdateOrder(req)
+	if err != nil {
+		t.Errorf("ttService.UpdateOrder error: %s", err.Error())
+	}
+}

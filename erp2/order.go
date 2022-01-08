@@ -467,6 +467,62 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 	return
 }
 
+// 更新订单处理（未配货前可用）
+
+type UpdateOrderTransaction struct {
+	GoodsDetailId  string `json:"goodsDetailId"`  // 货品ID与订单详情ID二者必填其一
+	OrderDetailsId string `json:"orderDetailsId"` // 订单详情ID,此参数值来自订单查询返回,此参数有值代表是需要更新货品数量或者删除货品(要看quantity参数值)，此参数有值同时会清空原有核查结果，需要重新核查，此参数没有值但goodsDetailId有值代表是需要新增货品
+	Quantity       int    `json:"quantity"`       // 数量,等于0表示删除当前货品
+}
+
+// UpdateOrderRequest 订单更新请求
+type UpdateOrderRequest struct {
+	BuyerInfo        OrderBuyer               `json:"buyerInfo"`                  // 买家信息
+	Transactions     []UpdateOrderTransaction `json:"transactions"`               // 交易记录信息,删除货品需要传对应的记录并数量传0
+	MerchantId       string                   `json:"merchantId"`                 // 商户ID
+	OrderId          string                   `json:"orderId"`                    // 通途订单ID
+	Remarks          []string                 `json:"remarks,omitempty"`          // 订单备注,只能新增
+	ShippingMethodId string                   `json:"shippingMethodId,omitempty"` // 渠道ID
+	WarehouseId      string                   `json:"warehouseId,omitempty"`      // 仓库ID
+}
+
+func (m UpdateOrderRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.OrderId, validation.Required.Error("订单 ID 不能为空")),
+	)
+}
+
+// UpdateOrder 更新订单
+// https://open.tongtool.com/apiDoc.html#/?docId=3e0d01bfe01441aa8e2071c2c88cc9fb
+func (s service) UpdateOrder(req UpdateOrderRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+	req.MerchantId = s.tongTool.MerchantId
+
+	res := struct {
+		result
+		Datas string `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/orderUpdate")
+	if err == nil {
+		if resp.IsSuccess() {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+
+	return err
+}
+
 // 作废订单处理
 
 type CancelOrderRequest struct {
