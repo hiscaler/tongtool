@@ -6,6 +6,7 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
@@ -62,9 +63,22 @@ type PackageQueryParams struct {
 	ShippingMethodName string `json:"shippingMethodName,omitempty"` // 邮寄方式名称
 }
 
+func (m PackageQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.AssignTimeFrom, validation.When(m.AssignTimeFrom != "", validation.Date(constant.DatetimeFormat).Error("配货开始时间日期格式无效"))),
+		validation.Field(&m.AssignTimeTo, validation.When(m.AssignTimeTo != "", validation.Date(constant.DatetimeFormat).Error("配货结束时间日期格式无效"))),
+		validation.Field(&m.DespatchTimeFrom, validation.When(m.DespatchTimeFrom != "", validation.Date(constant.DatetimeFormat).Error("发货开始时间日期格式无效"))),
+		validation.Field(&m.DespatchTimeTo, validation.When(m.DespatchTimeTo != "", validation.Date(constant.DatetimeFormat).Error("发货结束时间日期格式无效"))),
+		validation.Field(&m.PackageStatus, validation.In(PackageStatusWaitPrint, PackageStatusWaitDeliver, PackageStatusDelivered, PackageStatusCancel)),
+	)
+}
+
 // Packages 包裹列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0412c0185dce4a9d88714a9eef44932b
 func (s service) Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
