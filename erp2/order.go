@@ -434,8 +434,6 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 		SetResult(&res).
 		Post("/openapi/tongtool/orderImport")
 	if err == nil {
-		code := 0
-		message := ""
 		if resp.IsSuccess() {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 			if err == nil {
@@ -457,7 +455,7 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 			}
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(code, message)
+				err = tongtool.ErrorWrap(res.Code, res.Message)
 			} else {
 				err = errors.New(resp.Status())
 			}
@@ -562,8 +560,6 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 		SetResult(&res).
 		Post("/openapi/tongtool/orderCancel")
 	if err == nil {
-		code := 0
-		message := ""
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				for _, item := range res.Datas.Array {
@@ -575,7 +571,7 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 			}
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(code, message)
+				err = tongtool.ErrorWrap(res.Code, res.Message)
 			} else {
 				err = errors.New(resp.Status())
 			}
