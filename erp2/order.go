@@ -115,23 +115,23 @@ type Order struct {
 }
 
 type OrderQueryParams struct {
-	AccountCode      string `json:"accountCode"`
-	BuyerEmail       string `json:"buyerEmail,omitempty"`
-	MerchantId       string `json:"merchantId"`
-	OrderId          string `json:"orderId,omitempty"`
-	OrderStatus      string `json:"orderStatus,omitempty"`
-	PageNo           int    `json:"pageNo,omitempty"`
-	PageSize         int    `json:"pageSize,omitempty"`
-	PayDateFrom      string `json:"payDateFrom,omitempty"`
-	PayDateTo        string `json:"payDateTo,omitempty"`
-	PlatformCode     string `json:"platformCode,omitempty"`
-	RefundedDateFrom string `json:"refundedDateFrom,omitempty"`
-	RefundedDateTo   string `json:"refundedDateTo,omitempty"`
-	SaleDateFrom     string `json:"saleDateFrom,omitempty"`
-	SaleDateTo       string `json:"saleDateTo,omitempty"`
-	StoreFlag        string `json:"storeFlag"`
-	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`
-	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`
+	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
+	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
+	MerchantId       string `json:"merchantId"`                 // 商户ID
+	OrderId          string `json:"orderId,omitempty"`          // 订单号
+	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态 waitPacking/等待配货 ,waitPrinting/等待打印,waitingDespatching/等待发货 ,despatched/已发货,unpaid/未付款,payed/已付款,
+	PageNo           int    `json:"pageNo,omitempty"`           // 查询页数
+	PageSize         int    `json:"pageSize,omitempty"`         // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
+	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
+	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
+	RefundedDateFrom string `json:"refundedDateFrom,omitempty"` // 退款起始时间
+	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
+	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
+	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
+	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”）
+	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
+	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
 
 // StoreCountryCode 获取订单店铺国家代码
@@ -430,8 +430,6 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 		SetResult(&res).
 		Post("/openapi/tongtool/orderImport")
 	if err == nil {
-		code := 0
-		message := ""
 		if resp.IsSuccess() {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 			if err == nil {
@@ -453,7 +451,7 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 			}
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(code, message)
+				err = tongtool.ErrorWrap(res.Code, res.Message)
 			} else {
 				err = errors.New(resp.Status())
 			}
@@ -461,6 +459,62 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 	}
 
 	return
+}
+
+// 更新订单处理（未配货前可用）
+
+type UpdateOrderTransaction struct {
+	GoodsDetailId  string `json:"goodsDetailId"`  // 货品ID与订单详情ID二者必填其一
+	OrderDetailsId string `json:"orderDetailsId"` // 订单详情ID,此参数值来自订单查询返回,此参数有值代表是需要更新货品数量或者删除货品(要看quantity参数值)，此参数有值同时会清空原有核查结果，需要重新核查，此参数没有值但goodsDetailId有值代表是需要新增货品
+	Quantity       int    `json:"quantity"`       // 数量,等于0表示删除当前货品
+}
+
+// UpdateOrderRequest 订单更新请求
+type UpdateOrderRequest struct {
+	BuyerInfo        OrderBuyer               `json:"buyerInfo"`                  // 买家信息
+	Transactions     []UpdateOrderTransaction `json:"transactions"`               // 交易记录信息,删除货品需要传对应的记录并数量传0
+	MerchantId       string                   `json:"merchantId"`                 // 商户ID
+	OrderId          string                   `json:"orderId"`                    // 通途订单ID
+	Remarks          []string                 `json:"remarks,omitempty"`          // 订单备注,只能新增
+	ShippingMethodId string                   `json:"shippingMethodId,omitempty"` // 渠道ID
+	WarehouseId      string                   `json:"warehouseId,omitempty"`      // 仓库ID
+}
+
+func (m UpdateOrderRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.OrderId, validation.Required.Error("订单 ID 不能为空")),
+	)
+}
+
+// UpdateOrder 更新订单
+// https://open.tongtool.com/apiDoc.html#/?docId=3e0d01bfe01441aa8e2071c2c88cc9fb
+func (s service) UpdateOrder(req UpdateOrderRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+	req.MerchantId = s.tongTool.MerchantId
+
+	res := struct {
+		result
+		Datas string `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/orderUpdate")
+	if err == nil {
+		if resp.IsSuccess() {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+
+	return err
 }
 
 // 作废订单处理
@@ -502,8 +556,6 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 		SetResult(&res).
 		Post("/openapi/tongtool/orderCancel")
 	if err == nil {
-		code := 0
-		message := ""
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				for _, item := range res.Datas.Array {
@@ -515,7 +567,7 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 			}
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(code, message)
+				err = tongtool.ErrorWrap(res.Code, res.Message)
 			} else {
 				err = errors.New(resp.Status())
 			}

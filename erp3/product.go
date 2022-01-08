@@ -207,9 +207,9 @@ type UpdateProductRequest struct {
 
 type ProductQueryParams struct {
 	MerchantId         string   `json:"merchantId"`
-	NextToken          string   `json:"nextToken"`
+	NextToken          string   `json:"nextToken,omitempty"`
 	ProductCategoryId  string   `json:"product_category_id,omitempty"`
-	ProductGoodsIdList []string `json:"productGoodsIdList"`
+	ProductGoodsIdList []string `json:"productGoodsIdList,omitempty"`
 	QueryType          string   `json:"queryType,omitempty"`
 	SKUList            []string `json:"skuList,omitempty"`
 	UpdatedStartTime   string   `json:"updatedStartTime,omitempty"`
@@ -281,6 +281,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 // Products 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
 func (s service) Products(params ProductQueryParams) (items []Product, nextToken string, isLastPage bool, err error) {
+	params.MerchantId = s.tongTool.MerchantId
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}

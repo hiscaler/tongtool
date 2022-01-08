@@ -7,7 +7,6 @@ import (
 
 // 采购建议查询
 func TestService_PurchaseSuggestions(t *testing.T) {
-	_, ttService := newTestTongTool()
 	number := "0007000007201603230000076503"
 	params := PurchaseSuggestionQueryParams{
 		PurchaseTemplateId: number,

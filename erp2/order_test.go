@@ -8,7 +8,6 @@ import (
 )
 
 func TestService_Orders(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := OrderQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-31 23:59:59",
@@ -29,8 +28,7 @@ func TestService_Orders(t *testing.T) {
 }
 
 func TestService_Order(t *testing.T) {
-	orderNumber := "L-M20211208145011174"
-	_, ttService := newTestTongTool()
+	orderNumber := "LDXAUS-113-1075976-2803452-M9914"
 	order, err := ttService.Order(orderNumber)
 	if err != nil {
 		if errors.Is(err, tongtool.ErrNotFound) {
@@ -45,7 +43,6 @@ func TestService_Order(t *testing.T) {
 
 func TestService_OrderNotFound(t *testing.T) {
 	orderNumber := "L-M20211208145011174-bad-number"
-	_, ttService := newTestTongTool()
 	_, err := ttService.Order(orderNumber)
 	if err == nil {
 		t.Errorf("ttService.Order except error")
@@ -57,7 +54,6 @@ func TestService_OrderNotFound(t *testing.T) {
 }
 
 func TestService_CreateOrder(t *testing.T) {
-	_, ttService := newTestTongTool()
 	req := CreateOrderRequest{
 		BuyerInfo: OrderBuyer{
 			BuyerAccount:     "test",
@@ -121,5 +117,38 @@ func TestService_CreateOrder(t *testing.T) {
 		t.Errorf("ttService.CreateOrder error: %s", err.Error())
 	} else {
 		t.Logf("orderId: %s, orderNumber: %s", orderId, orderNumber)
+	}
+}
+
+func TestService_UpdateOrder(t *testing.T) {
+	req := UpdateOrderRequest{
+		OrderId: "abc",
+		BuyerInfo: OrderBuyer{
+			BuyerAccount:     "test",
+			BuyerAddress1:    "test address1",
+			BuyerAddress2:    "test address2",
+			BuyerAddress3:    "test address3",
+			BuyerCity:        "深圳",
+			BuyerCountryCode: "CN",
+			BuyerEmail:       "happy__snow@126.com",
+			BuyerMobilePhone: "15211111111",
+			BuyerName:        "张三",
+			BuyerPhone:       "15211111113",
+			BuyerPostalCode:  "510000",
+			BuyerState:       "test",
+		},
+		Remarks:          []string{},
+		ShippingMethodId: "",
+		Transactions: []UpdateOrderTransaction{
+			{
+				GoodsDetailId: "",
+				Quantity:      2,
+			},
+		},
+		WarehouseId: "0001000007201303040000013106",
+	}
+	err := ttService.UpdateOrder(req)
+	if err != nil {
+		t.Errorf("ttService.UpdateOrder error: %s", err.Error())
 	}
 }

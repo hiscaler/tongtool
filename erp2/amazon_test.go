@@ -7,7 +7,6 @@ import (
 )
 
 func TestService_AmazonAccountSites(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := AmazonAccountSiteQueryParams{
 		Account: "a",
 	}

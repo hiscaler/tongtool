@@ -9,7 +9,6 @@ import (
 
 // 采购单查询
 func TestService_PurchaseOrders(t *testing.T) {
-	_, ttService := newTestTongTool()
 	number := "PO000007"
 	params := PurchaseOrdersQueryParams{
 		PurchaseOrderCode: number,
@@ -34,7 +33,6 @@ func TestService_PurchaseOrders(t *testing.T) {
 }
 
 func TestService_PurchaseOrdersByStatus(t *testing.T) {
-	_, ttService := newTestTongTool()
 	status := "delivering"
 	params := PurchaseOrdersQueryParams{
 		POrderStatus: status,
@@ -49,7 +47,6 @@ func TestService_PurchaseOrdersByStatus(t *testing.T) {
 
 // 创建采购单
 func TestService_CreatePurchaseOrder(t *testing.T) {
-	_, ttService := newTestTongTool()
 	details := []PurchaseOrderGoodDetail{
 		{GoodsDetailId: "8309050530202104270001946885", Quantity: 1, UnitPrice: 1.1},
 		{GoodsDetailId: "8309050530202106100002312298", Quantity: 2, UnitPrice: 2.2},
@@ -75,7 +72,6 @@ func TestService_CreatePurchaseOrder(t *testing.T) {
 }
 
 func TestService_PurchaseOrderStockInLogs(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := PurchaseOrderLogQueryParams{
 		PurchaseOrderCode:   "PO002057",
 		WarehousingDateFrom: "2021-11-01 00:00:00",
@@ -97,7 +93,6 @@ func TestService_PurchaseOrderStockInLogs(t *testing.T) {
 }
 
 func TestService_PurchaseOrderArrival(t *testing.T) {
-	_, ttService := newTestTongTool()
 	req := PurchaseOrderArrivalRequest{
 		PurchaseArrivalList: []PurchaseOrderArrivalItem{
 			{

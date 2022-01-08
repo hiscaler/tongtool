@@ -89,7 +89,7 @@ type Product struct {
 	PurchaserId          string          `json:"purchaserId"`          // 采购员id
 	SKU                  string          `json:"sku"`                  // 商品sku
 	Status               string          `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
-	SupplierName         string          `json:"supplier_name"`        // 供应商名称
+	SupplierName         string          `json:"supplierName"`         // 供应商名称
 	UpdatedDate          int             `json:"updatedDate"`          // 产品信息修改时间
 	// 自定义字段
 	IsDeleted bool `json:"isDeleted"` // 商品是否删除
@@ -266,6 +266,8 @@ type ProductDetailDescription struct {
 	Title        string `json:"title"`        // 详细描述标题
 }
 
+// 创建商品
+
 type CreateProductRequest struct {
 	Accessories          []ProductAccessory         `json:"accessories"`          // 商品配件列表
 	QualityMeasures      []ProductQualityMeasure    `json:"qualityMeasures"`      // 质检标准列表
@@ -335,6 +337,37 @@ func (m CreateProductRequest) Validate() error {
 	)
 }
 
+// CreateProduct 创建商品
+// https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca
+func (s service) CreateProduct(req CreateProductRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+	req.MerchantId = s.tongTool.MerchantId
+	res := struct {
+		result
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetResult(&res).
+		SetBody(req).
+		Post("/openapi/tongtool/createProduct")
+	if err == nil {
+		if resp.IsSuccess() {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+
+	return err
+}
+
+// 更新商品
+
 type UpdateProductRequest struct {
 	DeclareCnName        string  `json:"declareCnName"`        // 商品中文报关名称
 	DeclareEnName        string  `json:"declareEnName"`        // 商品英文报关名称
@@ -372,49 +405,6 @@ func (m UpdateProductRequest) Validate() error {
 	)
 }
 
-type ProductQueryParams struct {
-	CategoryName     string   `json:"category_name,omitempty"`
-	MerchantId       string   `json:"merchantId"`
-	PageNo           int      `json:"pageNo"`
-	PageSize         int      `json:"pageSize"`
-	ProductStatus    string   `json:"productStatus,omitempty"`
-	ProductType      string   `json:"productType"`
-	SKUAliases       []string `json:"skuAliases,omitempty"`
-	SKUs             []string `json:"skus,omitempty"`
-	SupplierName     string   `json:"supplierName,omitempty"`
-	UpdatedDateBegin string   `json:"updatedDateBegin,omitempty"`
-	UpdatedDateEnd   string   `json:"updatedDateEnd,omitempty"`
-}
-
-// CreateProduct 创建商品
-// https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca
-func (s service) CreateProduct(req CreateProductRequest) error {
-	if err := req.Validate(); err != nil {
-		return err
-	}
-	req.MerchantId = s.tongTool.MerchantId
-	res := struct {
-		result
-	}{}
-	resp, err := s.tongTool.Client.R().
-		SetResult(&res).
-		SetBody(req).
-		Post("/openapi/tongtool/createProduct")
-	if err == nil {
-		if resp.IsSuccess() {
-			err = tongtool.ErrorWrap(res.Code, res.Message)
-		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
-		}
-	}
-
-	return err
-}
-
 // UpdateProduct 更新商品
 // https://open.tongtool.com/apiDoc.html#/?docId=a928207c94184649be852b120a9f4044
 func (s service) UpdateProduct(req UpdateProductRequest) error {
@@ -446,9 +436,54 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 	return err
 }
 
+// 查询商品
+
+type ProductQueryParams struct {
+	CategoryName     string   `json:"category_name,omitempty"`    // 分类名称
+	MerchantId       string   `json:"merchantId"`                 // 商户ID
+	PageNo           int      `json:"pageNo"`                     // 查询页数
+	PageSize         int      `json:"pageSize"`                   // 每页数量
+	ProductStatus    string   `json:"productStatus,omitempty"`    // 商品状态：1试卖、2正常
+	ProductType      string   `json:"productType"`                // 销售类型：0, 普通销售/1,变参销售/2,捆绑销售
+	SKUAliases       []string `json:"skuAliases,omitempty"`       // SKU别名数组，长度不超过10
+	SKUs             []string `json:"skus,omitempty"`             // SKU数组，长度不超过10
+	SupplierName     string   `json:"supplierName,omitempty"`     // 供应商
+	UpdatedDateBegin string   `json:"updatedDateBegin,omitempty"` // 更新时间查询的起始时间
+	UpdatedDateEnd   string   `json:"updatedDateEnd,omitempty"`   // 更新时间查询的结束时间
+}
+
+func (m ProductQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding)),
+		validation.Field(&m.SKUs, validation.When(len(m.SKUs) > 0, validation.By(func(value interface{}) error {
+			items, ok := value.([]string)
+			if !ok {
+				return errors.New("无效的 SKU 数据")
+			}
+			if len(items) > 10 {
+				return errors.New("SKU 数据不能多于 10 个")
+			}
+			return nil
+		}))),
+		validation.Field(&m.SKUAliases, validation.When(len(m.SKUAliases) > 0, validation.By(func(value interface{}) error {
+			items, ok := value.([]string)
+			if !ok {
+				return errors.New("无效的 SKU 别名数据")
+			}
+			if len(items) > 10 {
+				return errors.New("SKU 别名数据不能多于 10 个")
+			}
+			return nil
+		}))),
+	)
+}
+
 // Products 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
 func (s service) Products(params ProductQueryParams) (items []Product, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
@@ -527,10 +562,6 @@ ERROR: %s
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
 func (s service) Product(typ string, sku string, isAlias bool) (item Product, err error) {
-	if len(sku) == 0 {
-		return item, errors.New("invalid param values")
-	}
-
 	if !in.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
 		typ = ProductTypeNormal
 	}

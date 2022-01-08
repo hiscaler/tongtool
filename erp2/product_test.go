@@ -1,24 +1,48 @@
 package erp2
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/config"
 	"github.com/hiscaler/tongtool/pkg/cast"
+	"os"
 	"testing"
 )
 
+var ttInstance *tongtool.TongTool
+var ttService Service
+
+func TestMain(m *testing.M) {
+	b, err := os.ReadFile("../config/config_test.json")
+	if err != nil {
+		panic(fmt.Sprintf("Read config error: %s", err.Error()))
+	}
+	var c config.Config
+	err = json.Unmarshal(b, &c)
+	if err != nil {
+		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
+	}
+
+	ttInstance = tongtool.NewTongTool(c)
+	ttService = NewService(ttInstance)
+	m.Run()
+}
+
 func TestService_Products(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := ProductQueryParams{
 		ProductType: ProductTypeNormal,
+		SKUs:        []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
 	}
-	_, _, err := ttService.Products(params)
+	products, _, err := ttService.Products(params)
 	if err != nil {
 		t.Errorf("ttService.Products error: %s", err.Error())
+	} else {
+		t.Log(cast.ToJson(products))
 	}
 }
 
 func TestService_ProductByNormalType(t *testing.T) {
-	_, ttService := newTestTongTool()
 	typ := ProductTypeNormal
 	sku := "tt-sku-a"
 	isAlias := false
@@ -37,7 +61,6 @@ func TestService_ProductByNormalType(t *testing.T) {
 
 // 变体商品查询
 func TestService_ProductByVariableType(t *testing.T) {
-	_, ttService := newTestTongTool()
 	typ := ProductTypeVariable
 	sku := "00145_2"
 	isAlias := false
@@ -55,7 +78,6 @@ func TestService_ProductByVariableType(t *testing.T) {
 }
 
 func TestService_CreateProduct(t *testing.T) {
-	ttInstance, ttService := newTestTongTool()
 	req := CreateProductRequest{
 		ProductCode:          "tt-sku-c",
 		ProductName:          "NETGEAR 路由器",
@@ -80,8 +102,56 @@ func TestService_CreateProduct(t *testing.T) {
 		PackageWidth:       120,
 		PackageHeight:      30,
 		EnablePackageNum:   1,
+		Accessories: []ProductAccessory{
+			{"", 0},
+		},
 	}
-	req.MerchantId = ttInstance.MerchantId
+	err := ttService.CreateProduct(req)
+	if err == nil {
+		fmt.Println("Create product successful.")
+	} else {
+		t.Errorf("Create product failed, error: %s", err.Error())
+	}
+}
+
+func TestService_CreateVariableProduct(t *testing.T) {
+	req := CreateProductRequest{
+		ProductCode:          "tt-sku-a-variable-1",
+		ProductName:          "NETGEAR 路由器",
+		ProductPackingEnName: "NETGEAR 4-Stream WiFi 6 Router (R6700AXS) – with 1-Year Armor Cybersecurity Subscription - AX1800 Wireless Speed (Up to 1.8 Gbps) | Coverage up to 1,500 sq. ft., 20+ devices, AX WiFi 6 w/ 1yr Security",
+		ProductPackingName:   "NETGEAR 4-Stream WiFi 6 Router (R6700AXS) – with 1-Year Armor Cybersecurity Subscription - AX1800 Wireless Speed (Up to 1.8 Gbps) | Coverage up to 1,500 sq. ft., 20+ devices, AX WiFi 6 w/ 1yr Security",
+		DeclareCnName:        "NETGEAR 路由器",
+		DeclareEnName:        "NETGEAR 4-Stream WiFi 6 Router (R6700AXS) – with 1-Year Armor Cybersecurity Subscription - AX1800 Wireless Speed (Up to 1.8 Gbps) | Coverage up to 1,500 sq. ft., 20+ devices, AX WiFi 6 w/ 1yr Security",
+		HsCode:               "123456",
+		ImgUrls: []string{
+			"https://m.media-amazon.com/images/I/518c11AD-0L._AC_UY218_.jpg",
+		},
+		DeveloperName:      "张三",
+		PurchaserName:      "李四",
+		ProductStatus:      ProductStatusOnSale,
+		ProductRemark:      "test",
+		SalesType:          ProductSaleTypeVariable,
+		ProductCurrentCost: 12,
+		ProductWeight:      100,
+		CategoryCode:       "未分类",
+		ProductLabelIds:    []string{"a", "b"},
+		PackageLength:      20,
+		PackageWidth:       120,
+		PackageHeight:      30,
+		EnablePackageNum:   1,
+		Accessories: []ProductAccessory{
+			{"", 0},
+		},
+		Goods: []ProductGoods{
+			{
+				GoodsAverageCost: 0,
+				GoodsCurrentCost: 0,
+				GoodsSKU:         "tt-sku-a-variable-1-1",
+				GoodsWeight:      0,
+				GoodsVariation:   nil,
+			},
+		},
+	}
 	err := ttService.CreateProduct(req)
 	if err == nil {
 		fmt.Println("Create product successful.")

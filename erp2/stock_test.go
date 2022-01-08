@@ -7,7 +7,6 @@ import (
 )
 
 func TestService_Stocks(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := StockQueryParams{}
 	stocks := make([]Stock, 0)
 	for {
@@ -27,7 +26,6 @@ func TestService_Stocks(t *testing.T) {
 }
 
 func TestService_StockChangeLogs(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := StockChangeLogQueryParams{
 		UpdatedDateFrom: "2018-01-01 00:00:00",
 		WarehouseName:   "万邑通美国西岸仓",

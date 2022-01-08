@@ -13,6 +13,7 @@ type Service interface {
 	FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error)                                                       // FBA 订单列表
 	ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyOrder, isLastPage bool, err error)                                           // Shopify 订单列表
 	CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                               // 手工创建订单
+	UpdateOrder(req UpdateOrderRequest) error                                                                                                  // 更新订单
 	Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
 	Order(id string) (item Order, err error)                                                                                                   // 单个订单
 	CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                               // 作废订单
@@ -41,6 +42,7 @@ type Service interface {
 	PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) // 采购建议模板列表
 	PurchaseSuggestions(params PurchaseSuggestionQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error)                         // 采购建议列表
 	QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 供应商报价查询
+	AfterSales(params AfterSaleQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
 }
 
 func NewService(tt *tongtool.TongTool) Service {
