@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/hiscaler/tongtool"
 	"strings"
-	"time"
 )
 
 // 商品状态
@@ -45,32 +44,11 @@ const (
 
 // Product 通途商品
 type Product struct {
-	ProductId          string  `json:"product_id"`
-	ProductCode        string  `json:"productCode"`
-	BrandName          string  `json:"brandName"`
-	CategoryName       string  `json:"categoryName"`
-	DeclareCnName      string  `json:"declareCnName"`
-	DeclareEnName      string  `json:"declareEnName"`
-	DeveloperName      string  `json:"developerName"`
-	HsCode             string  `json:"hsCode"`
-	InquirerName       string  `json:"inquirerName"`
-	PackageCost        float64 `json:"packageCost"`
-	PackageHeight      float64 `json:"packageHeight"`
-	PackageLength      float64 `json:"packageLength"`
-	SKU                string  `json:"sku"`
-	ProductName        string  `json:"productName"`        // 产品名称
-	ProductPackingName string  `json:"productPackingName"` // 中文配货名称
-	ProductImgList     []struct {
-		ImageGroupId string `json:"imageGroupId"`
-	} `json:"productImgList"` // 产品图片
-	LabelList []struct {
-		SKULabel string `json:"skuLabel"`
-	} `json:"labelList"`
-	Status       string          `json:"status"`
-	SupplierName string          `json:"supplier_name"`
-	GoodsDetail  []ProductDetail `json:"goodsDetail"`
-	CreatedDate  int             `json:"createdDate"`
-	UpdatedDate  time.Time       `json:"updated_date"`
+	CnHsName    string `json:"cnHsName"`    // 中文报关名称
+	CnName      string `json:"cnName"`      // 商品中文名称
+	CreatedBy   string `json:"createdBy"`   // 创建人
+	CreatedTime string `json:"createdTime"` // 创建时间
+	Description string `json:"description"` // 描述
 }
 
 // ProductDetail 通途商品详情
@@ -108,8 +86,8 @@ type ProductSupplier struct {
 
 // ProductGoodsVariation 货品属性
 type ProductGoodsVariation struct {
-	VariationName  string `json:"variationName"` // 规格名称
-	VariationValue string `json:"variationName"` // 规格值
+	VariationName  string `json:"variationName"`  // 规格名称
+	VariationValue string `json:"variationValue"` // 规格值
 }
 
 // ProductAttribute 商品属性
@@ -217,15 +195,6 @@ type ProductQueryParams struct {
 	PageSize           int      `json:"pageSize"`
 }
 
-type productResult struct {
-	result
-	Datas struct {
-		Array    []Product `json:"array"`
-		PageNo   int       `json:"pageNo"`
-		PageSize int       `json:"pageSize"`
-	} `json:"datas,omitempty"`
-}
-
 // CreateProduct 创建商品
 // https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca
 func (s service) CreateProduct(req CreateProductRequest) error {
@@ -289,7 +258,13 @@ func (s service) Products(params ProductQueryParams) (items []Product, nextToken
 		return
 	}
 	items = make([]Product, 0)
-	res := productResult{}
+	res := struct {
+		result
+		NextToken string    `json:"nextToken"`
+		Datas     []Product `json:"productApiResultBos"`
+		PageNo    int       `json:"pageNo"`
+		PageSize  int       `json:"pageSize"`
+	}{}
 	resp, err := s.tongTool.Client.R().
 		SetBody(params).
 		SetResult(&res).
@@ -297,7 +272,8 @@ func (s service) Products(params ProductQueryParams) (items []Product, nextToken
 	if err == nil {
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Datas.Array
+				items = res.Datas
+				nextToken = res.NextToken
 				isLastPage = len(items) <= params.PageSize
 			}
 		} else {
