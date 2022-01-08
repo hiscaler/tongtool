@@ -25,6 +25,12 @@ type AfterSaleItem struct {
 	Quantity    int    `json:"quantity"`      // 数量
 }
 
+type AfterSaleService struct {
+	Refunded      bool `json:"refunded"`       // 退款
+	ReturnedGoods bool `json:"returned_goods"` // 退货
+	ReissueGoods  bool `json:"reissue_goods"`  // 补发
+}
+
 // AfterSale 售后单
 type AfterSale struct {
 	AfterSaleServiceType   string          `json:"after_sale_service_type"`   // 退款退货补发类型:以三位数表示 首位表示是否退款，第二位表示是否退货，第三位表示是否补发 0--表示不执行对应操作，1--表示执行以上操作 如：111表示退款退货补发，001表示补发
@@ -50,6 +56,8 @@ type AfterSale struct {
 	SubmittedBy            string          `json:"submitted_by"`              // 提交人
 	SubmittedDate          string          `json:"submitted_date"`            // 售后单提交时间
 	WarehouseStoreType     string          `json:"warehouse_store_type"`      // 仓库退货补发状态
+	// 扩展属性
+	AfterSaleService AfterSaleService `json:"after_sale_service"` // 退款退货补发
 }
 
 type AfterSaleQueryParams struct {
@@ -117,6 +125,19 @@ ERROR: %s
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
+				for i, item := range items {
+					ass := AfterSaleService{}
+					if item.AfterSaleServiceType[0:1] == "1" {
+						ass.Refunded = true
+					}
+					if item.AfterSaleServiceType[1:2] == "1" {
+						ass.ReturnedGoods = true
+					}
+					if item.AfterSaleServiceType[2:3] == "1" {
+						ass.ReissueGoods = true
+					}
+					items[i].AfterSaleService = ass
+				}
 				isLastPage = len(items) < params.PageSize
 			}
 		} else {
