@@ -7,7 +7,6 @@ import (
 )
 
 func TestService_ShopifyOrders(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := ShopifyOrderQueryParams{
 		PayDateFrom: "2021-12-01 00:00:00",
 		PayDateTo:   "2021-12-11 23:59:59",

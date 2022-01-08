@@ -8,7 +8,6 @@ import (
 )
 
 func TestService_Orders(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := OrderQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-31 23:59:59",
@@ -29,8 +28,7 @@ func TestService_Orders(t *testing.T) {
 }
 
 func TestService_Order(t *testing.T) {
-	orderNumber := "L-M20211208145011174"
-	_, ttService := newTestTongTool()
+	orderNumber := "LDXAUS-113-1075976-2803452-M9914"
 	order, err := ttService.Order(orderNumber)
 	if err != nil {
 		if errors.Is(err, tongtool.ErrNotFound) {
@@ -45,7 +43,6 @@ func TestService_Order(t *testing.T) {
 
 func TestService_OrderNotFound(t *testing.T) {
 	orderNumber := "L-M20211208145011174-bad-number"
-	_, ttService := newTestTongTool()
 	_, err := ttService.Order(orderNumber)
 	if err == nil {
 		t.Errorf("ttService.Order except error")
@@ -57,7 +54,6 @@ func TestService_OrderNotFound(t *testing.T) {
 }
 
 func TestService_CreateOrder(t *testing.T) {
-	_, ttService := newTestTongTool()
 	req := CreateOrderRequest{
 		BuyerInfo: OrderBuyer{
 			BuyerAccount:     "test",
@@ -125,7 +121,6 @@ func TestService_CreateOrder(t *testing.T) {
 }
 
 func TestService_UpdateOrder(t *testing.T) {
-	_, ttService := newTestTongTool()
 	req := UpdateOrderRequest{
 		OrderId: "abc",
 		BuyerInfo: OrderBuyer{

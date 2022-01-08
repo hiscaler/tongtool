@@ -7,7 +7,6 @@ import (
 )
 
 func TestService_Platforms(t *testing.T) {
-	_, ttService := newTestTongTool()
 	platforms, err := ttService.Platforms()
 	if err != nil {
 		t.Errorf("ttService.Platforms error: %s", err.Error())

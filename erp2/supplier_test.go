@@ -7,7 +7,6 @@ import (
 
 // 供应商列表
 func TestService_Suppliers(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := SuppliersQueryParams{}
 	name := "栀子花开女装店"
 	found := false

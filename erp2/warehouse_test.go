@@ -7,7 +7,6 @@ import (
 )
 
 func TestService_Warehouses(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := WarehouseQueryParams{}
 	warehouses := make([]Warehouse, 0)
 	for {
@@ -33,7 +32,6 @@ func TestService_Warehouses(t *testing.T) {
 }
 
 func TestService_Warehouse(t *testing.T) {
-	_, ttService := newTestTongTool()
 	id := "a"
 	warehouse, err := ttService.Warehouse(id)
 	if err != nil {
@@ -44,7 +42,6 @@ func TestService_Warehouse(t *testing.T) {
 }
 
 func TestService_ShippingMethods(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := ShippingMethodQueryParams{WarehouseId: "8151050530202008250000047045"}
 	items, _, err := ttService.ShippingMethods(params)
 	if err != nil {

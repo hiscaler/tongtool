@@ -8,7 +8,6 @@ import (
 )
 
 func TestService_Packages(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := PackageQueryParams{
 		AssignTimeFrom: "2021-10-01 00:00:00",
 		AssignTimeTo:   "2021-12-30 23:59:59",
@@ -23,7 +22,6 @@ func TestService_Packages(t *testing.T) {
 }
 
 func TestService_Package(t *testing.T) {
-	_, ttService := newTestTongTool()
 	orderId := "L-M20211221152430918"
 	packageId := "P02914669"
 	_, err := ttService.Package(orderId, packageId)
@@ -33,8 +31,7 @@ func TestService_Package(t *testing.T) {
 }
 
 func TestService_PackageWithCache(t *testing.T) {
-	tt, ttService := newTestTongTool()
-	tt.SwitchCache(true)
+	ttInstance.SwitchCache(true)
 	times := 400
 	n := 0
 	for i := 0; i < times; i++ {
@@ -55,7 +52,6 @@ func TestService_PackageWithCache(t *testing.T) {
 }
 
 func TestService_PackageDeliver(t *testing.T) {
-	_, ttService := newTestTongTool()
 	req := PackageDeliverRequest{
 		DeliverInfos: []PackageDeliverItem{
 			{

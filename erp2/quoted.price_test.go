@@ -3,7 +3,6 @@ package erp2
 import "testing"
 
 func TestService_QuotePrices(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := QuotedPriceQueryParams{
 		QuotedPriceDateBegin: "2018-01-01 00:00:00",
 		QuotedPriceDateEnd:   "2018-01-02 00:00:00",

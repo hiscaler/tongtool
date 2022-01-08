@@ -1,13 +1,35 @@
 package erp2
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/config"
 	"github.com/hiscaler/tongtool/pkg/cast"
+	"os"
 	"testing"
 )
 
+var ttInstance *tongtool.TongTool
+var ttService Service
+
+func TestMain(m *testing.M) {
+	b, err := os.ReadFile("../config/config_test.json")
+	if err != nil {
+		panic(fmt.Sprintf("Read config error: %s", err.Error()))
+	}
+	var c config.Config
+	err = json.Unmarshal(b, &c)
+	if err != nil {
+		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
+	}
+
+	ttInstance = tongtool.NewTongTool(c)
+	ttService = NewService(ttInstance)
+	m.Run()
+}
+
 func TestService_Products(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := ProductQueryParams{
 		ProductType: ProductTypeNormal,
 		SKUs:        []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
@@ -21,7 +43,6 @@ func TestService_Products(t *testing.T) {
 }
 
 func TestService_ProductByNormalType(t *testing.T) {
-	_, ttService := newTestTongTool()
 	typ := ProductTypeNormal
 	sku := "tt-sku-a"
 	isAlias := false
@@ -40,7 +61,6 @@ func TestService_ProductByNormalType(t *testing.T) {
 
 // 变体商品查询
 func TestService_ProductByVariableType(t *testing.T) {
-	_, ttService := newTestTongTool()
 	typ := ProductTypeVariable
 	sku := "00145_2"
 	isAlias := false
@@ -58,7 +78,6 @@ func TestService_ProductByVariableType(t *testing.T) {
 }
 
 func TestService_CreateProduct(t *testing.T) {
-	ttInstance, ttService := newTestTongTool()
 	req := CreateProductRequest{
 		ProductCode:          "tt-sku-c",
 		ProductName:          "NETGEAR 路由器",
@@ -87,7 +106,6 @@ func TestService_CreateProduct(t *testing.T) {
 			{"", 0},
 		},
 	}
-	req.MerchantId = ttInstance.MerchantId
 	err := ttService.CreateProduct(req)
 	if err == nil {
 		fmt.Println("Create product successful.")
@@ -97,7 +115,6 @@ func TestService_CreateProduct(t *testing.T) {
 }
 
 func TestService_CreateVariableProduct(t *testing.T) {
-	ttInstance, ttService := newTestTongTool()
 	req := CreateProductRequest{
 		ProductCode:          "tt-sku-a-variable-1",
 		ProductName:          "NETGEAR 路由器",
@@ -135,7 +152,6 @@ func TestService_CreateVariableProduct(t *testing.T) {
 			},
 		},
 	}
-	req.MerchantId = ttInstance.MerchantId
 	err := ttService.CreateProduct(req)
 	if err == nil {
 		fmt.Println("Create product successful.")

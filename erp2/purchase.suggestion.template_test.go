@@ -7,7 +7,6 @@ import (
 
 // 采购建议模板查询
 func TestService_PurchaseSuggestionTemplates(t *testing.T) {
-	_, ttService := newTestTongTool()
 	params := PurchaseSuggestionTemplateQueryParams{
 		Names: []string{"test"},
 	}
