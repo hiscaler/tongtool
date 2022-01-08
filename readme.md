@@ -39,6 +39,7 @@ TongTool API 封装
 - PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) // 采购建议模板列表
 - PurchaseSuggestions(params PurchaseSuggestionQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error)                         // 采购建议列表
 - QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 供应商报价查询
+- AfterSales(params AfterSaleQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
 
 ## 使用方法
 
