@@ -1,7 +1,11 @@
 TongTool API 封装
 =================
 
-对 TongTool API 接口的封装，方便统一调用
+对 TongTool API 接口的封装，方便开发者调用，使用者无需关注接口认证、接口限制等繁琐的细节，提供 appKey 和 appSecret 即可使用。
+
+接口返回具体格式和数据请参考 [通途接口文档](https://open.tongtool.com/apiDoc.html#/?docId=43a41f3680e04756a122d8671f2fc0ca)
+
+针对通途返回的数据未做任何改动，所以具体格式您可以以通途开发文档为准，有部分接口为了方便开发者添加了一些扩展属性。
 
 ## 支持的方法
 
@@ -41,6 +45,13 @@ TongTool API 封装
 - QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 供应商报价查询
 - AfterSales(params AfterSaleQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
 
+## 配置
+创建连接实例时，您需要提供一个配置参数。具体说明如下：
+- debug: 是否为调试模式，开启的情况下会打印接口调用数据，在开发模式下建议开启，生产系统上则建议关闭。
+- appKey: 通途 APP Key
+- AppSecret: 通途 APP Secret
+- enableCache: 是否激活缓存，激活的情况下，10 分钟内多次发起的请求第二次起都会直接从缓存中获取后返回
+
 ## 使用方法
 
 ```go
@@ -76,3 +87,8 @@ for {
 }
 fmt.Println(fmt.Sprintf("%#v", orders))
 ```
+
+## 通途接口调用速率限制处理
+所有接口调用频率为一分钟 5 次，需要调用端做好频率控制。但是通途接口并没有在返回数据中告知剩余的可访问次数。
+
+目前如果遇到调用速率限制，会重新发起请求，最多发起两次。同时也建议在生产环境中开启缓存，进一步的避免该问题。
