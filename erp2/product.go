@@ -9,6 +9,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/gosimple/slug"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"github.com/hiscaler/tongtool/pkg/in"
 	"io/ioutil"
@@ -454,6 +455,7 @@ type ProductQueryParams struct {
 
 func (m ProductQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductStatus, validation.In("1", "2").Error("无效的商品状态")),
 		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding)),
 		validation.Field(&m.SKUs, validation.When(len(m.SKUs) > 0, validation.By(func(value interface{}) error {
 			items, ok := value.([]string)
@@ -475,6 +477,8 @@ func (m ProductQueryParams) Validate() error {
 			}
 			return nil
 		}))),
+		validation.Field(&m.UpdatedDateBegin, validation.When(m.UpdatedDateBegin != "", validation.Date(constant.DatetimeFormat).Error(" 更新时间查询的起始时间格式无效"))),
+		validation.Field(&m.UpdatedDateEnd, validation.When(m.UpdatedDateEnd != "", validation.Date(constant.DatetimeFormat).Error(" 更新时间查询的结束时间格式无效"))),
 	)
 }
 
