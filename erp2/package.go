@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
-	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
 )
 
@@ -120,8 +120,8 @@ ERROR: %s
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				for i, item := range items {
-					items[i].IsValid = !in.StringIn(item.PackageStatus, PackageStatusCancel)
-					items[i].IsCheckedBoolean = in.StringIn(item.IsChecked, "Y")
+					items[i].IsValid = !inx.StringIn(item.PackageStatus, PackageStatusCancel)
+					items[i].IsCheckedBoolean = inx.StringIn(item.IsChecked, "Y")
 				}
 				isLastPage = len(items) < params.PageSize
 			}

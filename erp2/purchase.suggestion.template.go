@@ -3,8 +3,8 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
-	"github.com/hiscaler/tongtool/pkg/in"
 )
 
 // 模板类型
@@ -63,7 +63,7 @@ func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQu
 					items = res.Datas.Array
 				} else {
 					for _, d := range res.Datas.Array {
-						if in.StringIn(d.PurchaseTemplateName, params.Names...) {
+						if inx.StringIn(d.PurchaseTemplateName, params.Names...) {
 							items = append(items, d)
 						}
 					}

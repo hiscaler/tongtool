@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
-	"github.com/hiscaler/tongtool/pkg/in"
 	"strings"
 )
 
@@ -196,7 +196,7 @@ func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
-	if !in.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
+	if !inx.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
 		// ”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”
 		// 活跃表：3个月内
 		// 1年表：3个月到15个月
@@ -240,7 +240,7 @@ ERROR: %s
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas.Array
 				for i, item := range items {
-					item.IsInvalidBoolean = !in.StringIn(item.IsInvalid, "0", "", "null")
+					item.IsInvalidBoolean = !inx.StringIn(item.IsInvalid, "0", "", "null")
 					item.IsSuspendedBoolean = item.IsSuspended == "1"
 					items[i] = item
 				}

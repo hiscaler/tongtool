@@ -1,7 +1,7 @@
 package erp2
 
 import (
-	"github.com/hiscaler/tongtool/pkg/cast"
+	"github.com/hiscaler/gox/jsonx"
 	"testing"
 )
 
@@ -26,7 +26,7 @@ func TestService_TrackingNumbers(t *testing.T) {
 	if len(trackingNumbers) != len(params.OrderIds) {
 		t.Errorf("except return %d records, actual return %d records", len(params.OrderIds), len(trackingNumbers))
 	} else {
-		t.Log(cast.ToJson(trackingNumbers))
+		t.Log(jsonx.ToJson(trackingNumbers, "[]"))
 	}
 
 	// 验证未提供订单集合参数

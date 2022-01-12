@@ -7,6 +7,7 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.12.0
+	github.com/hiscaler/gox v0.0.0-20220112110149-120139142047
 )
 
 require (

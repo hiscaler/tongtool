@@ -2,7 +2,7 @@ package erp2
 
 import (
 	"fmt"
-	"github.com/hiscaler/tongtool/pkg/cast"
+	"github.com/hiscaler/gox/jsonx"
 	"strings"
 	"testing"
 )
@@ -15,7 +15,7 @@ func TestService_Packages(t *testing.T) {
 	}
 	packages, _, err := ttService.Packages(params)
 	if err == nil {
-		fmt.Println(cast.ToJson(packages))
+		fmt.Println(jsonx.ToJson(packages, "[]"))
 	} else {
 		t.Error(err)
 	}

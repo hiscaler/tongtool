@@ -3,9 +3,9 @@ package erp2
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/config"
-	"github.com/hiscaler/tongtool/pkg/cast"
 	"os"
 	"testing"
 )
@@ -38,7 +38,7 @@ func TestService_Products(t *testing.T) {
 	if err != nil {
 		t.Errorf("ttService.Products error: %s", err.Error())
 	} else {
-		t.Log(cast.ToJson(products))
+		t.Log(jsonx.ToJson(products, "[]"))
 	}
 }
 
@@ -49,7 +49,7 @@ func TestService_ProductByNormalType(t *testing.T) {
 	product, err := ttService.Product(typ, sku, isAlias)
 	if err == nil {
 		fmt.Println("sku is ", product.SKU)
-		fmt.Println(cast.ToJson(product))
+		fmt.Println(jsonx.ToJson(product, "[]"))
 	} else {
 		t.Error(err.Error())
 	}
@@ -67,7 +67,7 @@ func TestService_ProductByVariableType(t *testing.T) {
 	product, err := ttService.Product(typ, sku, isAlias)
 	if err == nil {
 		fmt.Println("sku is ", product.SKU)
-		fmt.Println(cast.ToJson(product))
+		fmt.Println(jsonx.ToJson(product, "[]"))
 	} else {
 		t.Error(err.Error())
 	}

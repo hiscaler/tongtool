@@ -2,7 +2,7 @@ package erp2
 
 import (
 	"fmt"
-	"github.com/hiscaler/tongtool/pkg/cast"
+	"github.com/hiscaler/gox/jsonx"
 	"testing"
 )
 
@@ -16,7 +16,7 @@ func TestService_AmazonAccountSites(t *testing.T) {
 		if err != nil {
 			t.Errorf("ttService.AmazonAccountSites error: %s", err.Error())
 		} else {
-			fmt.Println(cast.ToJson(pageLogs))
+			fmt.Println(jsonx.ToJson(pageLogs, "[]"))
 			logs = append(logs, pageLogs...)
 		}
 		if isLastPage || err != nil {

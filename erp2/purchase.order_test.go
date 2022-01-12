@@ -2,7 +2,7 @@ package erp2
 
 import (
 	"fmt"
-	"github.com/hiscaler/tongtool/pkg/cast"
+	"github.com/hiscaler/gox/jsonx"
 	"strings"
 	"testing"
 )
@@ -23,7 +23,7 @@ func TestService_PurchaseOrders(t *testing.T) {
 			}
 		}
 		if exists {
-			fmt.Println(cast.ToJson(orders))
+			fmt.Println(jsonx.ToJson(orders, "[]"))
 		} else {
 			t.Errorf("not found %s", number)
 		}
@@ -39,7 +39,7 @@ func TestService_PurchaseOrdersByStatus(t *testing.T) {
 	}
 	orders, _, err := ttService.PurchaseOrders(params)
 	if err == nil {
-		fmt.Println(cast.ToJson(orders))
+		fmt.Println(jsonx.ToJson(orders, "[]"))
 	} else {
 		t.Error(err)
 	}

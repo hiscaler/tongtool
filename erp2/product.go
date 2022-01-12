@@ -8,10 +8,10 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/gosimple/slug"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
-	"github.com/hiscaler/tongtool/pkg/in"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -566,7 +566,7 @@ ERROR: %s
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
 func (s service) Product(typ string, sku string, isAlias bool) (item Product, err error) {
-	if !in.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
+	if !inx.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
 		typ = ProductTypeNormal
 	}
 

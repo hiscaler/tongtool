@@ -2,7 +2,7 @@ package erp2
 
 import (
 	"fmt"
-	"github.com/hiscaler/tongtool/pkg/cast"
+	"github.com/hiscaler/gox/jsonx"
 	"testing"
 )
 
@@ -11,6 +11,6 @@ func TestService_Platforms(t *testing.T) {
 	if err != nil {
 		t.Errorf("ttService.Platforms error: %s", err.Error())
 	} else {
-		fmt.Println(cast.ToJson(platforms))
+		fmt.Println(jsonx.ToJson(platforms, "[]"))
 	}
 }

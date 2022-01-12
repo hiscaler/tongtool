@@ -1,7 +1,7 @@
 package erp2
 
 import (
-	"github.com/hiscaler/tongtool/pkg/cast"
+	"github.com/hiscaler/gox/jsonx"
 	"testing"
 )
 
@@ -17,5 +17,5 @@ func TestService_AfterSales(t *testing.T) {
 	} else {
 		items = append(items, pageItems...)
 	}
-	t.Log(cast.ToJson(items))
+	t.Log(jsonx.ToJson(items, "[]"))
 }

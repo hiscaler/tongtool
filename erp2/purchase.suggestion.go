@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/pkg/cache"
-	"github.com/hiscaler/tongtool/pkg/in"
 )
 
 // PurchaseSuggestion 采购建议
@@ -91,8 +91,8 @@ ERROR: %s
 					items = res.Datas.Array
 				} else {
 					for _, d := range res.Datas.Array {
-						if len(params.SKUs) != 0 && !in.StringIn(d.GoodsSKU, params.SKUs...) ||
-							len(params.WarehouseNames) != 0 && !in.StringIn(d.WarehouseName, params.WarehouseNames...) {
+						if len(params.SKUs) != 0 && !inx.StringIn(d.GoodsSKU, params.SKUs...) ||
+							len(params.WarehouseNames) != 0 && !inx.StringIn(d.WarehouseName, params.WarehouseNames...) {
 							continue
 						}
 						items = append(items, d)
