@@ -161,11 +161,18 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 			default:
 				imageExt = filepath.Ext(img)
 			}
-			name := slug.Make(p.SKU)
+			replacer := strings.NewReplacer("-", "", "_", "")
+			name := replacer.Replace(slug.Make(p.SKU))
 			dirs := []string{saveDir}
-			for i := 0; i < len(name); i += 2 {
-				dirs = append(dirs, name[i:i+2])
+			n := len(name)
+			for i := 0; i < n; i += 2 {
+				j := 2
+				if i >= n {
+					j = 1
+				}
+				dirs = append(dirs, name[i:j])
 				if len(dirs) >= 3 {
+					// Two levels dir
 					break
 				}
 			}
