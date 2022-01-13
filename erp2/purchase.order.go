@@ -242,8 +242,30 @@ type PurchaseOrderStockInRequest struct {
 	PurchaseOrderId string                     `json:"purchaseOrderId"` // 采购单 ID
 }
 
+func (m PurchaseOrderStockInRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ArrivalInfoList, validation.Required.Error("到货货品信息不能为空"), validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			item, ok := value.(PurchaseOrderStockInItem)
+			if !ok {
+				return errors.New("无效的到货商品")
+			}
+			if strings.TrimSpace(item.GoodsDetailId) == "" {
+				return errors.New("通途货品 ID 不能为空")
+			}
+			if item.Quantity < 1 {
+				return errors.New("采购数量不能小于 1")
+			}
+			return nil
+		}))),
+		validation.Field(&m.PurchaseOrderId, validation.Required.Error("采购单 ID不能为空")),
+	)
+}
+
 // PurchaseOrderStockIn 采购单入库
 func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		result
@@ -300,8 +322,18 @@ type PurchaseOrderLogQueryParams struct {
 	WarehousingDateTo   string `json:"warehousingDateTo"`           // 截止入库时间
 }
 
+func (m PurchaseOrderLogQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.WarehousingDateFrom, validation.When(m.WarehousingDateFrom != "", validation.Required.Error("起始入库时间不恩呢个为空"), validation.Date(constant.DatetimeFormat).Error("起始入库时间格式错误"))),
+		validation.Field(&m.WarehousingDateTo, validation.When(m.WarehousingDateTo != "", validation.Required.Error("截止入库时间不恩呢个为空"), validation.Date(constant.DatetimeFormat).Error("截止入库时间格式错误"))),
+	)
+}
+
 // PurchaseOrderStockInLogs 采购单入库记录查询
 func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
