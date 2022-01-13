@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/hiscaler/gox/inx"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
-	"github.com/hiscaler/tongtool/pkg/cache"
 )
 
 // 模板类型
@@ -45,7 +45,7 @@ func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQu
 	}
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return

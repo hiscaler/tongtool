@@ -6,9 +6,9 @@ import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/isx"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
-	"github.com/hiscaler/tongtool/pkg/cache"
 	"strings"
 )
 
@@ -98,7 +98,7 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	}
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return
@@ -343,7 +343,7 @@ func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (i
 	}
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return

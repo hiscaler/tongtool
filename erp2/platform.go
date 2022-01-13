@@ -3,8 +3,8 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
-	"github.com/hiscaler/tongtool/pkg/cache"
 )
 
 // Platform 平台
@@ -29,7 +29,7 @@ type PlatformSite struct {
 func (s service) Platforms() (items []Platform, err error) {
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey("Platforms")
+		cacheKey = keyx.Generate("Platforms")
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return

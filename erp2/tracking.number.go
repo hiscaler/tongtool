@@ -3,8 +3,8 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
-	"github.com/hiscaler/tongtool/pkg/cache"
 	"strings"
 )
 
@@ -46,7 +46,7 @@ func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []Trac
 	}
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return

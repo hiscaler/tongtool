@@ -9,9 +9,9 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/gosimple/slug"
 	"github.com/hiscaler/gox/inx"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
-	"github.com/hiscaler/tongtool/pkg/cache"
 	"io/ioutil"
 	"math/big"
 	"net/http"
@@ -513,7 +513,7 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return

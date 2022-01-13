@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
-	"github.com/hiscaler/tongtool/pkg/cache"
 	"time"
 )
 
@@ -62,7 +62,7 @@ func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool
 	}
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return
@@ -165,7 +165,7 @@ func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []Stoc
 	}
 	var cacheKey string
 	if s.tongTool.EnableCache {
-		cacheKey = cache.GenerateKey(params)
+		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
 			if e = json.Unmarshal(b, &items); e == nil {
 				return
@@ -207,7 +207,7 @@ ERROR: %s
 		}
 	}
 
-	if err == nil && s.tongTool.EnableCache  && len(items) > 0 {
+	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
 		if b, e := json.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
