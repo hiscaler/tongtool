@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/isx"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 	"github.com/hiscaler/tongtool/pkg/cache"
 	"strings"
 )
@@ -59,9 +60,32 @@ type PurchaseOrdersQueryParams struct {
 	PageSize          int    `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 }
 
+func (m PurchaseOrdersQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.POrderStatus, validation.When(m.POrderStatus != "", validation.In("delivering", "pReceivedAndWaitM", "partialReceived", "Received", "cancel", "NotPaymentApply", "paymentApply", "paymentCancel", "payed", "partialPayed").Error("无效的采购单状态"))),
+		validation.Field(&m.PurchaseDateFrom, validation.When(m.PurchaseDateFrom != "", validation.Date(constant.DatetimeFormat).Error("采购日期开始时间格式有误"))),
+		validation.Field(&m.PurchaseDateTo, validation.When(m.PurchaseDateTo != "", validation.Date(constant.DatetimeFormat).Error("采购日期结束时间格式有误"))),
+		validation.Field(&m.SKUs, validation.When(len(m.SKUs) > 0, validation.By(func(value interface{}) error {
+			items, ok := value.([]string)
+			if !ok {
+				return errors.New("无效的 SKU 数据")
+			}
+			if len(items) > 10 {
+				return errors.New("SKU 数据不能多于 10 个")
+			}
+			return nil
+		}))),
+		validation.Field(&m.UpdatedDateFrom, validation.When(m.UpdatedDateFrom != "", validation.Date(constant.DatetimeFormat).Error("采购单更新开始时间格式有误"))),
+		validation.Field(&m.UpdatedDateTo, validation.When(m.UpdatedDateTo != "", validation.Date(constant.DatetimeFormat).Error("采购单更新结束时间格式有误"))),
+	)
+}
+
 // PurchaseOrders 采购单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0dd564d52ce34ad0afce1f304d6b7824
 func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageNo <= 0 {
 		params.PageNo = 1
