@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/pkg/cache"
 )
 
 // 模板类型
@@ -42,6 +43,22 @@ func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQu
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
 	}
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = cache.GenerateKey(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
 	items = make([]PurchaseSuggestionTemplate, 0)
 	res := struct {
 		result
@@ -58,7 +75,6 @@ func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQu
 	if err == nil {
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-
 				if len(params.Names) == 0 {
 					items = res.Datas.Array
 				} else {
@@ -76,6 +92,16 @@ func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQu
 			} else {
 				err = errors.New(resp.Status())
 			}
+		}
+	}
+	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
+		if b, e := json.Marshal(&items); e == nil {
+			e = s.tongTool.Cache.Set(cacheKey, b)
+			if e != nil {
+				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("items marshal error: %s", err.Error())
 		}
 	}
 	return

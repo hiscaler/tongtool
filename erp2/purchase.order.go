@@ -116,7 +116,7 @@ ERROR: %s
 		}
 	}
 
-	if err == nil && s.tongTool.EnableCache {
+	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
 		if b, e := json.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
@@ -329,7 +329,7 @@ ERROR: %s
 		}
 	}
 
-	if err == nil && s.tongTool.EnableCache {
+	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
 		if b, e := json.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
