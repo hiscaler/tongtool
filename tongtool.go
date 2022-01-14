@@ -63,7 +63,7 @@ type app struct {
 	CreatedBy          string  `json:"createdBy"`
 	UpdatedDate        int     `json:"updatedDate"`
 	UpdatedBy          string  `json:"updatedBy"`
-	Timestamp          int     `json:"timestamp"`
+	Timestamp          int64   `json:"timestamp"`
 	Sign               string  `json:"sign"`
 	Valid              bool    `json:"valid"`
 }
@@ -108,7 +108,7 @@ func NewTongTool(config config.Config) *TongTool {
 			client.SetQueryParams(map[string]string{
 				"app_token": ttInstance.application.AppToken,
 				"sign":      ttInstance.application.Sign,
-				"timestamp": strconv.Itoa(ttInstance.application.Timestamp),
+				"timestamp": strconv.FormatInt(ttInstance.application.Timestamp, 10),
 			})
 			return nil
 		}).
@@ -186,10 +186,7 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 }
 
 func auth(appKey, appSecret string, debug bool) (application app, err error) {
-	client := resty.New().
-		SetDebug(debug).
-		SetBaseURL("https://open.tongtool.com/open-platform-service")
-
+	client := resty.New().SetDebug(debug).SetBaseURL("https://open.tongtool.com/open-platform-service")
 	if debug {
 		client.EnableTrace()
 	}
@@ -211,7 +208,7 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 		err = errors.New("get token failed")
 	}
 
-	timestamp := int(time.Now().UnixNano() / 1e6)
+	timestamp := time.Now().Unix()
 	appToken := tokenResponse.Datas
 	sign := cryptox.Md5String(fmt.Sprintf("app_token%stimestamp%d%s", appToken, timestamp, appSecret))
 	appResponse := struct {
