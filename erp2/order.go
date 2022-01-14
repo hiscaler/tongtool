@@ -180,7 +180,13 @@ func (o Order) StoreCountryCode() string {
 		}
 	} else {
 		// Todo 美国的买家买的加拿大站点的怎么办？
-		code = o.BuyerCountry
+		s := o.BuyerCountry
+		if s != "" {
+			s = strings.TrimSpace(s)
+		}
+		if inx.StringIn(s, constant.CountryUS, constant.CountryCA, constant.CountryDE, constant.CountryGB, constant.CountryFR, constant.CountryES, constant.CountryIT, constant.CountryJP, constant.CountryMX, constant.CountryAU, constant.CountryIN, constant.CountryAE, constant.CountryTR, constant.CountrySG, constant.CountryNL, constant.CountryBR, constant.CountrySA, constant.CountrySE, constant.CountryPL) {
+			code = strings.ToUpper(s)
+		}
 	}
 
 	return code
