@@ -1,13 +1,12 @@
 package tongtool
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/allegro/bigcache/v3"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/cryptox"
 	"github.com/hiscaler/tongtool/config"
 	"log"
 	"net/http"
@@ -214,9 +213,7 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 
 	timestamp := int(time.Now().UnixNano() / 1e6)
 	appToken := tokenResponse.Datas
-	h := md5.New()
-	h.Write([]byte(fmt.Sprintf("app_token%stimestamp%d%s", appToken, timestamp, appSecret)))
-	sign := hex.EncodeToString(h.Sum(nil))
+	sign := cryptox.Md5String(fmt.Sprintf("app_token%stimestamp%d%s", appToken, timestamp, appSecret))
 	appResponse := struct {
 		Success bool        `json:"success"`
 		Code    int         `json:"code"`
