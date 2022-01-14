@@ -114,8 +114,8 @@ func NewTongTool(config config.Config) *TongTool {
 			return nil
 		}).
 		SetRetryCount(2).
-		SetRetryWaitTime(10 * time.Second).
-		SetRetryMaxWaitTime(20 * time.Second).
+		SetRetryWaitTime(5 * time.Second).
+		SetRetryMaxWaitTime(10 * time.Second).
 		AddRetryCondition(func(response *resty.Response, err error) bool {
 			if response == nil {
 				return false
