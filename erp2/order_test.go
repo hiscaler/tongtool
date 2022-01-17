@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/hiscaler/tongtool"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -25,6 +26,35 @@ func TestService_Orders(t *testing.T) {
 		}
 		params.PageNo++
 	}
+}
+
+func TestService_GoroutineOrders(t *testing.T) {
+	params := OrderQueryParams{
+		SaleDateFrom: "2021-12-01 00:00:00",
+		SaleDateTo:   "2021-12-01 23:59:59",
+	}
+	var wg sync.WaitGroup
+	for i := 0; i <= 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			orders := make([]Order, 0)
+			for {
+				pageOrders, isLastPage, err := ttService.Orders(params)
+				if err != nil {
+					t.Errorf("ttService.Orders error: %s", err.Error())
+				} else {
+					orders = append(orders, pageOrders...)
+				}
+				if isLastPage || err != nil {
+					break
+				}
+				params.PageNo++
+			}
+			t.Logf("%d: found %d orders", i, len(orders))
+		}()
+	}
+	wg.Wait()
 }
 
 func TestService_Order(t *testing.T) {
