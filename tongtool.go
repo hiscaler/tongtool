@@ -105,7 +105,7 @@ func NewTongTool(config config.Config) *TongTool {
 				application.AppTokenExpireDate /= 1000
 				ttInstance.application = application
 			}
-			client.SetQueryParams(map[string]string{
+			request.SetQueryParams(map[string]string{
 				"app_token": ttInstance.application.AppToken,
 				"sign":      ttInstance.application.Sign,
 				"timestamp": strconv.FormatInt(ttInstance.application.Timestamp, 10),
