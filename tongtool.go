@@ -198,14 +198,16 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 		Datas   string      `json:"datas"`
 		Other   interface{} `json:"other"`
 	}{}
-	_, err = client.R().
+	resp, err := client.R().
 		SetResult(&tokenResponse).
 		Get(fmt.Sprintf("/devApp/appToken?accessKey=%s&secretAccessKey=%s", appKey, appSecret))
 	if err != nil {
 		return
 	}
-	if !tokenResponse.Success {
-		err = errors.New("get token failed")
+	if resp.IsError() {
+		return application, ErrorWrap(resp.StatusCode(), resp.String())
+	} else if !tokenResponse.Success {
+		return application, ErrorWrap(tokenResponse.Code, tokenResponse.Message)
 	}
 
 	timestamp := time.Now().Unix()
@@ -218,15 +220,16 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 		Datas   []app       `json:"datas"`
 		Other   interface{} `json:"other"`
 	}{}
-	_, err = client.R().
+	resp, err = client.R().
 		SetResult(&appResponse).
 		Get(fmt.Sprintf("/partnerOpenInfo/getAppBuyerList?app_token=%s&timestamp=%d&sign=%s", appToken, timestamp, sign))
 	if err != nil {
 		return
 	}
-	if !appResponse.Success || len(appResponse.Datas) == 0 {
-		err = errors.New("getAppBuyerList data invalid")
-		return
+	if resp.IsError() {
+		return application, ErrorWrap(resp.StatusCode(), resp.String())
+	} else if !appResponse.Success || len(appResponse.Datas) == 0 {
+		return application, ErrorWrap(appResponse.Code, appResponse.Message)
 	}
 
 	application = appResponse.Datas[0]
