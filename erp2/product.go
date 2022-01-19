@@ -615,6 +615,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 									if strings.EqualFold(sku, label.SKULabel) {
 										exists = true
 										item = p
+										break
 									}
 								}
 							} else {
