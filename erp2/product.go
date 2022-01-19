@@ -97,14 +97,12 @@ type Product struct {
 
 // GoodsDetailIndex 商品详情下标值
 func (p Product) GoodsDetailIndex() int {
-	index := -1
-	for i, d := range p.GoodsDetail {
-		if strings.EqualFold(d.GoodsSKU, p.SKU) {
-			index = i
-			break
+	for k, v := range p.GoodsDetail {
+		if strings.EqualFold(v.GoodsSKU, p.SKU) {
+			return k
 		}
 	}
-	return index
+	return -1
 }
 
 // Image 商品图片
@@ -126,15 +124,12 @@ func (p Product) Image() (path string) {
 // 作用：通途的图片地址中可能包含中文和其他一些特殊字符，导致在数据在某些场景下不能正确地使用，所以如果地址不是规范的，可以使用 SaveImage 方法将图片下载保存到本地再使用
 func (p Product) ImageIsNormalized() bool {
 	s := p.Image()
-	if s != "" {
-		re, _ := regexp.Compile(`^(?i)http[s]?://[a-zA-Z0-9.-/]+$`)
-		if re.MatchString(s) {
-			return true
-		} else {
-			return false
-		}
+	if s == "" {
+		return false
 	}
-	return false
+
+	re, _ := regexp.Compile(`^(?i)http[s]?://[a-zA-Z0-9.-/]+$`)
+	return re.MatchString(s)
 }
 
 // SaveImage 下载并保存图片
