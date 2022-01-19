@@ -134,7 +134,7 @@ type OrderQueryParams struct {
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
 
-// StoreCountryCode 获取订单店铺国家代码
+// StoreCountryCode 获取订单店铺所在国家代码
 func (o Order) StoreCountryCode() string {
 	code := ""
 	if o.WebStoreItemSite != "" {
@@ -178,14 +178,13 @@ func (o Order) StoreCountryCode() string {
 		case "100020":
 			code = constant.CountryPL
 		}
-	} else {
+	} else if o.BuyerCountry != "" {
 		// Todo 美国的买家买的加拿大站点的怎么办？
-		s := o.BuyerCountry
-		if s != "" {
-			s = strings.TrimSpace(s)
-		}
-		if inx.StringIn(s, constant.CountryUS, constant.CountryCA, constant.CountryDE, constant.CountryGB, constant.CountryFR, constant.CountryES, constant.CountryIT, constant.CountryJP, constant.CountryMX, constant.CountryAU, constant.CountryIN, constant.CountryAE, constant.CountryTR, constant.CountrySG, constant.CountryNL, constant.CountryBR, constant.CountrySA, constant.CountrySE, constant.CountryPL) {
-			code = strings.ToUpper(s)
+		country := strings.TrimSpace(o.BuyerCountry)
+		if country != "" {
+			if inx.StringIn(country, constant.CountryUS, constant.CountryCA, constant.CountryDE, constant.CountryGB, constant.CountryFR, constant.CountryES, constant.CountryIT, constant.CountryJP, constant.CountryMX, constant.CountryAU, constant.CountryIN, constant.CountryAE, constant.CountryTR, constant.CountrySG, constant.CountryNL, constant.CountryBR, constant.CountrySA, constant.CountrySE, constant.CountryPL) {
+				code = strings.ToUpper(country)
+			}
 		}
 	}
 
