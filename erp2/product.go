@@ -1,19 +1,18 @@
 package erp2
 
 import (
-	"bytes"
-	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/gosimple/slug"
+	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/gox/keyx"
+	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"io/ioutil"
-	"math/big"
 	"net/http"
 	"os"
 	"path"
@@ -141,70 +140,61 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		return
 	}
 	response, err := http.Get(img)
-	if err == nil {
-		defer response.Body.Close()
-		var b []byte
-		b, err = ioutil.ReadAll(response.Body)
-		if err == nil {
-			var imageExt string
-			switch http.DetectContentType(b) {
-			case "image/jpeg":
-				imageExt = ".jpg"
-			case "image/png":
-				imageExt = ".png"
-			case "image/gif":
-				imageExt = ".gif"
-			case "image/bmp":
-				imageExt = ".bmp"
-			case "image/webp":
-				imageExt = ".webp"
-			default:
-				imageExt = filepath.Ext(img)
-			}
-			replacer := strings.NewReplacer("-", "", "_", "")
-			name := replacer.Replace(slug.Make(p.SKU))
-			dirs := []string{saveDir}
-			n := len(name)
-			for i := 0; i < n; i += 2 {
-				j := 2
-				if i >= n {
-					j = 1
-				}
-				dirs = append(dirs, name[i:j])
-				if len(dirs) >= 3 {
-					// Two levels dir
-					break
-				}
-			}
-			filename := path.Join(dirs...)
+	if err != nil {
+		return
+	}
 
-			dirExists := false
-			fi, e := os.Stat(filename)
-			if !os.IsNotExist(e) {
-				dirExists = !fi.IsDir()
-			}
+	defer response.Body.Close()
+	b, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
 
-			if !dirExists {
-				if err = os.MkdirAll(filename, os.ModePerm); err != nil {
-					return
-				}
-			}
+	var imageExt string
+	switch http.DetectContentType(b) {
+	case "image/jpeg":
+		imageExt = ".jpg"
+	case "image/png":
+		imageExt = ".png"
+	case "image/gif":
+		imageExt = ".gif"
+	case "image/bmp":
+		imageExt = ".bmp"
+	case "image/webp":
+		imageExt = ".webp"
+	default:
+		imageExt = filepath.Ext(img)
+	}
+	replacer := strings.NewReplacer("-", "", "_", "")
+	name := replacer.Replace(slug.Make(p.SKU))
+	maxDirLevels := 2
+	dirs := make([]string, 0)
+	if saveDir != "" {
+		maxDirLevels++
+		dirs = append(dirs, saveDir)
+	}
 
-			randomNumberFunc := func(len int) string {
-				str := "0123456789"
-				number := ""
-				bigInt := big.NewInt(int64(bytes.NewBufferString(str).Len()))
-				for i := 0; i < len; i++ {
-					randomInt, _ := rand.Int(rand.Reader, bigInt)
-					number += string(str[randomInt.Int64()])
-				}
-				return number
-			}
-
-			imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", name, randomNumberFunc(8), imageExt))
-			err = os.WriteFile(imagePath, b, 0666)
+	n := len(name)
+	for i := 0; i < n; i += 2 {
+		j := 2
+		if i >= n {
+			j = 1
+		}
+		dirs = append(dirs, name[i:j])
+		if len(dirs) >= maxDirLevels {
+			break
 		}
 	}
+	filename := path.Join(dirs...)
+	if !filex.Exists(filename) {
+		if err = os.MkdirAll(filename, os.ModePerm); err != nil {
+			return
+		}
+	}
+
+	imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", name, randx.Number(8), imageExt))
+	err = os.WriteFile(imagePath, b, 0666)
+
 	return
 }
 

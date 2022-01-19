@@ -20,6 +20,8 @@ github.com/hiscaler/gox v0.0.0-20220113052819-06477396b0e9 h1:m8HCWn4qFoaqZHMZ/0
 github.com/hiscaler/gox v0.0.0-20220113052819-06477396b0e9/go.mod h1:ZoEDYprDRKYm5LZbmSwqahvsJcX4UQ3DSP3KqHmMBq8=
 github.com/hiscaler/gox v0.0.0-20220114014913-b26f837b456d h1:eZYVTqytd4SlGTOA9D9ePOPr7dNVloeaLrGSo4r6De0=
 github.com/hiscaler/gox v0.0.0-20220114014913-b26f837b456d/go.mod h1:ZoEDYprDRKYm5LZbmSwqahvsJcX4UQ3DSP3KqHmMBq8=
+github.com/hiscaler/gox v0.0.0-20220118081914-e4865be7b432 h1:bP6byY+BCXJTXun22H7uosO2XFS40Jw6nawcu8/ytZY=
+github.com/hiscaler/gox v0.0.0-20220118081914-e4865be7b432/go.mod h1:ZoEDYprDRKYm5LZbmSwqahvsJcX4UQ3DSP3KqHmMBq8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
