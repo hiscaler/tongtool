@@ -109,8 +109,13 @@ func (p Product) GoodsDetailIndex() int {
 
 // Image 商品图片
 func (p Product) Image() (path string) {
+	n := len(p.ProductImgList)
+	if n == 0 {
+		return
+	}
 	index := p.GoodsDetailIndex()
-	if index != -1 && len(p.ProductImgList) > 0 && (index+1) <= len(p.ProductImgList) {
+	if index >= 0 && index < n {
+		// 0 ~ n-1
 		path = p.ProductImgList[index].ImageGroupId
 	}
 	return
