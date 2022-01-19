@@ -140,49 +140,49 @@ func (o Order) StoreCountryCode() string {
 	if o.WebStoreItemSite != "" {
 		switch o.WebStoreItemSite {
 		case "100002":
-			code = constant.CountryUS
+			code = constant.CountryCodeAmerica
 		case "100003":
-			code = constant.CountryGB
+			code = constant.CountryCodeUK
 		case "100004":
-			code = constant.CountryCA
+			code = constant.CountryCodeCanada
 		case "100005":
-			code = constant.CountryDE
+			code = constant.CountryCodeGermany
 		case "100006":
-			code = constant.CountryES
+			code = constant.CountryCodeSpain
 		case "100007":
-			code = constant.CountryFR
+			code = constant.CountryCodeFrance
 		case "100008":
-			code = constant.CountryIT
+			code = constant.CountryCodeItaly
 		case "100009":
-			code = constant.CountryJP
+			code = constant.CountryCodeJapan
 		case "100010":
-			code = constant.CountryMX
+			code = constant.CountryCodeMexico
 		case "100011":
-			code = constant.CountryAU
+			code = constant.CountryCodeAustralian
 		case "100012":
-			code = constant.CountryIN
+			code = constant.CountryCodeIndia
 		case "100013":
-			code = constant.CountryAE
+			code = constant.CountryCodeUnitedArabEmirates
 		case "100014":
-			code = constant.CountryTR
+			code = constant.CountryCodeTurkey
 		case "100015":
-			code = constant.CountrySG
+			code = constant.CountryCodeSingapore
 		case "100016":
-			code = constant.CountryNL
+			code = constant.CountryCodeNetherlands
 		case "100017":
-			code = constant.CountryBR
+			code = constant.CountryCodeBrazil
 		case "100018":
-			code = constant.CountrySA
+			code = constant.CountryCodeSaudiArabia
 		case "100019":
-			code = constant.CountrySE
+			code = constant.CountryCodeSweden
 		case "100020":
-			code = constant.CountryPL
+			code = constant.CountryCodePoland
 		}
 	} else if o.BuyerCountry != "" {
 		// Todo 美国的买家买的加拿大站点的怎么办？
 		country := strings.TrimSpace(o.BuyerCountry)
 		if country != "" {
-			if inx.StringIn(country, constant.CountryUS, constant.CountryCA, constant.CountryDE, constant.CountryGB, constant.CountryFR, constant.CountryES, constant.CountryIT, constant.CountryJP, constant.CountryMX, constant.CountryAU, constant.CountryIN, constant.CountryAE, constant.CountryTR, constant.CountrySG, constant.CountryNL, constant.CountryBR, constant.CountrySA, constant.CountrySE, constant.CountryPL) {
+			if inx.StringIn(country, constant.CountryCodeAmerica, constant.CountryCodeCanada, constant.CountryCodeGermany, constant.CountryCodeUK, constant.CountryCodeFrance, constant.CountryCodeSpain, constant.CountryCodeItaly, constant.CountryCodeJapan, constant.CountryCodeMexico, constant.CountryCodeAustralian, constant.CountryCodeIndia, constant.CountryCodeUnitedArabEmirates, constant.CountryCodeTurkey, constant.CountryCodeSingapore, constant.CountryCodeNetherlands, constant.CountryCodeBrazil, constant.CountryCodeSaudiArabia, constant.CountryCodeSweden, constant.CountryCodePoland) {
 				code = strings.ToUpper(country)
 			}
 		}
