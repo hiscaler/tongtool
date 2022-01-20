@@ -19,21 +19,15 @@ type SaleAccount struct {
 }
 
 type SaleAccountQueryParams struct {
-	MerchantId string `json:"merchantId"`         // 商户ID
-	PageNo     int    `json:"pageNo,omitempty"`   // 查询页数
-	PageSize   int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	Paging
+	MerchantId string `json:"merchantId"` // 商户ID
 }
 
 // SaleAccounts 商户账号列表
 // https://open.tongtool.com/apiDoc.html#/?docId=1e81e4bbae0b4d60b5f7777fc629ba2a
 func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

@@ -38,10 +38,9 @@ type FBAOrder struct {
 }
 
 type FBAOrderQueryParams struct {
+	Paging
 	Account          string `json:"account,omitempty"`          // 速卖通登录账号
 	MerchantId       string `json:"merchantId"`                 // 商户ID
-	PageNo           int    `json:"pageNo,omitempty"`           // 查询页数
-	PageSize         int    `json:"pageSize,omitempty"`         // 每页数量
 	PurchaseDateFrom string `json:"purchaseDateFrom,omitempty"` // 订单购买时间开始时间
 	PurchaseDateTo   string `json:"purchaseDateTo,omitempty"`   // 订单购买时间结束时间
 }
@@ -61,12 +60,7 @@ func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLast
 	}
 
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

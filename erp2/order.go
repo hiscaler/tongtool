@@ -115,13 +115,12 @@ type Order struct {
 }
 
 type OrderQueryParams struct {
+	Paging
 	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
 	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
 	MerchantId       string `json:"merchantId"`                 // 商户ID
 	OrderId          string `json:"orderId,omitempty"`          // 订单号
 	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态 waitPacking/等待配货 ,waitPrinting/等待打印,waitingDespatching/等待发货 ,despatched/已发货,unpaid/未付款,payed/已付款,
-	PageNo           int    `json:"pageNo,omitempty"`           // 查询页数
-	PageSize         int    `json:"pageSize,omitempty"`         // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
 	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
 	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
@@ -195,12 +194,7 @@ func (o Order) StoreCountryCode() string {
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	if !inx.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
 		// ”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”
 		// 活跃表：3个月内
@@ -280,9 +274,7 @@ func (s service) Order(orderId string) (item Order, err error) {
 	}
 
 	params := OrderQueryParams{
-		OrderId:  orderId,
-		PageNo:   1,
-		PageSize: s.tongTool.QueryDefaultValues.PageSize,
+		OrderId: orderId,
 	}
 
 	exists := false

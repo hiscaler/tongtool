@@ -27,22 +27,16 @@ type PurchaseSuggestionTemplate struct {
 }
 
 type PurchaseSuggestionTemplateQueryParams struct {
-	MerchantId string   `json:"merchantId"`                   // 商户ID
-	PageNo     int      `json:"pageNo,omitempty,omitempty"`   // 查询页数
-	PageSize   int      `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
-	Names      []string `json:"names,omitempty"`              // 采购建议模板名称（扩展）
+	Paging
+	MerchantId string   `json:"merchantId"`      // 商户ID
+	Names      []string `json:"names,omitempty"` // 采购建议模板名称（扩展）
 }
 
 // PurchaseSuggestionTemplates 采购建议模板列表
 // https://open.tongtool.com/apiDoc.html#/?docId=129858303d494c6b90b552eeb5a7514f
 func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

@@ -39,10 +39,9 @@ type ShopifyOrder struct {
 }
 
 type ShopifyOrderQueryParams struct {
+	Paging
 	BuyerEmail          string `json:"buyerEmail,omitempty"`          // 买家邮箱
 	MerchantId          string `json:"merchantId"`                    // 商户ID
-	PageNo              int    `json:"pageNo,omitempty"`              // 查询页数
-	PageSize            int    `json:"pageSize,omitempty"`            // 每页数量
 	PayDateFrom         string `json:"payDateFrom,omitempty"`         // 付款起始时间
 	PayDateTo           string `json:"payDateTo,omitempty"`           // 付款结束时间
 	PaypalTransactionId string `json:"paypalTransactionId,omitempty"` // Paypal 交易号/Shopify 订单号/付款时间范围 必传其一
@@ -65,12 +64,7 @@ func (s service) ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyO
 		return
 	}
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

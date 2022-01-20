@@ -437,10 +437,9 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 // 查询商品
 
 type ProductQueryParams struct {
+	Paging
 	CategoryName     string   `json:"category_name,omitempty"`    // 分类名称
 	MerchantId       string   `json:"merchantId"`                 // 商户ID
-	PageNo           int      `json:"pageNo"`                     // 查询页数
-	PageSize         int      `json:"pageSize"`                   // 每页数量
 	ProductStatus    string   `json:"productStatus,omitempty"`    // 商品状态：1试卖、2正常
 	ProductType      string   `json:"productType"`                // 销售类型：0, 普通销售/1,变参销售/2,捆绑销售
 	SKUAliases       []string `json:"skuAliases,omitempty"`       // SKU别名数组，长度不超过10
@@ -485,13 +484,9 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	if len(params.SKUs) > 10 {
 		err = errors.New("skus 参数长度不能大于 10 个")
 	} else if len(params.SKUAliases) > 10 {
@@ -570,8 +565,6 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 	params := ProductQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
 		ProductType: typ,
-		PageNo:      1,
-		PageSize:    s.tongTool.QueryDefaultValues.PageSize,
 	}
 	if isAlias {
 		params.SKUAliases = []string{sku}

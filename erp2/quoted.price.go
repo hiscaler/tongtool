@@ -21,9 +21,8 @@ type QuotedPrice struct {
 }
 
 type QuotedPriceQueryParams struct {
+	Paging
 	MerchantId           string `json:"merchantId"`                     // 商家 ID
-	PageNo               int    `json:"pageNo"`                         // 当前页
-	PageSize             int    `json:"pageSize"`                       // 每页数量
 	QuotedPriceDateBegin string `json:"quotedPriceDateBegin,omitempty"` // 报价起始时间
 	QuotedPriceDateEnd   string `json:"quotedPriceDateEnd,omitempty"`   // 报价结束时间
 	SKU                  string `json:"sku,omitempty"`                  // 商品 SKU
@@ -43,12 +42,7 @@ func (s service) QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice
 		return
 	}
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

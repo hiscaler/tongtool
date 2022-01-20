@@ -39,21 +39,15 @@ type Supplier struct {
 }
 
 type SuppliersQueryParams struct {
+	Paging
 	MerchantId string `json:"merchantId"`
-	PageNo     int    `json:"pageNo,omitempty"`
-	PageSize   int    `json:"pageSize,omitempty"`
 }
 
 // Suppliers 供应商列表
 // https://open.tongtool.com/apiDoc.html#/?docId=1456c221fcbf4632b06d4810e8e0d4e4
 func (s service) Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

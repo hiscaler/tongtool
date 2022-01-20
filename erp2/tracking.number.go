@@ -20,10 +20,9 @@ type TrackingNumber struct {
 }
 
 type TrackingNumberQueryParams struct {
+	Paging
 	MerchantId string   `json:"merchantId"`         // 商户ID
 	OrderIds   []string `json:"orderIds,omitempty"` // orderNumber集合
-	PageNo     int      `json:"pageNo,omitempty"`   // 查询页数
-	PageSize   int      `json:"pageSize,omitempty"` // 每页数量
 }
 
 // TrackingNumbers 订单物流单号列表
@@ -38,12 +37,7 @@ func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []Trac
 	for _, orderId := range params.OrderIds {
 		items = append(items, TrackingNumber{OrderId: orderId})
 	}
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

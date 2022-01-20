@@ -18,9 +18,8 @@ type Warehouse struct {
 }
 
 type WarehouseQueryParams struct {
+	Paging
 	MerchantId    string `json:"merchantId"`              // 商户ID
-	PageNo        int    `json:"pageNo,omitempty"`        // 查询页数
-	PageSize      int    `json:"pageSize,omitempty"`      // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
 }
 
@@ -28,12 +27,7 @@ type WarehouseQueryParams struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=cdb49c57add3448daf1f4cd0fad40bef
 func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = s.tongTool.QueryDefaultValues.PageNo
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
@@ -148,10 +142,9 @@ type ShippingMethod struct {
 }
 
 type ShippingMethodQueryParams struct {
-	MerchantId  string `json:"merchantId"`         // 商户ID
-	PageNo      int    `json:"pageNo,omitempty"`   // 查询页数
-	PageSize    int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
-	WarehouseId string `json:"warehouseId"`        // 仓库id
+	Paging
+	MerchantId  string `json:"merchantId"`  // 商户ID
+	WarehouseId string `json:"warehouseId"` // 仓库id
 }
 
 func (m ShippingMethodQueryParams) Validate() error {
@@ -167,12 +160,7 @@ func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []Ship
 		return
 	}
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

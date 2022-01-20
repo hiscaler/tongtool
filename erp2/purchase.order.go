@@ -47,17 +47,16 @@ type PurchaseOrder struct {
 }
 
 type PurchaseOrdersQueryParams struct {
-	MerchantId        string `json:"merchantId"`                   // 商户ID
-	POrderStatus      string `json:"pOrderStatus,omitempty"`       // 采购单状态:delivering/等待到货 、pReceivedAndWaitM/部分到货等待剩余、partialReceived/部分到货不等待剩余、Received/全部到货、cancel/已作废、NotPaymentApply/未申请付款、paymentApply/已申请付款、paymentCancel/已取消付款、payed/已付款、partialPayed/部分付款
-	PurchaseDateFrom  string `json:"purchaseDateFrom,omitempty"`   // 采购日期开始时间
-	PurchaseDateTo    string `json:"purchaseDateTo,omitempty"`     // 采购日期结束时间
-	PurchaseOrderCode string `json:"purchaseOrderCode,omitempty"`  // 采购单号
-	SKUs              string `json:"skus,omitempty"`               // SKU数组，长度不超过10
-	SupplierName      string `json:"supplierName,omitempty"`       // 供应商名称
-	UpdatedDateFrom   string `json:"updatedDateFrom,omitempty"`    // 采购单更新开始时间
-	UpdatedDateTo     string `json:"updatedDateTo,omitempty"`      // 采购单更新结束时间
-	PageNo            int    `json:"pageNo,omitempty,omitempty"`   // 查询页数
-	PageSize          int    `json:"pageSize,omitempty,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	Paging
+	MerchantId        string `json:"merchantId"`                  // 商户ID
+	POrderStatus      string `json:"pOrderStatus,omitempty"`      // 采购单状态:delivering/等待到货 、pReceivedAndWaitM/部分到货等待剩余、partialReceived/部分到货不等待剩余、Received/全部到货、cancel/已作废、NotPaymentApply/未申请付款、paymentApply/已申请付款、paymentCancel/已取消付款、payed/已付款、partialPayed/部分付款
+	PurchaseDateFrom  string `json:"purchaseDateFrom,omitempty"`  // 采购日期开始时间
+	PurchaseDateTo    string `json:"purchaseDateTo,omitempty"`    // 采购日期结束时间
+	PurchaseOrderCode string `json:"purchaseOrderCode,omitempty"` // 采购单号
+	SKUs              string `json:"skus,omitempty"`              // SKU数组，长度不超过10
+	SupplierName      string `json:"supplierName,omitempty"`      // 供应商名称
+	UpdatedDateFrom   string `json:"updatedDateFrom,omitempty"`   // 采购单更新开始时间
+	UpdatedDateTo     string `json:"updatedDateTo,omitempty"`     // 采购单更新结束时间
 }
 
 func (m PurchaseOrdersQueryParams) Validate() error {
@@ -86,13 +85,9 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	if isx.Number(params.POrderStatus) {
 		params.POrderStatus = PurchaseOrderStatusNtoS(params.POrderStatus)
 	}
@@ -314,9 +309,8 @@ type PurchaseOrderLog struct {
 }
 
 type PurchaseOrderLogQueryParams struct {
+	Paging
 	MerchantId          string `json:"merchantId"`                  // 商户ID
-	PageNo              int    `json:"pageNo,omitempty"`            // 当前页
-	PageSize            int    `json:"pageSize,omitempty"`          // 每页数量
 	PurchaseOrderCode   string `json:"purchaseOrderCode,omitempty"` // 采购单号
 	WarehousingDateFrom string `json:"warehousingDateFrom"`         // 起始入库时间
 	WarehousingDateTo   string `json:"warehousingDateTo"`           // 截止入库时间
@@ -334,13 +328,9 @@ func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (i
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

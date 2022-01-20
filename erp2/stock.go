@@ -41,9 +41,8 @@ type Stock struct {
 }
 
 type StockQueryParams struct {
+	Paging
 	MerchantId      string   `json:"merchantId"`                // 商户ID
-	PageNo          int      `json:"pageNo,omitempty"`          // 查询页数
-	PageSize        int      `json:"pageSize,omitempty"`        // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	SKUs            []string `json:"skus,omitempty"`            // SKU 列表
 	UpdatedDateFrom string   `json:"updatedDateFrom,omitempty"` // 更新开始时间
 	UpdatedDateTo   string   `json:"updatedDateTo,omitempty"`   // 更新结束时间
@@ -54,12 +53,7 @@ type StockQueryParams struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=9aaf6b145a014060b3b3f669b0487096
 func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
@@ -126,12 +120,11 @@ type StockChangeLog struct {
 }
 
 type StockChangeLogQueryParams struct {
-	MerchantId      string   `json:"merchantId"`         // 商户 ID
-	PageNo          int      `json:"pageNo,omitempty"`   // 查询页数
-	PageSize        int      `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
-	SKUs            []string `json:"skus,omitempty"`     // SKU 列表
-	UpdatedDateFrom string   `json:"updatedDateFrom"`    // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
-	WarehouseName   string   `json:"warehouseName"`      // 仓库名称
+	Paging
+	MerchantId      string   `json:"merchantId"`      // 商户 ID
+	SKUs            []string `json:"skus,omitempty"`  // SKU 列表
+	UpdatedDateFrom string   `json:"updatedDateFrom"` // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
+	WarehouseName   string   `json:"warehouseName"`   // 仓库名称
 }
 
 func (m StockChangeLogQueryParams) Validate() error {
@@ -156,13 +149,9 @@ func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []Stoc
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

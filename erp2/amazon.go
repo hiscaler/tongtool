@@ -11,10 +11,9 @@ import (
 // 亚马逊账号对应的站点
 
 type AmazonAccountSiteQueryParams struct {
-	Account    string `json:"account"`            // 账号
-	MerchantId string `json:"merchantId"`         // 商户 ID
-	PageNo     int    `json:"pageNo,omitempty"`   // 查询页数
-	PageSize   int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
+	Paging
+	Account    string `json:"account"`    // 账号
+	MerchantId string `json:"merchantId"` // 商户 ID
 }
 
 func (m AmazonAccountSiteQueryParams) Validate() error {
@@ -29,13 +28,9 @@ func (s service) AmazonAccountSites(params AmazonAccountSiteQueryParams) (items 
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

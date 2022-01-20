@@ -61,14 +61,13 @@ type AfterSale struct {
 }
 
 type AfterSaleQueryParams struct {
+	Paging
 	ApproveStatus   string `json:"approveStatus"`   // 审核状态：approveStatus格式错误 、applying/等待提交、approving/等待审批、approved/审批通过
 	CreatedDateFrom string `json:"createdDateFrom"` // 售后创建开始时间
 	CreatedDateTo   string `json:"createdDateTo"`   // 售后创建结束时间
 	MerchantId      string `json:"merchantId"`
-	OrderId         string `json:"orderId"`            // 订单ID
-	PageNo          int    `json:"pageNo,omitempty"`   // 查询页数
-	PageSize        int    `json:"pageSize,omitempty"` // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
-	ZhiXingStatus   string `json:"zhixingStatus"`      // 执行状态: refunded/已退款、refundFail/退款失败、depatchOneMore/已补发货、rGoodStockInCancel/取消退款入库
+	OrderId         string `json:"orderId"`       // 订单ID
+	ZhiXingStatus   string `json:"zhixingStatus"` // 执行状态: refunded/已退款、refundFail/退款失败、depatchOneMore/已补发货、rGoodStockInCancel/取消退款入库
 }
 
 func (m AfterSaleQueryParams) Validate() error {
@@ -86,12 +85,7 @@ func (s service) AfterSales(params AfterSaleQueryParams) (items []AfterSale, isL
 		return
 	}
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)

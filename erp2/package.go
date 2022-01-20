@@ -51,6 +51,7 @@ type Package struct {
 }
 
 type PackageQueryParams struct {
+	Paging
 	AssignTimeFrom     string `json:"assignTimeFrom,omitempty"`     // 配货开始时间
 	AssignTimeTo       string `json:"assignTimeTo,omitempty"`       // 配货结束时间
 	DespatchTimeFrom   string `json:"despatchTimeFrom,omitempty"`   // 发货开始时间
@@ -58,8 +59,6 @@ type PackageQueryParams struct {
 	MerchantId         string `json:"merchantId"`                   // 商户ID
 	OrderNumber        string `json:"orderId,omitempty"`            // 订单号
 	PackageStatus      string `json:"packageStatus,omitempty"`      // 包裹状态： waitPrint 等待打印 waitDeliver 等待发货 delivered 已发货 cancel 作废
-	PageNo             int    `json:"pageNo"`                       // 查询页数
-	PageSize           int    `json:"pageSize"`                     // 每页数量,默认值：100,最大值100，超过最大值以最大值数量返回
 	ShippingMethodName string `json:"shippingMethodName,omitempty"` // 邮寄方式名称
 }
 
@@ -79,13 +78,9 @@ func (s service) Packages(params PackageQueryParams) (items []Package, isLastPag
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
-	if params.PageNo <= 0 {
-		params.PageNo = 1
-	}
-	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
-		params.PageSize = s.tongTool.QueryDefaultValues.PageSize
-	}
+	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
@@ -161,8 +156,6 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 	params := PackageQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
 		OrderNumber: strings.TrimSpace(orderNumber),
-		PageNo:      1,
-		PageSize:    s.tongTool.QueryDefaultValues.PageSize,
 	}
 	exists := false
 	for {
