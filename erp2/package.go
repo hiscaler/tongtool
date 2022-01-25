@@ -220,7 +220,7 @@ func (m PackageDeliverRequest) Validate() error {
 			}
 			for i, item := range items {
 				if item.RelatedNo == "" {
-					return errors.New(fmt.Sprintf("数据 %d 中识别号不能为空", i+1))
+					return fmt.Errorf("数据 %d 中识别号不能为空", i+1)
 				}
 			}
 			return nil

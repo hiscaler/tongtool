@@ -324,10 +324,10 @@ func (m CreateProductRequest) Validate() error {
 			}
 			for i, item := range items {
 				if item.AccessoriesName == "" {
-					return errors.New(fmt.Sprintf("数据 %d 中配件名称不能为空", i+1))
+					return fmt.Errorf("数据 %d 中配件名称不能为空", i+1)
 				}
 				if item.AccessoriesQuantity <= 0 {
-					return errors.New(fmt.Sprintf("数据 %d 中配件数量不能小于 1", i+1))
+					return fmt.Errorf("数据 %d 中配件数量不能小于 1", i+1)
 				}
 			}
 			return nil

@@ -267,5 +267,5 @@ func ErrorWrap(code int, message string) error {
 		}
 	}
 
-	return errors.New(fmt.Sprintf("%d: %s", code, message))
+	return fmt.Errorf("%d: %s", code, message)
 }
