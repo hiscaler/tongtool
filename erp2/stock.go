@@ -32,7 +32,7 @@ type Stock struct {
 	GoodsIdKey                   string                `json:"goodsIdKey"`                   // 通途商品id key
 	GoodsShelfStockList          []GoodsShelfStockItem `json:"goodsShelfStockList"`          // 货位库存列表，多货位才会有值
 	GoodsSKU                     string                `json:"goodsSku"`                     // 商品sku
-	IntransitStockQuantity       int                   `json:"intransitStockQuantity"`       // 在途库存数
+	InTransitStockQuantity       int                   `json:"intransitStockQuantity"`       // 在途库存数
 	OtherFee                     float64               `json:"otherFee"`                     // 头程其他费用
 	SafetyStock                  int                   `json:"safetyStock"`                  // 安全库存数
 	WaitingShipmentStockQuantity int                   `json:"waitingShipmentStockQuantity"` // 待发库存数

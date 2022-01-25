@@ -31,7 +31,7 @@ type PurchaseOrder struct {
 	GoodsSKU            string  `json:"goods_sku"`            // 商品 SKU
 	InQuantity          int     `json:"in_quantity"`          // 已入库数量
 	PayableAmounts      float64 `json:"payableAmounts"`       // 应付金额
-	PoNum               string  `json:"ponum"`                // 采购单号
+	PONum               string  `json:"ponum"`                // 采购单号
 	PurchaseArrivalDate string  `json:"purchaseArrivalDate"`  // 采购到货时间
 	PurchaseDate        string  `json:"purchaseDate"`         // 采购日期
 	PurchaseOrderId     string  `json:"purchaseOrderId"`      // 采购单id

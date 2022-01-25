@@ -17,7 +17,7 @@ func TestService_PurchaseOrders(t *testing.T) {
 	if err == nil {
 		exists := false
 		for _, order := range orders {
-			if strings.EqualFold(number, order.PoNum) {
+			if strings.EqualFold(number, order.PONum) {
 				exists = true
 				break
 			}
