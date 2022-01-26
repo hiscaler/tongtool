@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/gosimple/slug"
 	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/inx"
@@ -43,16 +44,16 @@ const (
 
 // 详细描述语言
 const (
-	ProductDetailDescriptionLanguageDe   = "de-de" // 德语
-	ProductDetailDescriptionLanguageEnGb = "en-gb" // 英语(英国)
-	ProductDetailDescriptionLanguageEnUs = "en-us" // 英语(美国)
-	ProductDetailDescriptionLanguageEs   = "es-es" // 西班牙语
-	ProductDetailDescriptionLanguageFr   = "fr-fr" // 法语
-	ProductDetailDescriptionLanguageIt   = "it-it" // 意大利语
-	ProductDetailDescriptionLanguagePl   = "pl-pl" // 波兰语
-	ProductDetailDescriptionLanguagePt   = "pt-pt" // 葡萄牙语
-	ProductDetailDescriptionLanguageRu   = "ru-ru" // 俄语
-	ProductDetailDescriptionLanguageZhCn = "zh-cn" // 简体中文
+	ProductDetailDescriptionGerman            = "de-de" // 德语
+	ProductDetailDescriptionBritishEnglish    = "en-gb" // 英语(英国)
+	ProductDetailDescriptionAmericanEnglish   = "en-us" // 英语(美国)
+	ProductDetailDescriptionSpanish           = "es-es" // 西班牙语
+	ProductDetailDescriptionFrench            = "fr-fr" // 法语
+	ProductDetailDescriptionItalian           = "it-it" // 意大利语
+	ProductDetailDescriptionPolish            = "pl-pl" // 波兰语
+	ProductDetailDescriptionPortuguese        = "pt-pt" // 葡萄牙语
+	ProductDetailDescriptionRussian           = "ru-ru" // 俄语
+	ProductDetailDescriptionSimplifiedChinese = "zh-cn" // 简体中文
 )
 
 // Product 通途商品
@@ -328,6 +329,36 @@ func (m CreateProductRequest) Validate() error {
 				}
 				if item.AccessoriesQuantity <= 0 {
 					return fmt.Errorf("数据 %d 中配件数量不能小于 1", i+1)
+				}
+			}
+			return nil
+		}))),
+		validation.Field(&m.DetailImageUrls, validation.When(len(m.DetailImageUrls) > 0), validation.Each(is.URL.Error("无效的地址"))),
+		validation.Field(&m.ImgUrls, validation.When(len(m.ImgUrls) > 0), validation.Each(is.URL.Error("无效的地址"))),
+		validation.Field(&m.DetailDescriptions, validation.When(len(m.DetailDescriptions) > 0, validation.By(func(value interface{}) error {
+			items, ok := value.([]ProductDetailDescription)
+			if !ok {
+				return errors.New("无效的商品详细描述")
+			}
+			for _, item := range items {
+				err := validation.ValidateStruct(&item,
+					validation.Field(&item.Title, validation.Required.Error("详细描述标题不能为空")),
+					validation.Field(&item.DescLanguage, validation.In(
+						ProductDetailDescriptionGerman,
+						ProductDetailDescriptionBritishEnglish,
+						ProductDetailDescriptionAmericanEnglish,
+						ProductDetailDescriptionSpanish,
+						ProductDetailDescriptionFrench,
+						ProductDetailDescriptionItalian,
+						ProductDetailDescriptionPolish,
+						ProductDetailDescriptionPortuguese,
+						ProductDetailDescriptionRussian,
+						ProductDetailDescriptionSimplifiedChinese,
+					).Error("无效的描叙语言")),
+					validation.Field(&item.Content, validation.Required.Error("详细描述内容不能为空")),
+				)
+				if err != nil {
+					return err
 				}
 			}
 			return nil
