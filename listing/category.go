@@ -11,25 +11,25 @@ import (
 // 获取产品类目
 // https://open.tongtool.com/apiDoc.html#/?docId=11a5118bb70642f198a7acca0c0b56a2
 
-type ProductCategoryQueryParams struct {
+type CategoryQueryParams struct {
 	CategoryId       string `json:"categoryId,omitempty"`       // 类目编号
 	CategoryName     string `json:"categoryName,omitempty"`     // 类目名称
 	MerchantId       string `json:"merchantId"`                 // 商户编号
 	ParentCategoryId string `json:"parentCategoryId,omitempty"` // 父类目编号\
 }
 
-type ProductCategory struct {
-	CategoryCode     string            `json:"categoryCode"`     // 类目 CODE
-	CategoryId       string            `json:"categoryId"`       // 类目编号
-	CategoryName     string            `json:"categoryName"`     // 类目名称
-	ChildList        []ProductCategory `json:"childList"`        // 子类目集合
-	IsRoot           string            `json:"isRoot"`           // 是否根类目
-	ParentCategoryId string            `json:"parentCategoryId"` // 父类目编号
+type Category struct {
+	CategoryCode     string     `json:"categoryCode"`     // 类目 CODE
+	CategoryId       string     `json:"categoryId"`       // 类目编号
+	CategoryName     string     `json:"categoryName"`     // 类目名称
+	ChildList        []Category `json:"childList"`        // 子类目集合
+	IsRoot           string     `json:"isRoot"`           // 是否根类目
+	ParentCategoryId string     `json:"parentCategoryId"` // 父类目编号
 }
 
-// ProductCategories 根据指定参数查询商品列表
+// Categories 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
-func (s service) ProductCategories(params ProductCategoryQueryParams) (items []ProductCategory, err error) {
+func (s service) Categories(params CategoryQueryParams) (items []Category, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	var cacheKey string
 	if s.tongTool.EnableCache {
@@ -47,13 +47,13 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]ProductCategory, 0)
+	items = make([]Category, 0)
 	res := struct {
 		result
 		Datas struct {
-			Array    []ProductCategory `json:"array"`
-			PageNo   int               `json:"pageNo"`
-			PageSize int               `json:"pageSize"`
+			Array    []Category `json:"array"`
+			PageNo   int        `json:"pageNo"`
+			PageSize int        `json:"pageSize"`
 		} `json:"datas,omitempty"`
 	}{}
 	resp, err := s.tongTool.Client.R().
@@ -87,7 +87,7 @@ ERROR: %s
 	return
 }
 
-type CUDProductCategory struct {
+type CUDCategory struct {
 	CategoryId       string `json:"categoryId"`       // 类目编号
 	CategoryName     string `json:"categoryName"`     // 类目名称
 	MerchantId       string `json:"merchantId"`       // 商户编号
@@ -97,19 +97,19 @@ type CUDProductCategory struct {
 // 添加产品类目
 // https://open.tongtool.com/apiDoc.html#/?docId=94ef3350cd064550a7cdb7b88f008b54
 
-type CreateProductCategoryRequest struct {
-	CUDProductCategory
+type CreateCategoryRequest struct {
+	CUDCategory
 }
 
-func (m CreateProductCategoryRequest) Validate() error {
+func (m CreateCategoryRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CategoryId, validation.Required.Error("类目编号不能为空")),
 		validation.Field(&m.CategoryName, validation.Required.Error("类目名称不能为空")),
 	)
 }
 
-// CreateProductCategory 修改产品类目
-func (s service) CreateProductCategory(req CreateProductCategoryRequest) error {
+// CreateCategory 修改产品类目
+func (s service) CreateCategory(req CreateCategoryRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
@@ -140,19 +140,19 @@ func (s service) CreateProductCategory(req CreateProductCategoryRequest) error {
 // 修改产品类目
 // https://open.tongtool.com/apiDoc.html#/?docId=afb5b4128bc94fb291aec0f5e9310f83
 
-type UpdateProductCategoryRequest struct {
-	CUDProductCategory
+type UpdateCategoryRequest struct {
+	CUDCategory
 }
 
-func (m UpdateProductCategoryRequest) Validate() error {
+func (m UpdateCategoryRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CategoryId, validation.Required.Error("类目编号不能为空")),
 		validation.Field(&m.CategoryName, validation.Required.Error("类目名称不能为空")),
 	)
 }
 
-// UpdateProductCategory 修改产品类目
-func (s service) UpdateProductCategory(req UpdateProductCategoryRequest) error {
+// UpdateCategory 修改产品类目
+func (s service) UpdateCategory(req UpdateCategoryRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
@@ -183,19 +183,19 @@ func (s service) UpdateProductCategory(req UpdateProductCategoryRequest) error {
 // 删除类目
 // https://open.tongtool.com/apiDoc.html#/?docId=76b970744cf64824b5093f59ecb8f3ba
 
-type DeleteProductCategoryRequest struct {
-	CUDProductCategory
+type DeleteCategoryRequest struct {
+	CUDCategory
 }
 
-func (m DeleteProductCategoryRequest) Validate() error {
+func (m DeleteCategoryRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CategoryId, validation.Required.Error("类目编号不能为空")),
 		validation.Field(&m.CategoryName, validation.Required.Error("类目名称不能为空")),
 	)
 }
 
-// DeleteProductCategory 删除产品类目
-func (s service) DeleteProductCategory(req DeleteProductCategoryRequest) error {
+// DeleteCategory 删除产品类目
+func (s service) DeleteCategory(req DeleteCategoryRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}

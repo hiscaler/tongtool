@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestService_ProductCategories(t *testing.T) {
-	params := ProductCategoryQueryParams{}
+	params := CategoryQueryParams{}
 	_, err := ttService.ProductCategories(params)
 	if err != nil {
 		t.Errorf("ttService.ProductCategories error: %s", err.Error())
