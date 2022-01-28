@@ -18,6 +18,7 @@ type Service interface {
 	UpdateTag(req UpdateTagRequest) error                                // 更新标签
 	DeleteTag(req DeleteTagRequest) error                                // 删除标签
 	Warehouses(req WarehouseQueryParams) (items []Warehouse, err error)  // 仓库列表
+	UpsertStockProduct(req UpsertStockProductRequest) error              // 保存库存产品资料
 }
 
 func NewService(tt *tongtool.TongTool) Service {
