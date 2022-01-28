@@ -9,10 +9,10 @@ type service struct {
 }
 
 type Service interface {
-	ProductCategories(params ProductCategoryQueryParams) (items []ProductCategory, err error)
-	CreateProductCategory(req CreateProductCategoryRequest) error
-	UpdateProductCategory(req UpdateProductCategoryRequest) error
-	DeleteProductCategory(req DeleteProductCategoryRequest) error
+	ProductCategories(params ProductCategoryQueryParams) (items []ProductCategory, err error) // 商品类目列表
+	CreateProductCategory(req CreateProductCategoryRequest) error                             // 添加商品类目
+	UpdateProductCategory(req UpdateProductCategoryRequest) error                             // 更新商品类目
+	DeleteProductCategory(req DeleteProductCategoryRequest) error                             // 删除商品类目
 }
 
 func NewService(tt *tongtool.TongTool) Service {
