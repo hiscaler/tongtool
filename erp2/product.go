@@ -657,10 +657,9 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 }
 
 // ProductExists 根据 SKU 或 SKU 别名查询单个商品是否存在
-func (s service) ProductExists(typ string, sku string, isAlias bool) bool {
-	if _, err := s.Product(typ, sku, isAlias); err == nil {
-		return true
-	} else {
-		return false
+func (s service) ProductExists(typ string, sku string, isAlias bool) (exists bool, err error) {
+	if _, err = s.Product(typ, sku, isAlias); err == nil {
+		exists = true
 	}
+	return
 }

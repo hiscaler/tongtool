@@ -15,12 +15,13 @@
 - FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error)                                                       // FBA 订单列表
 - ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyOrder, isLastPage bool, err error)                                           // Shopify 订单列表
 - CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                               // 手工创建订单
+- UpdateOrder(req UpdateOrderRequest) error                                                                                                  // 更新订单
 - Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
 - Order(id string) (item Order, err error)                                                                                                   // 单个订单
 - CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                               // 作废订单
 - Products(params ProductQueryParams) (items []Product, isLastPage bool, err error)                                                          // 商品列表
 - Product(typ string, sku string, isAlias bool) (item Product, err error)                                                                    // 单个商品
-- ProductExists(typ string, sku string, isAlias bool) bool                                                                                   // 商品是否存在
+- ProductExists(typ string, sku string, isAlias bool) (exists bool, err error)                                                               // 商品是否存在
 - CreateProduct(req CreateProductRequest) error                                                                                              // 创建商品
 - UpdateProduct(req UpdateProductRequest) error                                                                                              // 更新商品
 - Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表

@@ -53,9 +53,9 @@ func TestService_ProductByNormalType(t *testing.T) {
 	} else {
 		t.Error(err.Error())
 	}
-	exists := ttService.ProductExists(typ, sku, isAlias)
+	exists, err := ttService.ProductExists(typ, sku, isAlias)
 	if !exists {
-		t.Errorf("sku %s is not exists.", sku)
+		t.Errorf("sku %s is not exists, error: %s", sku, err.Error())
 	}
 }
 
@@ -71,9 +71,9 @@ func TestService_ProductByVariableType(t *testing.T) {
 	} else {
 		t.Error(err.Error())
 	}
-	exists := ttService.ProductExists(typ, sku, isAlias)
+	exists, err := ttService.ProductExists(typ, sku, isAlias)
 	if !exists {
-		t.Errorf("sku %s is not exists.", sku)
+		t.Errorf("sku %s is not exists, error: %s", sku, err.Error())
 	}
 }
 
