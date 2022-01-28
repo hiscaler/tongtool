@@ -59,6 +59,7 @@
 - Warehouses(req WarehouseQueryParams) (items []Warehouse, err error)  // 仓库列表
 - UpsertStockProduct(req UpsertStockProductRequest) error              // 保存库存产品资料
 - UpsertSaleAccount(req UpsertSaleAccountRequest) error                // 保存店铺信息
+- UpsertUser(req UpsertUserRequest) error                              // 保存用户信息
 
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：
