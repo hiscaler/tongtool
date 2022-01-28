@@ -518,15 +518,6 @@ func (s service) Products(params ProductQueryParams) (items []Product, isLastPag
 
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
-	if len(params.SKUs) > 10 {
-		err = errors.New("skus 参数长度不能大于 10 个")
-	} else if len(params.SKUAliases) > 10 {
-		err = errors.New("skuAliases 参数长度不能大于 10 个")
-	}
-	if err != nil {
-		return
-	}
-
 	var cacheKey string
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
