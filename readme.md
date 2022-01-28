@@ -63,10 +63,10 @@ import (
 )
 
 ttInstance := tongtool.NewTongTool(ttConfig.Config{
-    Debug:       false,
+    Debug:       true,
     AppKey:      "",
     AppSecret:   "",
-    EnableCache: true,
+    EnableCache: false,
 })
 ttService := erp2.NewService(ttInstance)
 params := OrderQueryParams{
