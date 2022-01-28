@@ -46,6 +46,13 @@
 - QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 供应商报价查询
 - AfterSales(params AfterSaleQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
 
+### 刊登
+
+- ProductCategories(params ProductCategoryQueryParams) (items []ProductCategory, err error) // 商品类目列表
+- CreateProductCategory(req CreateProductCategoryRequest) error                             // 添加商品类目
+- UpdateProductCategory(req UpdateProductCategoryRequest) error                             // 更新商品类目
+- DeleteProductCategory(req DeleteProductCategoryRequest) error                             // 删除商品类目
+
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：
 - Debug 是否为调试模式，开启的情况下会输入接口请求数据，在开发模式下建议开启，方便调试，生产系统上则建议关闭。
