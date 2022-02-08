@@ -92,25 +92,25 @@ type EbayAccount struct {
 }
 
 type UpsertSaleAccountRequest struct {
-	Account               string            `json:"account"`               // 账户名称(平台账户)
-	AliexpressAccountInfo AliExpressAccount `json:"aliexpressAccountInfo"` // aliexpress店铺信息
-	AmazonAccountInfo     AmazonAccount     `json:"amazonAccountInfo"`     // Amazon店铺信息
-	WishAccountInfo       WishAccount       `json:"wishAccountInfo"`       // wish店铺信息
-	EbayAccountInfo       EbayAccount       `json:"ebayAccountInfo"`       // ebay店铺信息
-	AccountCode           string            `json:"accountCode"`           // 账户简码(自定义账户)
-	CreatedBy             string            `json:"createdBy"`             // 创建人
-	CreatedDate           string            `json:"createdDate"`           // 创建时间
-	DisableTime           string            `json:"disableTime"`           // 停用时间
-	EnableTime            string            `json:"enableTime"`            // 启用时间
-	MerchantId            string            `json:"merchantId"`            // 商户编号
-	OutOfStock            string            `json:"outOfStock"`            // ebay零库存是否不下架,Y-不下架,N-下架
-	PlatformId            string            `json:"platformId"`            // 平台编号（amazon,ebay,aliexpress,wish其中一个）
-	SaleAccountId         string            `json:"saleAccountId"`         // 店铺账户编号
-	Status                string            `json:"status"`                // 账户状态(停用0，启用1)
-	StoreName             string            `json:"storeName"`             // 店铺名称
-	UpdatedBy             string            `json:"updatedBy"`             // 修改人
-	UpdatedDate           string            `json:"updatedDate"`           // 修改时间
-	UserId                string            `json:"userId"`                // 用户Id
+	Account               string            `json:"account,omitempty"`               // 账户名称(平台账户)
+	AliexpressAccountInfo AliExpressAccount `json:"aliexpressAccountInfo,omitempty"` // aliexpress店铺信息
+	AmazonAccountInfo     AmazonAccount     `json:"amazonAccountInfo,omitempty"`     // Amazon店铺信息
+	WishAccountInfo       WishAccount       `json:"wishAccountInfo,omitempty"`       // wish店铺信息
+	EbayAccountInfo       EbayAccount       `json:"ebayAccountInfo,omitempty"`       // ebay店铺信息
+	AccountCode           string            `json:"accountCode"`                     // 账户简码(自定义账户)
+	CreatedBy             string            `json:"createdBy,omitempty"`             // 创建人
+	CreatedDate           string            `json:"createdDate,omitempty"`           // 创建时间
+	DisableTime           string            `json:"disableTime,omitempty"`           // 停用时间
+	EnableTime            string            `json:"enableTime,omitempty"`            // 启用时间
+	MerchantId            string            `json:"merchantId"`                      // 商户编号
+	OutOfStock            string            `json:"outOfStock,omitempty"`            // ebay零库存是否不下架,Y-不下架,N-下架
+	PlatformId            string            `json:"platformId"`                      // 平台编号（amazon,ebay,aliexpress,wish其中一个）
+	SaleAccountId         string            `json:"saleAccountId,omitempty"`         // 店铺账户编号
+	Status                string            `json:"status,omitempty"`                // 账户状态(停用0，启用1)
+	StoreName             string            `json:"storeName,omitempty"`             // 店铺名称
+	UpdatedBy             string            `json:"updatedBy,omitempty"`             // 修改人
+	UpdatedDate           string            `json:"updatedDate,omitempty"`           // 修改时间
+	UserId                string            `json:"userId,omitempty"`                // 用户Id
 }
 
 func (m UpsertSaleAccountRequest) Validate() error {

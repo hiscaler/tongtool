@@ -26,10 +26,10 @@ type Tag struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=f22b1937adf04312974634495a9bbb6e
 
 type TagQueryParams struct {
-	LabelId    string `json:"labelId"`    // 标签ID
-	LabelName  string `json:"labelName"`  // 标签名称
-	LabelType  string `json:"labelType"`  // 标签类别
-	MerchantId string `json:"merchantId"` // 商户号
+	LabelId    string `json:"labelId,omitempty"`   // 标签ID
+	LabelName  string `json:"labelName,omitempty"` // 标签名称
+	LabelType  string `json:"labelType,omitempty"` // 标签类别
+	MerchantId string `json:"merchantId"`          // 商户号
 }
 
 func (m TagQueryParams) Validate() error {
