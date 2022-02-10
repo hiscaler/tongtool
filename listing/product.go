@@ -131,8 +131,8 @@ type ProductVideoGallery struct {
 	VideoList           []ProductVideo `json:"videoList"`           // 视频列表
 }
 
-// ProductInfo 售卖资料
-type ProductInfo struct {
+// Product 售卖资料
+type Product struct {
 	BaseInfo            ProductBaseInfo          `json:"baseInfo"`            // BaseInfo
 	CustomAttributeList []ProductCustomAttribute `json:"customAttributeList"` // 自定义属性
 	DescribeList        []ProductDescription     `json:"describeList"`        // 描述和标题
@@ -141,8 +141,8 @@ type ProductInfo struct {
 
 // UpdateProductRequest Todo 结构不完整，需要完善
 type UpdateProductRequest struct {
-	MerchantId           string        `json:"merchantId"`           // 商户号
-	ProductInfoParamList []ProductInfo `json:"productInfoParamList"` // 售卖资料
+	MerchantId           string    `json:"merchantId"`           // 商户号
+	ProductInfoParamList []Product `json:"productInfoParamList"` // 售卖资料
 }
 
 func (m UpdateProductRequest) Validate() error {
@@ -219,4 +219,51 @@ func (s service) DeleteProduct(req DeleteProductRequest) error {
 		}
 	}
 	return err
+}
+
+// 批量获取售卖详情
+// https://open.tongtool.com/apiDoc.html#/?docId=9af3a1d913b7431b8605a0cdae5c6aeb
+
+type ProductQueryParams struct {
+	MerchantId    string   `json:"merchantId"`    // 商户号
+	ProductIdList []string `json:"productIdList"` // 产品Id
+	SKUList       []string `json:"skuList"`       // 产品sku
+}
+
+func (m ProductQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductIdList, validation.When(len(m.SKUList) == 0, validation.Required.Error("产品Id不能为空"))),
+		validation.Field(&m.SKUList, validation.When(len(m.ProductIdList) == 0, validation.Required.Error("产品sku不能为空"))),
+	)
+}
+
+// Products 批量获取售卖详情
+func (s service) Products(req ProductQueryParams) (items []Product, err error) {
+	if err = req.Validate(); err != nil {
+		return
+	}
+
+	req.MerchantId = s.tongTool.MerchantId
+	res := struct {
+		tongtool.Response
+		Datas []Product `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetResult(&res).
+		SetBody(req).
+		Post("/openapi/tongtool/listing/product/getProductInfoByParamList")
+	if err == nil {
+		if resp.IsSuccess() {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+				items = res.Datas
+			}
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+	return
 }

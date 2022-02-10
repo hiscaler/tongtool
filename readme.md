@@ -63,6 +63,7 @@
 - SaveUserAccount(req UpsertUserAccountRequest) error                  // 保存用户店铺信息
 - UpdateProduct(req UpdateProductRequest) error                        // 修改售卖资料
 - DeleteProduct(req DeleteProductRequest) error                        // 删除售卖资料
+- Products(req ProductQueryParams) (items []Product, err error)        // 批量获取售卖详情
 
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：
