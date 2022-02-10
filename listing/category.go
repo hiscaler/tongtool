@@ -133,7 +133,6 @@ func (s service) CreateCategory(req CreateCategoryRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -176,7 +175,6 @@ func (s service) UpdateCategory(req UpdateCategoryRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -219,6 +217,5 @@ func (s service) DeleteCategory(req DeleteCategoryRequest) error {
 			}
 		}
 	}
-
 	return err
 }

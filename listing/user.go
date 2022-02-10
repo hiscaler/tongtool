@@ -64,6 +64,5 @@ func (s service) UpsertUser(req UpsertUserRequest) error {
 			}
 		}
 	}
-
 	return err
 }

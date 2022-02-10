@@ -214,7 +214,6 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 			err = errors.New(r.Status())
 		}
 	}
-
 	return err
 }
 
@@ -243,7 +242,6 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 			err = errors.New(r.Status())
 		}
 	}
-
 	return err
 }
 

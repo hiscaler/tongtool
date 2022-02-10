@@ -176,7 +176,6 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -219,6 +218,5 @@ func (s service) DeleteProduct(req DeleteProductRequest) error {
 			}
 		}
 	}
-
 	return err
 }

@@ -137,7 +137,6 @@ func (s service) CreateTag(req CreateTagRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -183,7 +182,6 @@ func (s service) UpdateTag(req UpdateTagRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -226,6 +224,5 @@ func (s service) DeleteTag(req DeleteTagRequest) error {
 			}
 		}
 	}
-
 	return err
 }

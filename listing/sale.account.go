@@ -145,6 +145,5 @@ func (s service) UpsertSaleAccount(req UpsertSaleAccountRequest) error {
 			}
 		}
 	}
-
 	return err
 }
