@@ -22,6 +22,8 @@ type Service interface {
 	UpsertSaleAccount(req UpsertSaleAccountRequest) error                // 保存店铺信息
 	UpsertUser(req UpsertUserRequest) error                              // 保存用户信息
 	SaveUserAccount(req UpsertUserAccountRequest) error                  // 保存用户店铺信息
+	UpdateProduct(req UpdateProductRequest) error                        // 修改售卖资料
+	DeleteProduct(req DeleteProductRequest) error                        // 删除售卖资料
 }
 
 func NewService(tt *tongtool.TongTool) Service {
