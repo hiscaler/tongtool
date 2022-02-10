@@ -50,7 +50,7 @@ type StockProductDescription struct {
 	CreatedBy         string `json:"createdBy"`         // 创建人
 	CreatedDate       string `json:"createdDate"`       // 创建时间
 	Highlights        string `json:"highlights"`        // 亮点描述
-	Language          string `json:"language"`          //	单选:EN英语,GER德语,FRA法语,SPN西班牙语,IT意大利语,POR葡萄牙语,CN中文,RUS俄语,TH泰语,AR阿拉伯语
+	Language          string `json:"language"`          // 单选:EN英语,GER德语,FRA法语,SPN西班牙语,IT意大利语,POR葡萄牙语,CN中文,RUS俄语,TH泰语,AR阿拉伯语
 	MerchantId        string `json:"merchantId"`        // 商户编号
 	PackageContent    string `json:"packageContent"`    // 包裹信息(描述)
 	ProductDescribeId string `json:"productDescribeId"` // 商品描述Id
@@ -60,14 +60,14 @@ type StockProductDescription struct {
 // StockProductGoodsInfo 库存货品信息
 type StockProductGoodsInfo struct {
 	CreatedBy        string  `json:"createdBy"`        // 创建人
-	CreatedDate      string  `json:"createdDate"`      //	创建时间
-	GoodHeight       float64 `json:"goodHeight"`       //	货品高度
-	GoodLength       float64 `json:"goodLength"`       //	货品长度
-	GoodPurchaseCost string  `json:"goodPurchaseCost"` //	货品采购成本
-	GoodWeight       int     `json:"goodWeight"`       //	货品重量(克)
+	CreatedDate      string  `json:"createdDate"`      // 创建时间
+	GoodHeight       float64 `json:"goodHeight"`       // 货品高度
+	GoodLength       float64 `json:"goodLength"`       // 货品长度
+	GoodPurchaseCost string  `json:"goodPurchaseCost"` // 货品采购成本
+	GoodWeight       int     `json:"goodWeight"`       // 货品重量(克)
 	GoodWidth        int     `json:"goodWidth"`        // 货品宽度
-	GoodsDetailId    string  `json:"goodsDetailId"`    //	货品ID
-	MerchantId       string  `json:"merchantId"`       //	商户编号
+	GoodsDetailId    string  `json:"goodsDetailId"`    // 货品ID
+	MerchantId       string  `json:"merchantId"`       // 商户编号
 	ProductId        string  `json:"productId"`        // 图片组顺序号
 	SKU              string  `json:"sku"`              // 属性SKU
 	SortNo           int     `json:"sortNo"`           // 排序号(同一商品下，从1开始递增)
@@ -76,9 +76,9 @@ type StockProductGoodsInfo struct {
 // StockProductNote 库存商品备注
 type StockProductNote struct {
 	Content       string `json:"content"`       // 备注内容
-	CreatedBy     string `json:"createdBy"`     //	创建人
-	CreatedDate   string `json:"createdDate"`   //	创建时间
-	MerchantId    string `json:"merchantId"`    //	商户编号
+	CreatedBy     string `json:"createdBy"`     // 创建人
+	CreatedDate   string `json:"createdDate"`   // 创建时间
+	MerchantId    string `json:"merchantId"`    // 商户编号
 	ProductId     string `json:"productId"`     // 商品Ids
 	ProductNoteId string `json:"productNoteId"` //	产品备注Id
 	UpdatedBy     string `json:"updatedBy"`     //	修改人
@@ -135,7 +135,7 @@ type UpsertStockProductRequest struct {
 	LabelList           []StockProductLabel          `json:"labelList"`           // 库存商品标签
 	ImageList           []StockProductImage          `json:"imageList"`           // 库存商品图片
 	VariationImagesList []StockProductVariationImage `json:"variationImagesList"` // 库存产品主属性图片信息
-	DataType            string                       `json:"dataType"`            //	数据内容（"baseInfo,picture,description"）包含其中的一个或多个,逗号分隔
+	DataType            string                       `json:"dataType"`            // 数据内容（"baseInfo,picture,description"）包含其中的一个或多个,逗号分隔
 	MerchantId          string                       `json:"merchantId"`          // 商户编号
 	RequestType         int                          `json:"requestType"`         // 请求类型-0创建，1更新
 	UploadPicToTongTool bool                         `json:"uploadPicToTongtool"` // 是否上传图片至通途空间

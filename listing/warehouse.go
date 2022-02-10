@@ -8,6 +8,11 @@ import (
 	"github.com/hiscaler/tongtool"
 )
 
+const (
+	WarehouseStatusInvalid = "0"
+	WarehouseStatusValid   = "1"
+)
+
 type Warehouse struct {
 	AutoSyncTime        string `json:"autoSyncTime"`        // 自动同步时间如,12:25
 	City                string `json:"city"`                // 城市
@@ -38,7 +43,7 @@ type WarehouseQueryParams struct {
 
 func (m WarehouseQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Status, validation.When(m.Status != "", validation.In("0", "1").Error("无效的仓库状态"))),
+		validation.Field(&m.Status, validation.When(m.Status != "", validation.In(WarehouseStatusInvalid, WarehouseStatusValid).Error("无效的仓库状态"))),
 	)
 }
 
