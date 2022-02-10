@@ -72,7 +72,7 @@ ERROR: %s
 	}
 	items = make([]Stock, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []Stock `json:"array"`
 			PageNo   int     `json:"pageNo"`
@@ -170,7 +170,7 @@ ERROR: %s
 	}
 	items = make([]StockChangeLog, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []StockChangeLog `json:"array"`
 			PageNo   int              `json:"pageNo"`

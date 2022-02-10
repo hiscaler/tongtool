@@ -99,7 +99,7 @@ ERROR: %s
 	}
 	items = make([]Package, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []Package `json:"array"`
 			PageNo   int       `json:"pageNo"`
@@ -236,7 +236,7 @@ func (s service) PackageDeliver(req PackageDeliverRequest) error {
 	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			ErrorList []struct {
 				RelatedNo string `json:"relatedNo"`

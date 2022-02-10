@@ -374,7 +374,7 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
@@ -442,7 +442,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 		Datas  string      `json:"datas"`
 		Others interface{} `json:"others"`
 	}{}
@@ -536,7 +536,7 @@ ERROR: %s
 	}
 	items = make([]Product, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []Product `json:"array"`
 			PageNo   int       `json:"pageNo"`

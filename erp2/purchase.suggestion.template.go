@@ -55,7 +55,7 @@ ERROR: %s
 	}
 	items = make([]PurchaseSuggestionTemplate, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []PurchaseSuggestionTemplate `json:"array"`
 			PageNo   int                          `json:"pageNo"`

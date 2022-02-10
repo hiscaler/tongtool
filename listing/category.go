@@ -15,7 +15,7 @@ type CategoryQueryParams struct {
 	CategoryId       string `json:"categoryId,omitempty"`       // 类目编号
 	CategoryName     string `json:"categoryName,omitempty"`     // 类目名称
 	MerchantId       string `json:"merchantId"`                 // 商户编号
-	ParentCategoryId string `json:"parentCategoryId,omitempty"` // 父类目编号\
+	ParentCategoryId string `json:"parentCategoryId,omitempty"` // 父类目编号
 }
 
 type Category struct {
@@ -49,7 +49,7 @@ ERROR: %s
 	}
 	items = make([]Category, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []Category `json:"array"`
 			PageNo   int        `json:"pageNo"`
@@ -116,7 +116,7 @@ func (s service) CreateCategory(req CreateCategoryRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
@@ -159,7 +159,7 @@ func (s service) UpdateCategory(req UpdateCategoryRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
@@ -202,7 +202,7 @@ func (s service) DeleteCategory(req DeleteCategoryRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).

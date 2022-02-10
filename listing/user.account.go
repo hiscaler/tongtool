@@ -43,7 +43,7 @@ func (s service) SaveUserAccount(req UpsertUserAccountRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 		Datas string `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().

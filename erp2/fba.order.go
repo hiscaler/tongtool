@@ -79,7 +79,7 @@ ERROR: %s
 	}
 	items = make([]FBAOrder, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array []FBAOrder `json:"array"`
 		} `json:"datas,omitempty"`

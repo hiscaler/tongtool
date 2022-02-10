@@ -109,7 +109,7 @@ ERROR: %s
 	}
 	items = make([]PurchaseOrder, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []PurchaseOrder `json:"array"`
 			PageNo   int             `json:"pageNo"`
@@ -263,7 +263,7 @@ func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error {
 	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 		Datas interface{} `json:"datas,omitempty"`
 	}{}
 	resp, err := s.tongTool.Client.R().
@@ -349,7 +349,7 @@ ERROR: %s
 	}
 	items = make([]PurchaseOrderLog, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []PurchaseOrderLog `json:"array"`
 			PageNo   int                `json:"pageNo"`
@@ -417,7 +417,7 @@ type PurchaseOrderArrivalRequest struct {
 func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) error {
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 		Datas interface{} `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().

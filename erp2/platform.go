@@ -45,7 +45,7 @@ ERROR: %s
 	}
 	items = make([]Platform, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array []Platform `json:"array"`
 		} `json:"datas,omitempty"`

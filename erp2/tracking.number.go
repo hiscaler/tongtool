@@ -55,7 +55,7 @@ ERROR: %s
 		}
 	}
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []TrackingNumber `json:"array"`
 			PageNo   int              `json:"pageNo"`

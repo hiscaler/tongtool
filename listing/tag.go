@@ -58,7 +58,7 @@ ERROR: %s
 	}
 	items = make([]Tag, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []Tag `json:"array"`
 			PageNo   int   `json:"pageNo"`
@@ -120,7 +120,7 @@ func (s service) CreateTag(req CreateTagRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
@@ -166,7 +166,7 @@ func (s service) UpdateTag(req UpdateTagRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
@@ -209,7 +209,7 @@ func (s service) DeleteTag(req DeleteTagRequest) error {
 
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).

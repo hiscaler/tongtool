@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

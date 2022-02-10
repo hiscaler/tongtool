@@ -49,7 +49,7 @@ ERROR: %s
 	}
 	items = make([]string, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array []struct {
 				SiteId string `json:"siteId"`

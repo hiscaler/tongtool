@@ -223,7 +223,7 @@ ERROR: %s
 	}
 	items = make([]Order, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []Order `json:"array"`
 			PageNo   int     `json:"pageNo"`
@@ -419,7 +419,7 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 		Order:      req,
 	}
 	res := struct {
-		result
+		tongtool.Response
 		Datas interface{} `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().
@@ -492,7 +492,7 @@ func (s service) UpdateOrder(req UpdateOrderRequest) error {
 	req.MerchantId = s.tongTool.MerchantId
 
 	res := struct {
-		result
+		tongtool.Response
 		Datas string `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().
@@ -540,7 +540,7 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 	}
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array []struct {
 				OrderId string `json:"order_id"`

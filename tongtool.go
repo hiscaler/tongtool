@@ -241,6 +241,11 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 	return
 }
 
+type Response struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 // ErrorWrap 错误包装
 func ErrorWrap(code int, message string) error {
 	if code == OK {

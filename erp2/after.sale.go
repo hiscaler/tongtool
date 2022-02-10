@@ -104,7 +104,7 @@ ERROR: %s
 	}
 	items = make([]AfterSale, 0)
 	res := struct {
-		result
+		tongtool.Response
 		Datas struct {
 			Array    []AfterSale `json:"array"`
 			PageNo   int         `json:"pageNo"`
