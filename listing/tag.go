@@ -25,20 +25,20 @@ type Tag struct {
 // 标签列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f22b1937adf04312974634495a9bbb6e
 
-type TagQueryParams struct {
+type TagsQueryParams struct {
 	LabelId    string `json:"labelId,omitempty"`   // 标签ID
 	LabelName  string `json:"labelName,omitempty"` // 标签名称
 	LabelType  string `json:"labelType,omitempty"` // 标签类别
 	MerchantId string `json:"merchantId"`          // 商户号
 }
 
-func (m TagQueryParams) Validate() error {
+func (m TagsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.LabelType, validation.When(m.LabelType != "", validation.In(ProductTag, ProductEbayDraftTag, ProductEbayListingTag, ProductAliexpressDraftTag, ProductAliexpressListingTag).Error("无效的标签类别"))),
 	)
 }
 
-func (s service) Tags(params TagQueryParams) (items []Tag, err error) {
+func (s service) Tags(params TagsQueryParams) (items []Tag, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	var cacheKey string
 	if s.tongTool.EnableCache {

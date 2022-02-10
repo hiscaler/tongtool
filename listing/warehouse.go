@@ -35,19 +35,19 @@ type Warehouse struct {
 // 查询仓库列表
 // https://open.tongtool.com/apiDoc.html#/?docId=9e7d98f617d84f2e93754bf78cfeac1c
 
-type WarehouseQueryParams struct {
+type WarehousesQueryParams struct {
 	MerchantId    string `json:"merchantId"`              // 商户编号
 	Status        string `json:"status,omitempty"`        // 状态（1生效，0失效）
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
 }
 
-func (m WarehouseQueryParams) Validate() error {
+func (m WarehousesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Status, validation.When(m.Status != "", validation.In(WarehouseStatusInvalid, WarehouseStatusValid).Error("无效的仓库状态"))),
 	)
 }
 
-func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, err error) {
+func (s service) Warehouses(params WarehousesQueryParams) (items []Warehouse, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	var cacheKey string
 	if s.tongTool.EnableCache {

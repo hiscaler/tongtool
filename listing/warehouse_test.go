@@ -5,7 +5,7 @@ import (
 )
 
 func TestService_Warehouses(t *testing.T) {
-	params := WarehouseQueryParams{}
+	params := WarehousesQueryParams{}
 	_, err := ttService.Warehouses(params)
 	if err != nil {
 		t.Errorf("ttService.Warehouses error: %s", err.Error())

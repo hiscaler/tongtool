@@ -11,7 +11,7 @@ import (
 // 获取产品类目
 // https://open.tongtool.com/apiDoc.html#/?docId=11a5118bb70642f198a7acca0c0b56a2
 
-type CategoryQueryParams struct {
+type CategoriesQueryParams struct {
 	CategoryId       string `json:"categoryId,omitempty"`       // 类目编号
 	CategoryName     string `json:"categoryName,omitempty"`     // 类目名称
 	MerchantId       string `json:"merchantId"`                 // 商户编号
@@ -29,7 +29,7 @@ type Category struct {
 
 // Categories 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
-func (s service) Categories(params CategoryQueryParams) (items []Category, err error) {
+func (s service) Categories(params CategoriesQueryParams) (items []Category, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	var cacheKey string
 	if s.tongTool.EnableCache {
