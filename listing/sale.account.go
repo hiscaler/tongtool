@@ -16,7 +16,7 @@ type AliExpressAccount struct {
 	AliexpressStatus    string `json:"aliexpressStatus"`    // 速卖通账号是否有效1-有效 0-失效 2-未知
 	AppKey              string `json:"appKey"`              // APP KEY
 	AppSecret           string `json:"appSecret"`           // 密钥
-	CreatedBy           string `json:"createdBy"`           // userId	创建人
+	CreatedBy           string `json:"createdBy"`           // 创建人
 	CreatedDate         string `json:"createdDate"`         // 创建时间
 	LoginId             string `json:"loginId"`             // 速卖通账号唯一标识
 	MerchantId          string `json:"merchantId"`          // 商户ID
