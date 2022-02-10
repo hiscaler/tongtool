@@ -345,13 +345,13 @@ func (s service) DeleteProduct(req DeleteProductRequest) error {
 // 批量获取售卖详情
 // https://open.tongtool.com/apiDoc.html#/?docId=9af3a1d913b7431b8605a0cdae5c6aeb
 
-type ProductQueryParams struct {
+type ProductsQueryParams struct {
 	MerchantId    string   `json:"merchantId"`    // 商户号
 	ProductIdList []string `json:"productIdList"` // 产品Id
 	SKUList       []string `json:"skuList"`       // 产品sku
 }
 
-func (m ProductQueryParams) Validate() error {
+func (m ProductsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductIdList, validation.When(len(m.SKUList) == 0, validation.Required.Error("产品Id不能为空"))),
 		validation.Field(&m.SKUList, validation.When(len(m.ProductIdList) == 0, validation.Required.Error("产品sku不能为空"))),
@@ -359,7 +359,7 @@ func (m ProductQueryParams) Validate() error {
 }
 
 // Products 批量获取售卖详情
-func (s service) Products(req ProductQueryParams) (items []Product, err error) {
+func (s service) Products(req ProductsQueryParams) (items []Product, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -377,6 +377,57 @@ func (s service) Products(req ProductQueryParams) (items []Product, err error) {
 		if resp.IsSuccess() {
 			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Datas
+			}
+		} else {
+			if e := json.Unmarshal(resp.Body(), &res); e == nil {
+				err = tongtool.ErrorWrap(res.Code, res.Message)
+			} else {
+				err = errors.New(resp.Status())
+			}
+		}
+	}
+	return
+}
+
+// 获取售卖基本资料
+// https://open.tongtool.com/apiDoc.html#/?docId=c38871189c6847a883d0c6c0ba983010
+
+type ProductQueryParams struct {
+	MerchantId string `json:"merchantId"` // 商户号
+	ProductId  string `json:"productId"`  // 产品Id（产品Id和sku必需传其一）
+	SKU        string `json:"sku"`        // 产品sku（产品Id和sku必需传其一）
+}
+
+func (m ProductQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.When(len(m.SKU) == 0, validation.Required.Error("产品Id不能为空"))),
+		validation.Field(&m.SKU, validation.When(len(m.ProductId) == 0, validation.Required.Error("产品sku不能为空"))),
+	)
+}
+
+// Product 获取售卖基本资料
+func (s service) Product(req ProductQueryParams) (item Product, err error) {
+	if err = req.Validate(); err != nil {
+		return
+	}
+
+	req.MerchantId = s.tongTool.MerchantId
+	res := struct {
+		tongtool.Response
+		Datas []Product `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetResult(&res).
+		SetBody(req).
+		Post("/openapi/tongtool/listing/product/getProductInfoByParam")
+	if err == nil {
+		if resp.IsSuccess() {
+			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+				if len(res.Datas) == 0 {
+					err = tongtool.ErrNotFound
+				} else {
+					item = res.Datas[0]
+				}
 			}
 		} else {
 			if e := json.Unmarshal(resp.Body(), &res); e == nil {
