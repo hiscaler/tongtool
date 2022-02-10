@@ -7,7 +7,7 @@ import (
 )
 
 func TestService_Warehouses(t *testing.T) {
-	params := WarehouseQueryParams{}
+	params := WarehousesQueryParams{}
 	warehouses := make([]Warehouse, 0)
 	for {
 		pageWarehouses, isLastPage, err := ttService.Warehouses(params)
@@ -42,7 +42,7 @@ func TestService_Warehouse(t *testing.T) {
 }
 
 func TestService_ShippingMethods(t *testing.T) {
-	params := ShippingMethodQueryParams{WarehouseId: "8151050530202008250000047045"}
+	params := ShippingMethodsQueryParams{WarehouseId: "8151050530202008250000047045"}
 	items, _, err := ttService.ShippingMethods(params)
 	if err != nil {
 		t.Errorf(err.Error())

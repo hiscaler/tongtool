@@ -72,7 +72,7 @@ func TestService_CreatePurchaseOrder(t *testing.T) {
 }
 
 func TestService_PurchaseOrderStockInLogs(t *testing.T) {
-	params := PurchaseOrderLogQueryParams{
+	params := PurchaseOrderLogsQueryParams{
 		PurchaseOrderCode:   "PO002057",
 		WarehousingDateFrom: "2021-11-01 00:00:00",
 		WarehousingDateTo:   "2021-12-31 23:59:59",

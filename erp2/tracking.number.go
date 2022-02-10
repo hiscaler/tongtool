@@ -19,7 +19,7 @@ type TrackingNumber struct {
 	IsMatched bool `json:"isMatched"` // 是否匹配
 }
 
-type TrackingNumberQueryParams struct {
+type TrackingNumbersQueryParams struct {
 	Paging
 	MerchantId string   `json:"merchantId"`         // 商户ID
 	OrderIds   []string `json:"orderIds,omitempty"` // orderNumber集合
@@ -28,7 +28,7 @@ type TrackingNumberQueryParams struct {
 // TrackingNumbers 订单物流单号列表
 // 需要注意的是该封装总是返回包含所有查询订单集合的数据，无论是否有物流数据
 // https://open.tongtool.com/apiDoc.html#/?docId=3b3cceec8fe04e6db44da17ec4b38f08
-func (s service) TrackingNumbers(params TrackingNumberQueryParams) (items []TrackingNumber, isLastPage bool, err error) {
+func (s service) TrackingNumbers(params TrackingNumbersQueryParams) (items []TrackingNumber, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	items = make([]TrackingNumber, 0)
 	if len(params.OrderIds) == 0 {

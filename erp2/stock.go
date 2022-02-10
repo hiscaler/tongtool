@@ -40,7 +40,7 @@ type Stock struct {
 	WarehouseName                string                `json:"warehouseName"`                // 仓库名称
 }
 
-type StockQueryParams struct {
+type StocksQueryParams struct {
 	Paging
 	MerchantId      string   `json:"merchantId"`                // 商户ID
 	SKUs            []string `json:"skus,omitempty"`            // SKU 列表
@@ -51,7 +51,7 @@ type StockQueryParams struct {
 
 // Stocks 库存列表
 // https://open.tongtool.com/apiDoc.html#/?docId=9aaf6b145a014060b3b3f669b0487096
-func (s service) Stocks(params StockQueryParams) (items []Stock, isLastPage bool, err error) {
+func (s service) Stocks(params StocksQueryParams) (items []Stock, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
@@ -119,7 +119,7 @@ type StockChangeLog struct {
 	GoodsSKU               string `json:"goodsSku"`               // 商品sku
 }
 
-type StockChangeLogQueryParams struct {
+type StockChangeLogsQueryParams struct {
 	Paging
 	MerchantId      string   `json:"merchantId"`      // 商户 ID
 	SKUs            []string `json:"skus,omitempty"`  // SKU 列表
@@ -127,7 +127,7 @@ type StockChangeLogQueryParams struct {
 	WarehouseName   string   `json:"warehouseName"`   // 仓库名称
 }
 
-func (m StockChangeLogQueryParams) Validate() error {
+func (m StockChangeLogsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.UpdatedDateFrom, validation.Required.Error("变动起始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("变动起始时间格式错误"), validation.By(func(value interface{}) error {
 			t, err := time.Parse(constant.DatetimeFormat, value.(string))
@@ -145,7 +145,7 @@ func (m StockChangeLogQueryParams) Validate() error {
 
 // StockChangeLogs 库存变动查询
 // https://open.tongtool.com/apiDoc.html#/?docId=bd0971f61f2449eaa9752c7be779afa0
-func (s service) StockChangeLogs(params StockChangeLogQueryParams) (items []StockChangeLog, isLastPage bool, err error) {
+func (s service) StockChangeLogs(params StockChangeLogsQueryParams) (items []StockChangeLog, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

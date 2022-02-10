@@ -10,13 +10,13 @@ import (
 
 // 亚马逊账号对应的站点
 
-type AmazonAccountSiteQueryParams struct {
+type AmazonAccountSitesQueryParams struct {
 	Paging
 	Account    string `json:"account"`    // 账号
 	MerchantId string `json:"merchantId"` // 商户 ID
 }
 
-func (m AmazonAccountSiteQueryParams) Validate() error {
+func (m AmazonAccountSitesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Account, validation.Required.Error("帐号不能为空")),
 	)
@@ -24,7 +24,7 @@ func (m AmazonAccountSiteQueryParams) Validate() error {
 
 // AmazonAccountSites 查询亚马逊账号对应的站点
 // https://open.tongtool.com/apiDoc.html#/?docId=4dd54cb61d6c4719860bec1d875f48af
-func (s service) AmazonAccountSites(params AmazonAccountSiteQueryParams) (items []string, isLastPage bool, err error) {
+func (s service) AmazonAccountSites(params AmazonAccountSitesQueryParams) (items []string, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

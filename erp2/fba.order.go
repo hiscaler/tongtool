@@ -37,7 +37,7 @@ type FBAOrder struct {
 	TotalShippingTax   float64 `json:"totalShippingTax"`   // 物流税费总计
 }
 
-type FBAOrderQueryParams struct {
+type FBAOrdersQueryParams struct {
 	Paging
 	Account          string `json:"account,omitempty"`          // 速卖通登录账号
 	MerchantId       string `json:"merchantId"`                 // 商户ID
@@ -45,7 +45,7 @@ type FBAOrderQueryParams struct {
 	PurchaseDateTo   string `json:"purchaseDateTo,omitempty"`   // 订单购买时间结束时间
 }
 
-func (m FBAOrderQueryParams) Validate() error {
+func (m FBAOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PurchaseDateFrom, validation.Required.Error("订单购买开始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("无效的订单购买开始时间格式")),
 		validation.Field(&m.PurchaseDateTo, validation.Required.Error("订单购买结束时间不能为空"), validation.Date(constant.DatetimeFormat).Error("无效的订单购买结束时间格式")),
@@ -54,7 +54,7 @@ func (m FBAOrderQueryParams) Validate() error {
 
 // FBAOrders FBA 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=c33e7bd4e73d4d2d9a27de56f794cc82
-func (s service) FBAOrders(params FBAOrderQueryParams) (items []FBAOrder, isLastPage bool, err error) {
+func (s service) FBAOrders(params FBAOrdersQueryParams) (items []FBAOrder, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

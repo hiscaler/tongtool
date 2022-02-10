@@ -26,7 +26,7 @@ type PurchaseSuggestionTemplate struct {
 	WarehouseType        string `json:"warehouseType"`        // 仓库类型 owner/本地仓库、thirdParty/第三方仓库
 }
 
-type PurchaseSuggestionTemplateQueryParams struct {
+type PurchaseSuggestionTemplatesQueryParams struct {
 	Paging
 	MerchantId string   `json:"merchantId"`      // 商户ID
 	Names      []string `json:"names,omitempty"` // 采购建议模板名称（扩展）
@@ -34,7 +34,7 @@ type PurchaseSuggestionTemplateQueryParams struct {
 
 // PurchaseSuggestionTemplates 采购建议模板列表
 // https://open.tongtool.com/apiDoc.html#/?docId=129858303d494c6b90b552eeb5a7514f
-func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplateQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) {
+func (s service) PurchaseSuggestionTemplates(params PurchaseSuggestionTemplatesQueryParams) (items []PurchaseSuggestionTemplate, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string

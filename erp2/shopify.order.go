@@ -38,7 +38,7 @@ type ShopifyOrder struct {
 	ShopifyOrderId      string             `json:"shopifOrderId"`       // Shopify订单号
 }
 
-type ShopifyOrderQueryParams struct {
+type ShopifyOrdersQueryParams struct {
 	Paging
 	BuyerEmail          string `json:"buyerEmail,omitempty"`          // 买家邮箱
 	MerchantId          string `json:"merchantId"`                    // 商户ID
@@ -48,7 +48,7 @@ type ShopifyOrderQueryParams struct {
 	ShopifyOrderId      string `json:"shopifyOrderId,omitempty"`      // Shopify 订单号
 }
 
-func (m ShopifyOrderQueryParams) Validate() error {
+func (m ShopifyOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PayDateFrom, validation.When(m.PayDateFrom != "", validation.Date(constant.DatetimeFormat).Error("付款起始时间格式错误"))),
 		validation.Field(&m.PayDateTo, validation.When(m.PayDateTo != "", validation.Date(constant.DatetimeFormat).Error("付款结束时间格式错误"))),
@@ -59,7 +59,7 @@ func (m ShopifyOrderQueryParams) Validate() error {
 
 // ShopifyOrders Shopify 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=e949a88561e7471785cccef86feb3e6d
-func (s service) ShopifyOrders(params ShopifyOrderQueryParams) (items []ShopifyOrder, isLastPage bool, err error) {
+func (s service) ShopifyOrders(params ShopifyOrdersQueryParams) (items []ShopifyOrder, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

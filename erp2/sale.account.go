@@ -18,14 +18,14 @@ type SaleAccount struct {
 	StatusBoolean bool     `json:"statusBoolean"` // 账号状态布尔值
 }
 
-type SaleAccountQueryParams struct {
+type SaleAccountsQueryParams struct {
 	Paging
 	MerchantId string `json:"merchantId"` // 商户ID
 }
 
 // SaleAccounts 商户账号列表
 // https://open.tongtool.com/apiDoc.html#/?docId=1e81e4bbae0b4d60b5f7777fc629ba2a
-func (s service) SaleAccounts(params SaleAccountQueryParams) (items []SaleAccount, isLastPage bool, err error) {
+func (s service) SaleAccounts(params SaleAccountsQueryParams) (items []SaleAccount, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string

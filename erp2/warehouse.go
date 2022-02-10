@@ -17,7 +17,7 @@ type Warehouse struct {
 	StatusBoolean bool   `json:"statusBoolean"` // 仓库状态布尔值（返回仓库状态布尔值，方便调用者判断）
 }
 
-type WarehouseQueryParams struct {
+type WarehousesQueryParams struct {
 	Paging
 	MerchantId    string `json:"merchantId"`              // 商户ID
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
@@ -25,7 +25,7 @@ type WarehouseQueryParams struct {
 
 // Warehouses 查询仓库列表
 // https://open.tongtool.com/apiDoc.html#/?docId=cdb49c57add3448daf1f4cd0fad40bef
-func (s service) Warehouses(params WarehouseQueryParams) (items []Warehouse, isLastPage bool, err error) {
+func (s service) Warehouses(params WarehousesQueryParams) (items []Warehouse, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
@@ -95,7 +95,7 @@ func (s service) Warehouse(id string) (item Warehouse, err error) {
 		return
 	}
 
-	params := WarehouseQueryParams{}
+	params := WarehousesQueryParams{}
 	exists := false
 	for {
 		items := make([]Warehouse, 0)
@@ -140,13 +140,13 @@ type ShippingMethod struct {
 	WarehouseName               string `json:"warehouseName"`               // 仓库名称
 }
 
-type ShippingMethodQueryParams struct {
+type ShippingMethodsQueryParams struct {
 	Paging
 	MerchantId  string `json:"merchantId"`  // 商户ID
 	WarehouseId string `json:"warehouseId"` // 仓库id
 }
 
-func (m ShippingMethodQueryParams) Validate() error {
+func (m ShippingMethodsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.WarehouseId, validation.Required.Error("仓库 ID 不能为空")),
 	)
@@ -154,7 +154,7 @@ func (m ShippingMethodQueryParams) Validate() error {
 
 // ShippingMethods 仓库物流渠道查询
 // https://open.tongtool.com/apiDoc.html#/?docId=9ed7d6c3e7c44e498c0d43329d5a443b
-func (s service) ShippingMethods(params ShippingMethodQueryParams) (items []ShippingMethod, isLastPage bool, err error) {
+func (s service) ShippingMethods(params ShippingMethodsQueryParams) (items []ShippingMethod, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

@@ -60,7 +60,7 @@ type AfterSale struct {
 	AfterSaleService AfterSaleService `json:"after_sale_service"` // 退款退货补发
 }
 
-type AfterSaleQueryParams struct {
+type AfterSalesQueryParams struct {
 	Paging
 	ApproveStatus   string `json:"approveStatus"`   // 审核状态：approveStatus格式错误 、applying/等待提交、approving/等待审批、approved/审批通过
 	CreatedDateFrom string `json:"createdDateFrom"` // 售后创建开始时间
@@ -70,7 +70,7 @@ type AfterSaleQueryParams struct {
 	ZhiXingStatus   string `json:"zhixingStatus"` // 执行状态: refunded/已退款、refundFail/退款失败、depatchOneMore/已补发货、rGoodStockInCancel/取消退款入库
 }
 
-func (m AfterSaleQueryParams) Validate() error {
+func (m AfterSalesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CreatedDateFrom, validation.Date(constant.DatetimeFormat).Error("售后创建开始时间格式无效")),
 		validation.Field(&m.CreatedDateTo, validation.Date(constant.DatetimeFormat).Error("售后创建结束时间格式无效")),
@@ -80,7 +80,7 @@ func (m AfterSaleQueryParams) Validate() error {
 
 // AfterSales 查询售后单信息
 // https://open.tongtool.com/apiDoc.html#/?docId=4406fd10e6d34dae994043e6d52c4e33
-func (s service) AfterSales(params AfterSaleQueryParams) (items []AfterSale, isLastPage bool, err error) {
+func (s service) AfterSales(params AfterSalesQueryParams) (items []AfterSale, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

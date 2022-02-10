@@ -6,7 +6,7 @@ import (
 )
 
 func TestService_AfterSales(t *testing.T) {
-	params := AfterSaleQueryParams{
+	params := AfterSalesQueryParams{
 		CreatedDateFrom: "2020-01-01 00:00:00",
 		CreatedDateTo:   "2022-01-01 23:59:59",
 	}

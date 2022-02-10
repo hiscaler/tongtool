@@ -114,7 +114,7 @@ type Order struct {
 	IsSuspendedBoolean bool `json:"isSuspendedBoolean"` // 是否需要人工审核布尔值
 }
 
-type OrderQueryParams struct {
+type OrdersQueryParams struct {
 	Paging
 	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
 	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
@@ -191,7 +191,7 @@ func (o Order) StoreCountryCode() string {
 
 // Orders 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
-func (s service) Orders(params OrderQueryParams) (items []Order, isLastPage bool, err error) {
+func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	if !inx.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
@@ -272,7 +272,7 @@ func (s service) Order(orderId string) (item Order, err error) {
 		return
 	}
 
-	params := OrderQueryParams{
+	params := OrdersQueryParams{
 		OrderId: orderId,
 	}
 

@@ -50,7 +50,7 @@ type Package struct {
 	IsValid bool `json:"isValid"` // 是否有效
 }
 
-type PackageQueryParams struct {
+type PackagesQueryParams struct {
 	Paging
 	AssignTimeFrom     string `json:"assignTimeFrom,omitempty"`     // 配货开始时间
 	AssignTimeTo       string `json:"assignTimeTo,omitempty"`       // 配货结束时间
@@ -62,7 +62,7 @@ type PackageQueryParams struct {
 	ShippingMethodName string `json:"shippingMethodName,omitempty"` // 邮寄方式名称
 }
 
-func (m PackageQueryParams) Validate() error {
+func (m PackagesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.AssignTimeFrom, validation.When(m.AssignTimeFrom != "", validation.Date(constant.DatetimeFormat).Error("配货开始时间日期格式无效"))),
 		validation.Field(&m.AssignTimeTo, validation.When(m.AssignTimeTo != "", validation.Date(constant.DatetimeFormat).Error("配货结束时间日期格式无效"))),
@@ -74,7 +74,7 @@ func (m PackageQueryParams) Validate() error {
 
 // Packages 包裹列表
 // https://open.tongtool.com/apiDoc.html#/?docId=0412c0185dce4a9d88714a9eef44932b
-func (s service) Packages(params PackageQueryParams) (items []Package, isLastPage bool, err error) {
+func (s service) Packages(params PackagesQueryParams) (items []Package, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 		err = errors.New("订单号和包裹号不能为空")
 		return
 	}
-	params := PackageQueryParams{
+	params := PackagesQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
 		OrderNumber: strings.TrimSpace(orderNumber),
 	}

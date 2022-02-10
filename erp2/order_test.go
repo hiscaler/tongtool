@@ -9,7 +9,7 @@ import (
 )
 
 func TestService_Orders(t *testing.T) {
-	params := OrderQueryParams{
+	params := OrdersQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-31 23:59:59",
 	}
@@ -29,7 +29,7 @@ func TestService_Orders(t *testing.T) {
 }
 
 func TestService_GoroutineOrders(t *testing.T) {
-	params := OrderQueryParams{
+	params := OrdersQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-01 23:59:59",
 	}

@@ -7,7 +7,7 @@ import (
 
 func TestService_TrackingNumbers(t *testing.T) {
 	// 验证返回结果数量
-	params := TrackingNumberQueryParams{
+	params := TrackingNumbersQueryParams{
 		OrderIds: []string{"bad.order.id1", "bad.order.id2", "L-M20211221152430918", "US-12345", "US-abcd"},
 	}
 	trackingNumbers := make([]TrackingNumber, 0)
@@ -30,7 +30,7 @@ func TestService_TrackingNumbers(t *testing.T) {
 	}
 
 	// 验证未提供订单集合参数
-	_, _, err := ttService.TrackingNumbers(TrackingNumberQueryParams{})
+	_, _, err := ttService.TrackingNumbers(TrackingNumbersQueryParams{})
 	if err != nil {
 		t.Errorf("ttService.TrackingNumbers error: %s", err.Error())
 	}

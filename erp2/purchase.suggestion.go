@@ -27,7 +27,7 @@ type PurchaseSuggestion struct {
 	WarehouseName          string  `json:"warehouseName"`          // 仓库名称
 }
 
-type PurchaseSuggestionQueryParams struct {
+type PurchaseSuggestionsQueryParams struct {
 	Paging
 	MerchantId         string   `json:"merchantId"`               // 商户 ID
 	PurchaseTemplateId string   `json:"purchaseTemplateId"`       // 采购建议模板 ID
@@ -35,7 +35,7 @@ type PurchaseSuggestionQueryParams struct {
 	SKUs               []string `json:"skus,omitempty"`           // SKU 列表（扩展）
 }
 
-func (m PurchaseSuggestionQueryParams) Validate() error {
+func (m PurchaseSuggestionsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PurchaseTemplateId, validation.Required.Error("采购建议模板 ID 不能为空")),
 	)
@@ -43,7 +43,7 @@ func (m PurchaseSuggestionQueryParams) Validate() error {
 
 // PurchaseSuggestions 采购建议列表
 // https://open.tongtool.com/apiDoc.html#/?docId=8e80fde6a4824b288d17bc04be8f4ef6
-func (s service) PurchaseSuggestions(params PurchaseSuggestionQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error) {
+func (s service) PurchaseSuggestions(params PurchaseSuggestionsQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

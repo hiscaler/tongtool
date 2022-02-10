@@ -7,7 +7,7 @@ import (
 )
 
 func TestService_AmazonAccountSites(t *testing.T) {
-	params := AmazonAccountSiteQueryParams{
+	params := AmazonAccountSitesQueryParams{
 		Account: "a",
 	}
 	logs := make([]string, 0)

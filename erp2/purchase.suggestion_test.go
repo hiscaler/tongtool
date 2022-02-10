@@ -8,7 +8,7 @@ import (
 // 采购建议查询
 func TestService_PurchaseSuggestions(t *testing.T) {
 	number := "0007000007201603230000076503"
-	params := PurchaseSuggestionQueryParams{
+	params := PurchaseSuggestionsQueryParams{
 		PurchaseTemplateId: number,
 		SKUs:               []string{"abc"},
 	}

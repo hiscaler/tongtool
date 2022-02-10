@@ -20,7 +20,7 @@ type QuotedPrice struct {
 	SupplierName    string  `json:"supplierName"`    // 供应商名称
 }
 
-type QuotedPriceQueryParams struct {
+type QuotedPricesQueryParams struct {
 	Paging
 	MerchantId           string `json:"merchantId"`                     // 商家 ID
 	QuotedPriceDateBegin string `json:"quotedPriceDateBegin,omitempty"` // 报价起始时间
@@ -28,7 +28,7 @@ type QuotedPriceQueryParams struct {
 	SKU                  string `json:"sku,omitempty"`                  // 商品 SKU
 }
 
-func (m QuotedPriceQueryParams) Validate() error {
+func (m QuotedPricesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.QuotedPriceDateBegin, validation.When(m.SKU == "", validation.Required.Error("报价起始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("报价起始时间格式有误"))),
 		validation.Field(&m.QuotedPriceDateEnd, validation.When(m.SKU == "", validation.Required.Error("报价结束时间不能为空"), validation.Date(constant.DatetimeFormat).Error("报价结束时间格式有误"))),
@@ -37,7 +37,7 @@ func (m QuotedPriceQueryParams) Validate() error {
 
 // QuotePrices 供应商报价查询
 // https://open.tongtool.com/apiDoc.html#/?docId=0a508970886f4c7596b064f3b37987c9
-func (s service) QuotePrices(params QuotedPriceQueryParams) (items []QuotedPrice, isLastPage bool, err error) {
+func (s service) QuotePrices(params QuotedPricesQueryParams) (items []QuotedPrice, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

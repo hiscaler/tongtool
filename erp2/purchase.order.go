@@ -308,7 +308,7 @@ type PurchaseOrderLog struct {
 	WarehousingNum    int     `json:"warehousingNum"`    // 当前入库数量
 }
 
-type PurchaseOrderLogQueryParams struct {
+type PurchaseOrderLogsQueryParams struct {
 	Paging
 	MerchantId          string `json:"merchantId"`                  // 商户ID
 	PurchaseOrderCode   string `json:"purchaseOrderCode,omitempty"` // 采购单号
@@ -316,7 +316,7 @@ type PurchaseOrderLogQueryParams struct {
 	WarehousingDateTo   string `json:"warehousingDateTo"`           // 截止入库时间
 }
 
-func (m PurchaseOrderLogQueryParams) Validate() error {
+func (m PurchaseOrderLogsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.WarehousingDateFrom, validation.When(m.WarehousingDateFrom != "", validation.Required.Error("起始入库时间不恩呢个为空"), validation.Date(constant.DatetimeFormat).Error("起始入库时间格式错误"))),
 		validation.Field(&m.WarehousingDateTo, validation.When(m.WarehousingDateTo != "", validation.Required.Error("截止入库时间不恩呢个为空"), validation.Date(constant.DatetimeFormat).Error("截止入库时间格式错误"))),
@@ -324,7 +324,7 @@ func (m PurchaseOrderLogQueryParams) Validate() error {
 }
 
 // PurchaseOrderStockInLogs 采购单入库记录查询
-func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error) {
+func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogsQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

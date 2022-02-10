@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestService_Products(t *testing.T) {
-	params := ProductQueryParams{
+	params := ProductsQueryParams{
 		ProductType: ProductTypeNormal,
 		SKUs:        []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
 	}

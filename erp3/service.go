@@ -9,7 +9,7 @@ type service struct {
 }
 
 type Service interface {
-	Products(params ProductQueryParams) (items []Product, nextToken string, isLastPage bool, err error) // 商品列表
+	Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error) // 商品列表
 }
 
 func NewService(tt *tongtool.TongTool) Service {

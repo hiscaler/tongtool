@@ -8,7 +8,7 @@ import (
 )
 
 func TestService_Packages(t *testing.T) {
-	params := PackageQueryParams{
+	params := PackagesQueryParams{
 		AssignTimeFrom: "2021-10-01 00:00:00",
 		AssignTimeTo:   "2021-12-30 23:59:59",
 		PackageStatus:  PackageStatusWaitDeliver,

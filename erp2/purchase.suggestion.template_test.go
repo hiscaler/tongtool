@@ -7,7 +7,7 @@ import (
 
 // 采购建议模板查询
 func TestService_PurchaseSuggestionTemplates(t *testing.T) {
-	params := PurchaseSuggestionTemplateQueryParams{
+	params := PurchaseSuggestionTemplatesQueryParams{
 		Names: []string{"test"},
 	}
 	templates := make([]PurchaseSuggestionTemplate, 0)

@@ -183,7 +183,7 @@ type UpdateProductRequest struct {
 	SalesType            string  `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
 }
 
-type ProductQueryParams struct {
+type ProductsQueryParams struct {
 	MerchantId         string   `json:"merchantId"`
 	NextToken          string   `json:"nextToken,omitempty"`
 	ProductCategoryId  string   `json:"product_category_id,omitempty"`
@@ -247,7 +247,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 
 // Products 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=c55a65d27322400a84996ea79bb23f92
-func (s service) Products(params ProductQueryParams) (items []Product, nextToken string, isLastPage bool, err error) {
+func (s service) Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
 	if params.PageSize <= 0 || params.PageSize > s.tongTool.QueryDefaultValues.PageSize {
 		params.PageSize = s.tongTool.QueryDefaultValues.PageSize

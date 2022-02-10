@@ -7,7 +7,7 @@ import (
 )
 
 func TestService_SaleAccounts(t *testing.T) {
-	params := SaleAccountQueryParams{}
+	params := SaleAccountsQueryParams{}
 	for {
 		accounts, isLastPage, err := ttService.SaleAccounts(params)
 		if err == nil {

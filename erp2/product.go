@@ -470,7 +470,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 
 // 查询商品
 
-type ProductQueryParams struct {
+type ProductsQueryParams struct {
 	Paging
 	CategoryName     string   `json:"category_name,omitempty"`    // 分类名称
 	MerchantId       string   `json:"merchantId"`                 // 商户ID
@@ -483,7 +483,7 @@ type ProductQueryParams struct {
 	UpdatedDateEnd   string   `json:"updatedDateEnd,omitempty"`   // 更新时间查询的结束时间
 }
 
-func (m ProductQueryParams) Validate() error {
+func (m ProductsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductStatus, validation.In("1", "2").Error("无效的商品状态")),
 		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding)),
@@ -514,7 +514,7 @@ func (m ProductQueryParams) Validate() error {
 
 // Products 根据指定参数查询商品列表
 // https://open.tongtool.com/apiDoc.html#/?docId=919e8fff6c8047deb77661f4d8c92a3a
-func (s service) Products(params ProductQueryParams) (items []Product, isLastPage bool, err error) {
+func (s service) Products(params ProductsQueryParams) (items []Product, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -587,7 +587,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 		typ = ProductTypeNormal
 	}
 
-	params := ProductQueryParams{
+	params := ProductsQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
 		ProductType: typ,
 	}
