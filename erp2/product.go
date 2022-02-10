@@ -13,7 +13,7 @@ import (
 	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path"
@@ -146,7 +146,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 	}
 
 	defer response.Body.Close()
-	b, err := ioutil.ReadAll(response.Body)
+	b, err := io.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
@@ -186,6 +186,10 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 			break
 		}
 	}
+	if name == "" {
+		// If SKU is empty after slug then generate random file name
+		name = randx.Letter(8, false)
+	}
 	filename := path.Join(dirs...)
 	if !filex.Exists(filename) {
 		if err = os.MkdirAll(filename, os.ModePerm); err != nil {
@@ -193,7 +197,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		}
 	}
 
-	imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", name, randx.Number(8), imageExt))
+	imagePath = path.Join(filename, name+imageExt)
 	err = os.WriteFile(imagePath, b, 0666)
 	return
 }
