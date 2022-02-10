@@ -47,6 +47,7 @@ func (s service) UpsertUser(req UpsertUserRequest) error {
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		tongtool.Response
+		Datas string `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).

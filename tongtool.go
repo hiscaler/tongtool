@@ -242,8 +242,10 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 }
 
 type Response struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    int         `json:"code"`
+	Datas   interface{} `json:"datas"`
+	Message string      `json:"message"`
+	Others  interface{} `json:"others"`
 }
 
 // ErrorWrap 错误包装
