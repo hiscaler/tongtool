@@ -14,6 +14,10 @@ github.com/gosimple/unidecode v1.0.1 h1:hZzFTMMqSswvf0LBJZCZgThIZrpDHFXux9KeGmn6
 github.com/gosimple/unidecode v1.0.1/go.mod h1:CP0Cr1Y1kogOtx0bJblKzsVWrqYaqfNOnHzpgWw4Awc=
 github.com/hiscaler/gox v0.0.0-20220118081914-e4865be7b432 h1:bP6byY+BCXJTXun22H7uosO2XFS40Jw6nawcu8/ytZY=
 github.com/hiscaler/gox v0.0.0-20220118081914-e4865be7b432/go.mod h1:ZoEDYprDRKYm5LZbmSwqahvsJcX4UQ3DSP3KqHmMBq8=
+github.com/hiscaler/gox v0.0.0-20220126022618-6f1c890caa43 h1:ZhewZby06DHVmXRERHa62BDyFeZYYfU1txn+qd9AaJA=
+github.com/hiscaler/gox v0.0.0-20220126022618-6f1c890caa43/go.mod h1:ZoEDYprDRKYm5LZbmSwqahvsJcX4UQ3DSP3KqHmMBq8=
+github.com/hiscaler/gox v0.0.0-20220209094108-666731c5a366 h1:fJB7iYky2WMbja6+a4hocygvB5GqNtDnyBDq6OCKTII=
+github.com/hiscaler/gox v0.0.0-20220209094108-666731c5a366/go.mod h1:ZoEDYprDRKYm5LZbmSwqahvsJcX4UQ3DSP3KqHmMBq8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
