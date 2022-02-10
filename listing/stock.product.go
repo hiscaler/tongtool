@@ -3,44 +3,52 @@ package listing
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/tongtool"
+	"strings"
 )
 
 // 保存库存产品资料
 // https://open.tongtool.com/apiDoc.html#/?docId=c39bd0a8801a48ea9ece608ef236e314
 
+const (
+	CreateStockProduct = iota // 创建
+	UpdateStockProduct        // 更新
+)
+
 // StockProductBaseInfo 库存商品商品信息
 type StockProductBaseInfo struct {
-	CreatedBy           string  `json:"createdBy"`           // 创建人
-	CreatedDate         string  `json:"createdDate"`         // 创建时间
-	FromType            string  `json:"fromType"`            // 来源：L系统，N新品开发系统
-	FullText            string  `json:"fullText"`            // 全文检索(分词)
-	IsSimpleMode        string  `json:"isSimpleMode"`        // 图库是否简易模式:Y是，N否
-	MerchantId          string  `json:"merchantId"`          // 商户编号
-	PrimaryAttribute    string  `json:"primaryAttribute"`    // 主属性(橱窗图属性名称)
-	ProductCategoryId   string  `json:"productCategoryId"`   // 产品类目Id
-	ProductCategoryText string  `json:"productCategoryText"` // 产品类名称
-	ProductHeight       float64 `json:"productHeight"`       // 商品高度
-	ProductId           string  `json:"productId"`           // 商品ID
-	ProductLength       int     `json:"productLength"`       // 商品长度
-	ProductName         string  `json:"productName"`         // 商品名称
-	ProductRegisterType string  `json:"productRegisterType"` // 是否带电 1:带电
-	ProductType         string  `json:"productType"`         // 产品类型 1-单属性,2-多属性,3-捆绑,4-多属性单卖
-	ProductWeight       int     `json:"productWeight"`       // 商品重量(克)
-	ProductWidth        float64 `json:"productWidth"`        // 商品宽度
-	PurchaseCost        float64 `json:"purchaseCost"`        // 采购成本(元)
-	Responsible         string  `json:"responsible"`         // 责任人
-	SKU                 string  `json:"sku"`                 // 商品编号
-	UpdatedBy           string  `json:"updatedBy"`           // 修改人
-	UpdatedDate         string  `json:"updatedDate"`         // 修改时间
+	CreatedBy           string  `json:"createdBy,omitempty"`           // 创建人
+	CreatedDate         string  `json:"createdDate,omitempty"`         // 创建时间
+	FromType            string  `json:"fromType,omitempty"`            // 来源：L系统，N新品开发系统
+	FullText            string  `json:"fullText,omitempty"`            // 全文检索(分词)
+	IsSimpleMode        string  `json:"isSimpleMode,omitempty"`        // 图库是否简易模式:Y是，N否
+	MerchantId          string  `json:"merchantId,omitempty"`          // 商户编号
+	PrimaryAttribute    string  `json:"primaryAttribute,omitempty"`    // 主属性(橱窗图属性名称)
+	ProductCategoryId   string  `json:"productCategoryId,omitempty"`   // 产品类目Id
+	ProductCategoryText string  `json:"productCategoryText,omitempty"` // 产品类名称
+	ProductHeight       float64 `json:"productHeight,omitempty"`       // 商品高度
+	ProductId           string  `json:"productId"`                     // 商品ID
+	ProductLength       int     `json:"productLength,omitempty"`       // 商品长度
+	ProductName         string  `json:"productName,omitempty"`         // 商品名称
+	ProductRegisterType string  `json:"productRegisterType,omitempty"` // 是否带电 1:带电
+	ProductType         string  `json:"productType,omitempty"`         // 产品类型 1-单属性,2-多属性,3-捆绑,4-多属性单卖
+	ProductWeight       int     `json:"productWeight,omitempty"`       // 商品重量(克)
+	ProductWidth        float64 `json:"productWidth,omitempty"`        // 商品宽度
+	PurchaseCost        float64 `json:"purchaseCost,omitempty"`        // 采购成本(元)
+	Responsible         string  `json:"responsible,omitempty"`         // 责任人
+	SKU                 string  `json:"sku,omitempty"`                 // 商品编号
+	UpdatedBy           string  `json:"updatedBy,omitempty"`           // 修改人
+	UpdatedDate         string  `json:"updatedDate,omitempty"`         // 修改时间
 }
 
 // StockProductURL 库存产品来源 URL
 type StockProductURL struct {
-	MerchantId  string `json:"merchantId"`  // 商户编号
-	MonitorLink string `json:"monitorLink"` // 来源 URL 内容
-	ProductId   string `json:"productId"`   // 库存产品编号
+	MerchantId  string `json:"merchantId,omitempty"`  // 商户编号
+	MonitorLink string `json:"monitorLink,omitempty"` // 来源 URL 内容
+	ProductId   string `json:"productId,omitempty"`   // 库存产品编号
 }
 
 // StockProductDescription 库存商品描述
@@ -127,23 +135,32 @@ type StockProductVariationImage struct {
 
 // UpsertStockProductRequest 库存商品更新请求
 type UpsertStockProductRequest struct {
-	BaseInfo            StockProductBaseInfo         `json:"baseInfo"`            // 库存商品商品信息
-	MonitorList         []StockProductURL            `json:"monitorList"`         // 库存产品来源 URL
-	DescribeParamList   []StockProductDescription    `json:"describeParamList"`   // 库存商品描述
-	GoodsInfoParamList  []StockProductGoodsInfo      `json:"goodsInfoParamList"`  // 库存货品信息
-	NoteList            []StockProductNote           `json:"noteList"`            // 库存商品备注
-	LabelList           []StockProductLabel          `json:"labelList"`           // 库存商品标签
-	ImageList           []StockProductImage          `json:"imageList"`           // 库存商品图片
-	VariationImagesList []StockProductVariationImage `json:"variationImagesList"` // 库存产品主属性图片信息
-	DataType            string                       `json:"dataType"`            // 数据内容（"baseInfo,picture,description"）包含其中的一个或多个,逗号分隔
-	MerchantId          string                       `json:"merchantId"`          // 商户编号
-	RequestType         int                          `json:"requestType"`         // 请求类型-0创建，1更新
-	UploadPicToTongTool bool                         `json:"uploadPicToTongtool"` // 是否上传图片至通途空间
+	BaseInfo            StockProductBaseInfo         `json:"baseInfo"`                      // 库存商品商品信息
+	MonitorList         []StockProductURL            `json:"monitorList,omitempty"`         // 库存产品来源 URL
+	DescribeParamList   []StockProductDescription    `json:"describeParamList,omitempty"`   // 库存商品描述
+	GoodsInfoParamList  []StockProductGoodsInfo      `json:"goodsInfoParamList,omitempty"`  // 库存货品信息
+	NoteList            []StockProductNote           `json:"noteList,omitempty"`            // 库存商品备注
+	LabelList           []StockProductLabel          `json:"labelList,omitempty"`           // 库存商品标签
+	ImageList           []StockProductImage          `json:"imageList,omitempty"`           // 库存商品图片
+	VariationImagesList []StockProductVariationImage `json:"variationImagesList,omitempty"` // 库存产品主属性图片信息
+	DataType            string                       `json:"dataType"`                      // 数据内容（"baseInfo,picture,description"）包含其中的一个或多个,逗号分隔
+	MerchantId          string                       `json:"merchantId"`                    // 商户编号
+	RequestType         int                          `json:"requestType"`                   // 请求类型-0创建，1更新
+	UploadPicToTongTool bool                         `json:"uploadPicToTongtool"`           // 是否上传图片至通途空间
 }
 
 func (m UpsertStockProductRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.RequestType, validation.In(0, 1).Error("错误的请求类型")),
+		validation.Field(&m.DataType, validation.Required.Error("数据内容不能为空"), validation.By(func(value interface{}) error {
+			s, _ := value.(string)
+			for _, typ := range strings.Split(s, ",") {
+				if !inx.StringIn(typ, "baseInfo", "picture", "description") {
+					return fmt.Errorf("%s 数据内容无效", typ)
+				}
+			}
+			return nil
+		})),
+		validation.Field(&m.RequestType, validation.In(CreateStockProduct, UpdateStockProduct).Error("错误的请求类型")),
 	)
 }
 
