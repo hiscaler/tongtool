@@ -184,7 +184,6 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 	if err == nil && !exists {
 		err = tongtool.ErrNotFound
 	}
-
 	return
 }
 

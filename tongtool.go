@@ -183,7 +183,6 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 		// Close
 		t.EnableCache = false
 	}
-
 	return
 }
 

@@ -61,6 +61,5 @@ func (s service) SaveUserAccount(req UpsertUserAccountRequest) error {
 			}
 		}
 	}
-
 	return err
 }

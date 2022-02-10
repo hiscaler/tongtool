@@ -123,7 +123,6 @@ func (s service) Warehouse(id string) (item Warehouse, err error) {
 	if err == nil && !exists {
 		err = tongtool.ErrNotFound
 	}
-
 	return
 }
 

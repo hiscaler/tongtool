@@ -195,7 +195,6 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 
 	imagePath = path.Join(filename, fmt.Sprintf("%s-%s%s", name, randx.Number(8), imageExt))
 	err = os.WriteFile(imagePath, b, 0666)
-
 	return
 }
 

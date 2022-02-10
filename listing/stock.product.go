@@ -189,6 +189,5 @@ func (s service) UpsertStockProduct(req UpsertStockProductRequest) error {
 			}
 		}
 	}
-
 	return err
 }

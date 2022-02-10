@@ -186,7 +186,6 @@ func (o Order) StoreCountryCode() string {
 			}
 		}
 	}
-
 	return code
 }
 
