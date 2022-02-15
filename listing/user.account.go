@@ -31,7 +31,7 @@ type UpsertUserAccountRequest struct {
 func (m UpsertUserAccountRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.UserAccountInfoList, validation.Required.Error("店铺信息列表不能为空")),
-		validation.Field(&m.UserId, validation.Required.Error("用户Id不能为空")),
+		validation.Field(&m.UserId, validation.Required.Error("用户 ID 不能为空")),
 	)
 }
 

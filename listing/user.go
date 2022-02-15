@@ -34,7 +34,7 @@ func (m UpsertUserRequest) Validate() error {
 		validation.Field(&m.ListingStatus, validation.When(m.OperatingType == UserOperatingTypeUpdate, validation.Required.Error("刊登系统状态不能为空"), validation.In("0", "1").Error("无效的刊登系统状态"))),
 		validation.Field(&m.OperatingType, validation.In(UserOperatingTypeAdd, UserOperatingTypeEdit, UserOperatingTypeUpdate).Error("无效的操作类型")),
 		validation.Field(&m.Password, validation.When(m.OperatingType == UserOperatingTypeAdd, validation.Required.Error("密码不能为空"))),
-		validation.Field(&m.UserId, validation.When(m.OperatingType == UserOperatingTypeEdit, validation.Required.Error("用户Id不能为空"))),
+		validation.Field(&m.UserId, validation.When(m.OperatingType == UserOperatingTypeEdit, validation.Required.Error("用户 ID 不能为空"))),
 	)
 }
 

@@ -107,7 +107,7 @@ type ProductVideo struct {
 	ImagePath           string `json:"imagePath"`           // 图片路径
 	IsUploadedAbroad    string `json:"isUploadedAbroad"`    // 是否已上传国外服务器
 	MerchantId          string `json:"merchantId"`          // 商户编号
-	ProductVideoGroupId string `json:"productVideoGroupId"` //	视频组顺序号
+	ProductVideoGroupId string `json:"productVideoGroupId"` // 视频组顺序号
 	ProductVideoId      string `json:"productVideoId"`      // 视频顺序号
 	SortNo              int    `json:"sortNo"`              // 视频顺序
 	UpdatedBy           string `json:"updatedBy"`           // 创建人
@@ -310,7 +310,7 @@ type DeleteProductRequest struct {
 
 func (m DeleteProductRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductIds, validation.Required.Error("售卖产品id不能为空")),
+		validation.Field(&m.ProductIds, validation.Required.Error("售卖产品 ID 不能为空")),
 	)
 }
 
@@ -353,8 +353,8 @@ type ProductsQueryParams struct {
 
 func (m ProductsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductIdList, validation.When(len(m.SKUList) == 0, validation.Required.Error("产品Id不能为空"))),
-		validation.Field(&m.SKUList, validation.When(len(m.ProductIdList) == 0, validation.Required.Error("产品sku不能为空"))),
+		validation.Field(&m.ProductIdList, validation.When(len(m.SKUList) == 0, validation.Required.Error("产品 ID 不能为空"))),
+		validation.Field(&m.SKUList, validation.When(len(m.ProductIdList) == 0, validation.Required.Error("产品 SKU 不能为空"))),
 	)
 }
 
@@ -400,8 +400,8 @@ type ProductQueryParams struct {
 
 func (m ProductQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductId, validation.When(len(m.SKU) == 0, validation.Required.Error("产品Id不能为空"))),
-		validation.Field(&m.SKU, validation.When(len(m.ProductId) == 0, validation.Required.Error("产品sku不能为空"))),
+		validation.Field(&m.ProductId, validation.When(len(m.SKU) == 0, validation.Required.Error("产品 ID 不能为空"))),
+		validation.Field(&m.SKU, validation.When(len(m.ProductId) == 0, validation.Required.Error("产品 SKU 不能为空"))),
 	)
 }
 

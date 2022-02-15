@@ -196,7 +196,7 @@ type DeleteTagRequest struct {
 
 func (m DeleteTagRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.LabelId, validation.Required.Error("标签ID不能为空")),
+		validation.Field(&m.LabelId, validation.Required.Error("标签 ID 不能为空")),
 	)
 }
 

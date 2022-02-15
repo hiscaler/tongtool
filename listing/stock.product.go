@@ -53,8 +53,8 @@ type StockProductURL struct {
 
 // StockProductDescription 库存商品描述
 type StockProductDescription struct {
-	BaseRichText      string `json:"baseRichText"`      //	(简单)富文本描述
-	Content           string `json:"content"`           //	富文本描述
+	BaseRichText      string `json:"baseRichText"`      // (简单)富文本描述
+	Content           string `json:"content"`           // 富文本描述
 	CreatedBy         string `json:"createdBy"`         // 创建人
 	CreatedDate       string `json:"createdDate"`       // 创建时间
 	Highlights        string `json:"highlights"`        // 亮点描述
@@ -88,9 +88,9 @@ type StockProductNote struct {
 	CreatedDate   string `json:"createdDate"`   // 创建时间
 	MerchantId    string `json:"merchantId"`    // 商户编号
 	ProductId     string `json:"productId"`     // 商品Ids
-	ProductNoteId string `json:"productNoteId"` //	产品备注Id
-	UpdatedBy     string `json:"updatedBy"`     //	修改人
-	UpdatedDate   string `json:"updatedDate"`   //	修改时间
+	ProductNoteId string `json:"productNoteId"` // 产品备注Id
+	UpdatedBy     string `json:"updatedBy"`     // 修改人
+	UpdatedDate   string `json:"updatedDate"`   // 修改时间
 }
 
 // StockProductLabel 库存商品标签
