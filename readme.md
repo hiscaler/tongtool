@@ -18,15 +18,15 @@
 - CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                                // 手工创建订单
 - UpdateOrder(req UpdateOrderRequest) error                                                                                                   // 更新订单
 - Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
-- Order(id string) (item Order, err error)                                                                                                    // 单个订单
+- Order(id string) (item Order, exists bool, err error)                                                                                       // 单个订单
 - CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                                // 作废订单
 - Products(params ProductsQueryParams) (items []Product, isLastPage bool, err error)                                                          // 商品列表
-- Product(typ string, sku string, isAlias bool) (item Product, err error)                                                                     // 单个商品
+- Product(typ string, sku string, isAlias bool) (item Product, exists bool, err error)                                                        // 单个商品
 - ProductExists(typ string, sku string, isAlias bool) (exists bool, err error)                                                                // 商品是否存在
 - CreateProduct(req CreateProductRequest) error                                                                                               // 创建商品
 - UpdateProduct(req UpdateProductRequest) error                                                                                               // 更新商品
 - Packages(params PackagesQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表
-- Package(orderNumber, packageNumber string) (item Package, err error)                                                                        // 单个包裹
+- Package(orderNumber, packageNumber string) (item Package, exists bool, err error)                                                           // 单个包裹
 - PackageDeliver(req PackageDeliverRequest) error                                                                                             // 执行包裹发货
 - Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                                                       // 供应商列表
 - PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error)                                        // 采购单列表
@@ -63,7 +63,7 @@
 - UpsertUser(req UpsertUserRequest) error                                // 保存用户信息
 - SaveUserAccount(req UpsertUserAccountRequest) error                    // 保存用户店铺信息
 - Products(req ProductsQueryParams) (items []Product, err error)         // 批量获取售卖详情
-- Product(req ProductQueryParams) (item Product, err error)              // 获取售卖基本资料
+- Product(req ProductQueryParams) (item Product, exists bool, err error) // 获取售卖基本资料
 - UpdateProduct(req UpdateProductRequest) error                          // 修改售卖资料
 - DeleteProduct(req DeleteProductRequest) error                          // 删除售卖资料
 
@@ -77,37 +77,41 @@
 ## 使用方法
 
 ```go
+package main
+
 import (
     "github.com/hiscaler/tongtool"
     ttConfig "github.com/hiscaler/tongtool/config"
     "github.com/hiscaler/tongtool/erp2"
 )
 
-ttInstance := tongtool.NewTongTool(ttConfig.Config{
-    Debug:       true,
-    AppKey:      "",
-    AppSecret:   "",
-    EnableCache: false,
-})
-ttService := erp2.NewService(ttInstance)
-params := OrderQueryParams{
-    SaleDateFrom: "2021-12-01 00:00:00",
-    SaleDateTo:   "2021-12-31 23:59:59",
+func main() {
+	ttInstance := tongtool.NewTongTool(ttConfig.Config{
+		Debug:       true,
+		AppKey:      "",
+		AppSecret:   "",
+		EnableCache: false,
+	})
+	ttService := erp2.NewService(ttInstance)
+	params := OrderQueryParams{
+		SaleDateFrom: "2021-12-01 00:00:00",
+		SaleDateTo:   "2021-12-31 23:59:59",
+	}
+	orders := make([]Order, 0)
+	for {
+		pageOrders, isLastPage, err := ttService.Orders(params)
+		if err != nil {
+			t.Errorf("ttService.Orders error: %s", err.Error())
+		} else {
+			orders = append(orders, pageOrders...)
+		}
+		if isLastPage || err != nil {
+			break
+		}
+		params.PageNo++
+	}
+	fmt.Println(fmt.Sprintf("%#v", orders))
 }
-orders := make([]Order, 0)
-for {
-    pageOrders, isLastPage, err := ttService.Orders(params)
-    if err != nil {
-        t.Errorf("ttService.Orders error: %s", err.Error())
-    } else {
-        orders = append(orders, pageOrders...)
-    }
-    if isLastPage || err != nil {
-        break
-    }
-    params.PageNo++
-}
-fmt.Println(fmt.Sprintf("%#v", orders))
 ```
 
 ## 注意事项

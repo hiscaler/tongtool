@@ -46,7 +46,7 @@ func TestService_ProductByNormalType(t *testing.T) {
 	typ := ProductTypeNormal
 	sku := "tt-sku-a"
 	isAlias := false
-	product, err := ttService.Product(typ, sku, isAlias)
+	product, _, err := ttService.Product(typ, sku, isAlias)
 	if err == nil {
 		fmt.Println("sku is ", product.SKU)
 		fmt.Println(jsonx.ToJson(product, "[]"))
@@ -64,7 +64,7 @@ func TestService_ProductByVariableType(t *testing.T) {
 	typ := ProductTypeVariable
 	sku := "00145_2"
 	isAlias := false
-	product, err := ttService.Product(typ, sku, isAlias)
+	product, _, err := ttService.Product(typ, sku, isAlias)
 	if err == nil {
 		fmt.Println("sku is ", product.SKU)
 		fmt.Println(jsonx.ToJson(product, "[]"))

@@ -15,15 +15,15 @@ type Service interface {
 	CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                                // 手工创建订单
 	UpdateOrder(req UpdateOrderRequest) error                                                                                                   // 更新订单
 	Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
-	Order(id string) (item Order, err error)                                                                                                    // 单个订单
+	Order(id string) (item Order, exists bool, err error)                                                                                       // 单个订单
 	CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                                // 作废订单
 	Products(params ProductsQueryParams) (items []Product, isLastPage bool, err error)                                                          // 商品列表
-	Product(typ string, sku string, isAlias bool) (item Product, err error)                                                                     // 单个商品
+	Product(typ string, sku string, isAlias bool) (item Product, exists bool, err error)                                                        // 单个商品
 	ProductExists(typ string, sku string, isAlias bool) (exists bool, err error)                                                                // 商品是否存在
 	CreateProduct(req CreateProductRequest) error                                                                                               // 创建商品
 	UpdateProduct(req UpdateProductRequest) error                                                                                               // 更新商品
 	Packages(params PackagesQueryParams) (items []Package, isLastPage bool, err error)                                                          // 包裹列表
-	Package(orderNumber, packageNumber string) (item Package, err error)                                                                        // 单个包裹
+	Package(orderNumber, packageNumber string) (item Package, exists bool, err error)                                                           // 单个包裹
 	PackageDeliver(req PackageDeliverRequest) error                                                                                             // 执行包裹发货
 	Suppliers(params SuppliersQueryParams) (items []Supplier, isLastPage bool, err error)                                                       // 供应商列表
 	PurchaseOrders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, isLastPage bool, err error)                                        // 采购单列表

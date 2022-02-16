@@ -59,7 +59,7 @@ func TestService_GoroutineOrders(t *testing.T) {
 
 func TestService_Order(t *testing.T) {
 	orderNumber := "LDXAUS-113-1075976-2803452-M9914"
-	order, err := ttService.Order(orderNumber)
+	order, _, err := ttService.Order(orderNumber)
 	if err != nil {
 		if errors.Is(err, tongtool.ErrNotFound) {
 			t.Errorf("%s not exists in tongtool", orderNumber)
@@ -73,13 +73,13 @@ func TestService_Order(t *testing.T) {
 
 func TestService_OrderNotFound(t *testing.T) {
 	orderNumber := "L-M20211208145011174-bad-number"
-	_, err := ttService.Order(orderNumber)
+	_, exists, err := ttService.Order(orderNumber)
 	if err == nil {
 		t.Errorf("ttService.Order except error")
-	} else {
-		if !errors.Is(err, tongtool.ErrNotFound) {
-			t.Error("ttService.Order except not found error")
-		}
+	} else if exists {
+		t.Errorf("ttService.Order: this is a invalid order number, but return it.")
+	} else if !errors.Is(err, tongtool.ErrNotFound) {
+		t.Error("ttService.Order except tongtool.ErrNotFound error")
 	}
 }
 

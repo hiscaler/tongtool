@@ -143,10 +143,11 @@ ERROR: %s
 }
 
 // Package 根据订单号和包裹号获取包裹资料
-// 调用本函数时，必须同时提供订单号和包裹号（因为一个订单可能存在多个包裹号），返回的是一个有效的包裹信息（取消的包裹不会返回）
-// 返回的 err 不为 nil 的情况下可以使用 errors.Is(err, tongtool.ErrNotFound) 来判断是通途中不存在还是其他错误导致没有正确返回，返回 true 则表示通途系统中不存在，否则为其他错误。
+// 调用本函数时，必须同时提供订单号和包裹号（因为一个订单可能存在多个包裹号），仅返回一个有效的包裹信息（包裹状态不是 cancel 的）
+// 在使用 item 数据前，您需要先判断 exists 返回值是否为 true 再使用，如果是 false 则需要根据 err 的错误信息确定您后续的业务处理。
+//
 // 如果需要查询一个订单所有的包裹，请使用 Packages 方法并提供 OrderNumber 参数值
-func (s service) Package(orderNumber, packageNumber string) (item Package, err error) {
+func (s service) Package(orderNumber, packageNumber string) (item Package, exists bool, err error) {
 	orderNumber = strings.TrimSpace(orderNumber)
 	packageNumber = strings.TrimSpace(packageNumber)
 	if orderNumber == "" || packageNumber == "" {
@@ -157,7 +158,6 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, err e
 		MerchantId:  s.tongTool.MerchantId,
 		OrderNumber: strings.TrimSpace(orderNumber),
 	}
-	exists := false
 	for {
 		packages := make([]Package, 0)
 		isLastPage := false

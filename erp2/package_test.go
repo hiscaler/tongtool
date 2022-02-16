@@ -24,9 +24,11 @@ func TestService_Packages(t *testing.T) {
 func TestService_Package(t *testing.T) {
 	orderId := "L-M20211221152430918"
 	packageId := "P02914669"
-	_, err := ttService.Package(orderId, packageId)
+	item, exists, err := ttService.Package(orderId, packageId)
 	if err != nil {
 		t.Error(err)
+	} else if exists && !strings.EqualFold(item.PackageId, packageId) {
+		t.Errorf("package except %s, acutal %s", packageId, item.PackageId)
 	}
 }
 
@@ -37,10 +39,10 @@ func TestService_PackageWithCache(t *testing.T) {
 	for i := 0; i < times; i++ {
 		orderId := "L-M20211221152430918"
 		packageId := "P02914669"
-		p, err := ttService.Package(orderId, packageId)
+		p, exists, err := ttService.Package(orderId, packageId)
 		if err != nil {
 			t.Errorf("ttService.Package error: %s", err.Error())
-		} else if !strings.EqualFold(p.PackageId, packageId) {
+		} else if exists && !strings.EqualFold(p.PackageId, packageId) {
 			t.Errorf("package.PackageId %s not equal %s", p.PackageId, packageId)
 		} else {
 			n++

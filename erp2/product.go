@@ -582,7 +582,7 @@ ERROR: %s
 }
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
-func (s service) Product(typ string, sku string, isAlias bool) (item Product, err error) {
+func (s service) Product(typ string, sku string, isAlias bool) (item Product, exists bool, err error) {
 	if !inx.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
 		typ = ProductTypeNormal
 	}
@@ -596,8 +596,6 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 	} else {
 		params.SKUs = []string{sku}
 	}
-
-	exists := false
 	for {
 		items := make([]Product, 0)
 		isLastPage := false
@@ -661,7 +659,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, er
 
 // ProductExists 根据 SKU 或 SKU 别名查询单个商品是否存在
 func (s service) ProductExists(typ string, sku string, isAlias bool) (exists bool, err error) {
-	if _, err = s.Product(typ, sku, isAlias); err == nil {
+	if _, exists, err = s.Product(typ, sku, isAlias); err == nil {
 		exists = true
 	}
 	return

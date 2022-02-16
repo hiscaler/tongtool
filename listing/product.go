@@ -406,7 +406,7 @@ func (m ProductQueryParams) Validate() error {
 }
 
 // Product 获取售卖基本资料
-func (s service) Product(req ProductQueryParams) (item Product, err error) {
+func (s service) Product(req ProductQueryParams) (item Product, exists bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -427,6 +427,7 @@ func (s service) Product(req ProductQueryParams) (item Product, err error) {
 					err = tongtool.ErrNotFound
 				} else {
 					item = res.Datas[0]
+					exists = true
 				}
 			}
 		} else {

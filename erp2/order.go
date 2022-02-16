@@ -266,7 +266,7 @@ ERROR: %s
 	return
 }
 
-func (s service) Order(orderId string) (item Order, err error) {
+func (s service) Order(orderId string) (item Order, exists bool, err error) {
 	if len(orderId) == 0 {
 		err = errors.New("orderId params cannot empty")
 		return
@@ -275,8 +275,6 @@ func (s service) Order(orderId string) (item Order, err error) {
 	params := OrdersQueryParams{
 		OrderId: orderId,
 	}
-
-	exists := false
 	for {
 		items := make([]Order, 0)
 		isLastPage := false
