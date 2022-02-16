@@ -118,7 +118,7 @@ func main() {
 ### 判断数据是否存在
 针对单项数据的查询，通常返回数据格式为：
 ```go
-Func(req Request) (item DataType, exists bool)
+FuncName(req Request) (item DataType, exists bool, err error)
 ```
 如果你需要判断返回的数据是否有效，在使用数据前请先判断 exists 返回值是否为 true。为 true 的情况下数据一定是存在且有效的，而如果为 false 则需要继续判断 err 返回值是否为 nil，为 nil 则表示数据确实不存在，而非 nil 则是在查询过程中出现问题导致不能正常获取到相应的数据，需要您根据业务需求来确定后续的代码逻辑。
 
