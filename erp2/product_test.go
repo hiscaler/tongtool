@@ -77,6 +77,25 @@ func TestService_ProductByVariableType(t *testing.T) {
 	}
 }
 
+// Product 查询结果判断
+func TestService_ProductExists(t *testing.T) {
+	typ := ProductTypeVariable
+	sku := "00145_2"
+	isAlias := false
+	product, exists, err := ttService.Product(typ, sku, isAlias)
+	if product.ProductId == "" || !exists || err != nil {
+		t.Errorf("ttService.Product exists except return true")
+		t.Error(err.Error())
+	}
+
+	sku = "00145_2-bad"
+	product, exists, err = ttService.Product(typ, sku, isAlias)
+	if product.ProductId != "" || exists || err == nil {
+		t.Errorf("ttService.Product exists except return false")
+		t.Error(err.Error())
+	}
+}
+
 func TestService_CreateProduct(t *testing.T) {
 	req := CreateProductRequest{
 		ProductCode:          "tt-sku-c",

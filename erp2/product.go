@@ -586,7 +586,6 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 	if !inx.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
 		typ = ProductTypeNormal
 	}
-
 	params := ProductsQueryParams{
 		MerchantId:  s.tongTool.MerchantId,
 		ProductType: typ,
