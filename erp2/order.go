@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	OrderStoreFlagActive   = "0" // 活跃表
-	OrderStoreFlagOneYear  = "1" // 一年表
-	OrderStoreFlagArchived = "2" // 归档表
+	OrderStoreFlagActive   = "0" // 活跃表（3 个月内）
+	OrderStoreFlagOneYear  = "1" // 一年表（3 个月到 15 个月）
+	OrderStoreFlagArchived = "2" // 归档表（15 个月以前）
 )
 
 // OrderDetail 通途订单详情
