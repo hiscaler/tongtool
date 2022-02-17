@@ -317,15 +317,14 @@ ERROR: %s
 	return
 }
 
+// Order 根据订单号获取订单信息
 func (s service) Order(orderId string) (item Order, exists bool, err error) {
-	if len(orderId) == 0 {
-		err = errors.New("orderId params cannot empty")
+	err = validation.Validate(orderId, validation.Required.Error("orderId 参数不能为空"))
+	if err != nil {
 		return
 	}
 
-	params := OrdersQueryParams{
-		OrderId: orderId,
-	}
+	params := OrdersQueryParams{OrderId: orderId}
 	for {
 		items := make([]Order, 0)
 		isLastPage := false
