@@ -65,9 +65,9 @@ type AfterSalesQueryParams struct {
 	ApproveStatus   string `json:"approveStatus"`   // 审核状态：approveStatus格式错误 、applying/等待提交、approving/等待审批、approved/审批通过
 	CreatedDateFrom string `json:"createdDateFrom"` // 售后创建开始时间
 	CreatedDateTo   string `json:"createdDateTo"`   // 售后创建结束时间
-	MerchantId      string `json:"merchantId"`
-	OrderId         string `json:"orderId"`       // 订单ID
-	ZhiXingStatus   string `json:"zhixingStatus"` // 执行状态: refunded/已退款、refundFail/退款失败、depatchOneMore/已补发货、rGoodStockInCancel/取消退款入库
+	MerchantId      string `json:"merchantId"`      // 商户 ID
+	OrderId         string `json:"orderId"`         // 订单 ID
+	ZhiXingStatus   string `json:"zhixingStatus"`   // 执行状态: refunded/已退款、refundFail/退款失败、depatchOneMore/已补发货、rGoodStockInCancel/取消退款入库
 }
 
 func (m AfterSalesQueryParams) Validate() error {
