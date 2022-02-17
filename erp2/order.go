@@ -38,17 +38,45 @@ type OrderPackage struct {
 	TrackingNumberTime   int    `json:"trackingNumberTime"`   // 物流跟踪号获取时间
 }
 
-type TongToolGoodsInfoList struct {
-	GoodsSKU           string  `json:"goodsSku"`
-	ProductCurrentCost float64 `json:"productCurrentCost"`
-	GoodsCurrentCost   float64 `json:"goodsCurrentCost"`
-	GoodsAverageCost   float64 `json:"goodsAverageCost"`
-	GoodsImageGroupId  string  `json:"goodsImageGroupId"`
-	ProductName        string  `json:"productName"`
+// PlatformGoodsInfo 平台商品信息
+type PlatformGoodsInfo struct {
+	ProductId           string `json:"product_id"`          // 商品顺序号
+	Quantity            int    `json:"quantity"`            // 原始sku数量
+	WebTransactionId    string `json:"webTransactionId"`    // 平台订单产品交易号
+	WebStoreCustomLabel string `json:"webstoreCustomLabel"` // 原始sku
+	WebStoreItemId      string `json:"webstoreItemId"`      // 平台订单产品ItemId
+	WebStoreSKU         string `json:"webstoreSku"`         // 通途sku
+}
+
+// TongToolGoodsInfo 通途商品信息
+type TongToolGoodsInfo struct {
+	GoodsAverageCost     float64 `json:"goodsAverageCost"`     // 货品平均成本
+	GoodsCurrentCost     float64 `json:"goodsCurrentCost"`     // 货品成本(最新成本)
+	GoodsImageGroupId    string  `json:"goodsImageGroupId"`    // 商品图片
+	GoodsPackagingCost   float64 `json:"goodsPackagingCost"`   // 货品包装成本
+	GoodsPackagingWeight float64 `json:"goodsPackagingWeight"` // 货品包装重量(克)
+	GoodsSKU             string  `json:"goodsSku"`             // 货品sku
+	GoodsTitle           string  `json:"goodsTitle"`           // 商品规格
+	GoodsWeight          float64 `json:"goodsWeight"`          // 货品重量(克)
+	PackageHeight        float64 `json:"packageHeight"`        // 包裹尺寸(高cm)
+	PackageLength        float64 `json:"packageLength"`        // 包裹尺寸(长cm)
+	PackageWidth         float64 `json:"packageWidth"`         // 包裹尺寸(宽cm)
+	PackagingCost        float64 `json:"packagingCost"`        // 货品包装成本
+	PackagingWeight      float64 `json:"packagingWeight"`      // 商品包装重量(克)
+	ProductAverageCost   float64 `json:"productAverageCost"`   // 商品平均成本
+	ProductCurrentCost   float64 `json:"productCurrentCost"`   // 商品成本
+	ProductHeight        float64 `json:"productHeight"`        // 商品尺寸(高cm)
+	ProductLength        float64 `json:"productLength"`        // 商品尺寸(长cm)
+	ProductName          string  `json:"productName"`          // 商品名称
+	ProductWeight        float64 `json:"productWeight"`        // 商品重量(克)
+	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸(宽cm)
+	Quantity             int     `json:"quantity"`             // 货品数量
+	WotId                string  `json:"wotId"`                // 平台交易编号
 }
 
 type GoodsInfo struct {
-	TongToolGoodsInfoList []TongToolGoodsInfoList `json:"tongToolGoodsInfoList"`
+	PlatformGoodsInfoList []PlatformGoodsInfo `json:"platformGoodsInfoList"` // 平台商品信息列表
+	TongToolGoodsInfoList []TongToolGoodsInfo `json:"tongToolGoodsInfoList"` // 通途商品信息列表
 }
 
 // Order 通途订单
