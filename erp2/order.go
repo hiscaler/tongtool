@@ -12,6 +12,17 @@ import (
 	"strings"
 )
 
+// 订单状态
+const (
+	OrderStatusWaitPacking        = "waitPacking"        // 等待配货
+	OrderStatusWaitPrinting       = "waitPrinting"       // 等待打印
+	OrderStatusWaitingDespatching = "waitingDespatching" // 等待发货
+	OrderStatusDespatched         = "despatched"         // 已发货
+	OrderStatusUnpaid             = "unpaid"             // 未付款
+	OrderStatusPaid               = "payed"              // 已付款
+)
+
+// 查询对象
 const (
 	OrderStoreFlagActive   = "0" // 活跃表（3 个月内）
 	OrderStoreFlagOneYear  = "1" // 一年表（3 个月到 15 个月）
@@ -93,7 +104,7 @@ type Order struct {
 	BuyerPhone                string         `json:"buyerPhone"`                // 买家电话
 	BuyerState                string         `json:"buyerState"`                // 买家省份
 	Carrier                   string         `json:"carrier"`                   // 上传物流的carrier
-	CarrierType               string         `json:"carrierType"`               // 物流商类型 ( 0:通途API对接、 1:通途Excel文件导出、 2:通途离线生成跟踪号 3:无对接、 4:自定义Excel对接)
+	CarrierType               string         `json:"carrierType"`               // 物流商类型 (0:通途API对接、 1:通途Excel文件导出、 2:通途离线生成跟踪号、3:无对接、 4:自定义Excel对接)
 	CarrierURL                string         `json:"carrierUrl"`                // 物流网络地址
 	DespatchCompleteTime      string         `json:"despatchCompleteTime"`      // 订单发货完成时间
 	DispatchTypeName          string         `json:"dispathTypeName"`           // 邮寄方式名称
@@ -104,7 +115,7 @@ type Order struct {
 	InsuranceIncome           float64        `json:"insuranceIncome"`           // 买家所付保费
 	InsuranceIncomeCurrency   string         `json:"insuranceIncomeCurrency"`   // 买家所付保费币种
 	IsInvalid                 string         `json:"isInvalid"`                 // 是否作废(0,''，null 未作废，1 手工作废 2 订单任务下载永久作废 3 拆分单主单作废 4 拆分单子单作废)
-	IsSuspended               string         `json:"isSuspended"`               // 是否需要人工审核 (1需要人工审核,0或null不需要)
+	IsSuspended               string         `json:"isSuspended"`               // 是否需要人工审核 (1需要人工审核，0或null不需要)
 	MerchantCarrierShortname  string         `json:"merchantCarrierShortname"`  // 承运人简称
 	OrderAmount               float64        `json:"orderAmount"`               // 订单总金额(商品金额+运费+保费)
 	OrderAmountCurrency       string         `json:"orderAmountCurrency"`       // 订单金额币种
@@ -140,25 +151,6 @@ type Order struct {
 	// 自定义属性
 	IsInvalidBoolean   bool `json:"isInvalidBoolean"`   // 是否作废布尔值
 	IsSuspendedBoolean bool `json:"isSuspendedBoolean"` // 是否需要人工审核布尔值
-}
-
-type OrdersQueryParams struct {
-	Paging
-	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
-	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
-	MerchantId       string `json:"merchantId"`                 // 商户ID
-	OrderId          string `json:"orderId,omitempty"`          // 订单号
-	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态 waitPacking/等待配货 ,waitPrinting/等待打印,waitingDespatching/等待发货 ,despatched/已发货,unpaid/未付款,payed/已付款,
-	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
-	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
-	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
-	RefundedDateFrom string `json:"refundedDateFrom,omitempty"` // 退款起始时间
-	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
-	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
-	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
-	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”）
-	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
-	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
 
 // StoreCountryCode 获取订单店铺所在国家代码
@@ -217,9 +209,40 @@ func (o Order) StoreCountryCode() string {
 	return code
 }
 
+type OrdersQueryParams struct {
+	Paging
+	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
+	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
+	MerchantId       string `json:"merchantId"`                 // 商户ID
+	OrderId          string `json:"orderId,omitempty"`          // 订单号
+	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态 waitPacking/等待配货 ,waitPrinting/等待打印,waitingDespatching/等待发货 ,despatched/已发货,unpaid/未付款,payed/已付款,
+	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
+	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
+	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
+	RefundedDateFrom string `json:"refundedDateFrom,omitempty"` // 退款起始时间
+	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
+	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
+	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
+	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”）
+	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
+	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
+}
+
+func (m OrdersQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.AccountCode, validation.Required.Error("帐户代码不能为空")),
+		validation.Field(&m.StoreFlag, validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询对象"))),
+		validation.Field(&m.OrderStatus, validation.When(m.OrderStatus != "", validation.In(OrderStatusWaitPacking, OrderStatusWaitPrinting, OrderStatusWaitingDespatching, OrderStatusDespatched, OrderStatusUnpaid, OrderStatusPaid).Error("无效的订单状态"))),
+	)
+}
+
 // Orders 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	if !inx.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
