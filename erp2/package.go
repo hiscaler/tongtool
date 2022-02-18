@@ -110,26 +110,31 @@ ERROR: %s
 		SetBody(params).
 		SetResult(&res).
 		Post("/openapi/tongtool/packagesQuery")
-	if err == nil {
-		if resp.IsSuccess() {
-			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Datas.Array
-				for i, item := range items {
-					items[i].IsValid = !inx.StringIn(item.PackageStatus, PackageStatusCancel)
-					items[i].IsCheckedBoolean = inx.StringIn(item.IsChecked, "Y")
-				}
-				isLastPage = len(items) < params.PageSize
-			}
-		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
-		}
+	if err != nil {
+		return
 	}
 
-	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			items = res.Datas.Array
+			for i, item := range items {
+				items[i].IsValid = !inx.StringIn(item.PackageStatus, PackageStatusCancel)
+				items[i].IsCheckedBoolean = inx.StringIn(item.IsChecked, "Y")
+			}
+			isLastPage = len(items) < params.PageSize
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	if err != nil {
+		return
+	}
+
+	if s.tongTool.EnableCache && len(items) > 0 {
 		if b, e := json.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
@@ -190,17 +195,17 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, exist
 // 包裹发货处理
 
 type PackageDeliverItemVolume struct {
-	Height float64 `json:"height"` // 高cm
-	Length float64 `json:"length"` // 长cm
-	Width  float64 `json:"width"`  // 宽cm
+	Height float64 `json:"height,omitempty"` // 高cm
+	Length float64 `json:"length,omitempty"` // 长cm
+	Width  float64 `json:"width,omitempty"`  // 宽cm
 }
 
 type PackageDeliverItem struct {
-	RelatedNo      string                   `json:"relatedNo"`      // 识别号(包裹号、物流跟踪号、物流商处理号、虚拟跟踪号)
-	ShipFee        float64                  `json:"shipFee"`        // 运费￥
-	TrackingNumber string                   `json:"trackingNumber"` // 跟踪号
-	Volume         PackageDeliverItemVolume `json:"volume"`         // 体积cm³
-	Weight         float64                  `json:"weight"`         // 称重g
+	RelatedNo      string                   `json:"relatedNo"`                // 识别号(包裹号、物流跟踪号、物流商处理号、虚拟跟踪号)
+	ShipFee        float64                  `json:"shipFee,omitempty"`        // 运费￥
+	TrackingNumber string                   `json:"trackingNumber,omitempty"` // 跟踪号
+	Volume         PackageDeliverItemVolume `json:"volume,omitempty"`         // 体积cm³
+	Weight         float64                  `json:"weight,omitempty"`         // 称重g
 }
 
 type PackageDeliverRequest struct {
@@ -252,7 +257,7 @@ func (s service) PackageDeliver(req PackageDeliverRequest) error {
 	}
 
 	if resp.IsSuccess() {
-		if res.Code == tongtool.OK {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			if len(res.Datas.ErrorList) != 0 {
 				errorMessageNumbers := make(map[string][]string, 0)
 				for _, item := range res.Datas.ErrorList {
@@ -270,8 +275,6 @@ func (s service) PackageDeliver(req PackageDeliverRequest) error {
 				}
 				err = errors.New(strings.Join(errorMessages, "; "))
 			}
-		} else {
-			err = tongtool.ErrorWrap(res.Code, res.Message)
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {

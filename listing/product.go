@@ -373,17 +373,19 @@ func (s service) Products(req ProductsQueryParams) (items []Product, err error) 
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/product/getProductInfoByParamList")
-	if err == nil {
-		if resp.IsSuccess() {
-			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Datas
-			}
+	if err != nil {
+		return
+	}
+
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			items = res.Datas
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return

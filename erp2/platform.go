@@ -54,24 +54,29 @@ ERROR: %s
 		SetBody(map[string]string{"merchantId": s.tongTool.MerchantId}).
 		SetResult(&res).
 		Post("/openapi/tongtool/merchantPlatformQuery")
-	if err == nil {
-		if resp.IsSuccess() {
-			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Datas.Array
-				for i, item := range items {
-					items[i].PlatformStatusBoolean = item.PlatformStatus == "0"
-				}
-			}
-		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
-		}
+	if err != nil {
+		return
 	}
 
-	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			items = res.Datas.Array
+			for i, item := range items {
+				items[i].PlatformStatusBoolean = item.PlatformStatus == "0"
+			}
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	if err != nil {
+		return
+	}
+
+	if s.tongTool.EnableCache && len(items) > 0 {
 		if b, e := json.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {

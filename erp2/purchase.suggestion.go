@@ -79,32 +79,37 @@ ERROR: %s
 		SetBody(params).
 		SetResult(&res).
 		Post("/openapi/tongtool/proposalResultQuery")
-	if err == nil {
-		if resp.IsSuccess() {
-			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				if len(params.SKUs) == 0 && len(params.WarehouseNames) == 0 {
-					items = res.Datas.Array
-				} else {
-					for _, d := range res.Datas.Array {
-						if len(params.SKUs) != 0 && !inx.StringIn(d.GoodsSKU, params.SKUs...) ||
-							len(params.WarehouseNames) != 0 && !inx.StringIn(d.WarehouseName, params.WarehouseNames...) {
-							continue
-						}
-						items = append(items, d)
-					}
-				}
-				isLastPage = len(res.Datas.Array) < params.PageSize
-			}
-		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
-		}
+	if err != nil {
+		return
 	}
 
-	if err == nil && s.tongTool.EnableCache && len(items) > 0 {
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			if len(params.SKUs) == 0 && len(params.WarehouseNames) == 0 {
+				items = res.Datas.Array
+			} else {
+				for _, d := range res.Datas.Array {
+					if len(params.SKUs) != 0 && !inx.StringIn(d.GoodsSKU, params.SKUs...) ||
+						len(params.WarehouseNames) != 0 && !inx.StringIn(d.WarehouseName, params.WarehouseNames...) {
+						continue
+					}
+					items = append(items, d)
+				}
+			}
+			isLastPage = len(res.Datas.Array) < params.PageSize
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	if err != nil {
+		return
+	}
+
+	if s.tongTool.EnableCache && len(items) > 0 {
 		if b, e := json.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {

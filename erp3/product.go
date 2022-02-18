@@ -267,19 +267,21 @@ func (s service) Products(params ProductsQueryParams) (items []Product, nextToke
 		SetBody(params).
 		SetResult(&res).
 		Post("/openapi/product/query")
-	if err == nil {
-		if resp.IsSuccess() {
-			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Datas
-				nextToken = res.NextToken
-				isLastPage = len(items) <= params.PageSize
-			}
+	if err != nil {
+		return
+	}
+
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			items = res.Datas
+			nextToken = res.NextToken
+			isLastPage = len(items) <= params.PageSize
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return

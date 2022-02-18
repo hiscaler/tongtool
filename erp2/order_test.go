@@ -10,6 +10,7 @@ import (
 
 func TestService_Orders(t *testing.T) {
 	params := OrdersQueryParams{
+		AccountCode:  "LDXAUS",
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-31 23:59:59",
 	}
@@ -58,7 +59,7 @@ func TestService_GoroutineOrders(t *testing.T) {
 }
 
 func TestService_Order(t *testing.T) {
-	orderNumber := "LDXAUS-113-1075976-2803452-M9914"
+	orderNumber := "abc"
 	order, _, err := ttService.Order(orderNumber)
 	if err != nil {
 		if errors.Is(err, tongtool.ErrNotFound) {
