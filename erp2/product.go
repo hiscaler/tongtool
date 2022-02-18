@@ -507,8 +507,8 @@ func (m ProductsQueryParams) Validate() error {
 			}
 			return nil
 		}))),
-		validation.Field(&m.UpdatedDateBegin, validation.When(m.UpdatedDateBegin != "", validation.Date(constant.DatetimeFormat).Error(" 更新时间查询的起始时间格式无效"))),
-		validation.Field(&m.UpdatedDateEnd, validation.When(m.UpdatedDateEnd != "", validation.Date(constant.DatetimeFormat).Error(" 更新时间查询的结束时间格式无效"))),
+		validation.Field(&m.UpdatedDateBegin, validation.When(m.UpdatedDateBegin != "", validation.Date(constant.DatetimeFormat).Error("更新时间查询的起始时间格式无效"))),
+		validation.Field(&m.UpdatedDateEnd, validation.When(m.UpdatedDateEnd != "", validation.Date(constant.DatetimeFormat).Error("更新时间查询的结束时间格式无效"))),
 	)
 }
 
