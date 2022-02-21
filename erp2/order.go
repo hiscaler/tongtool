@@ -230,8 +230,8 @@ type OrdersQueryParams struct {
 
 func (m OrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.AccountCode, validation.Required.Error("帐户代码不能为空")),
-		validation.Field(&m.StoreFlag, validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询对象"))),
+		validation.Field(&m.AccountCode, validation.When(m.OrderId == "", validation.Required.Error("帐户代码不能为空"))),
+		validation.Field(&m.StoreFlag, validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围"))),
 		validation.Field(&m.OrderStatus, validation.When(m.OrderStatus != "", validation.In(OrderStatusWaitPacking, OrderStatusWaitPrinting, OrderStatusWaitingDespatching, OrderStatusDespatched, OrderStatusUnpaid, OrderStatusPaid).Error("无效的订单状态"))),
 	)
 }

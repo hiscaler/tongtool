@@ -151,11 +151,11 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 	if v {
 		// Active
 		if t.Cache == nil {
-			var config bigcache.Config
+			var cacheConfig bigcache.Config
 			if t.Debug {
-				config = bigcache.DefaultConfig(10 * time.Minute)
+				cacheConfig = bigcache.DefaultConfig(10 * time.Minute)
 			} else {
-				config = bigcache.Config{
+				cacheConfig = bigcache.Config{
 					Shards:             1024,
 					LifeWindow:         10 * time.Minute,
 					CleanWindow:        1 * time.Second,
@@ -168,8 +168,8 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 					Logger:             nil,
 				}
 			}
-			config.Logger = t.Logger
-			if cache, e := bigcache.NewBigCache(config); e == nil {
+			cacheConfig.Logger = t.Logger
+			if cache, e := bigcache.NewBigCache(cacheConfig); e == nil {
 				t.EnableCache = true
 				t.Cache = cache
 			} else {
