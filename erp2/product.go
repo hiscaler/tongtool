@@ -166,8 +166,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 	default:
 		imageExt = filepath.Ext(img)
 	}
-	replacer := strings.NewReplacer("-", "", "_", "")
-	name := replacer.Replace(slug.Make(p.SKU))
+	name := strings.NewReplacer("-", "", "_", "").Replace(slug.Make(p.SKU))
 	maxDirLevels := 2
 	dirs := make([]string, 0)
 	if saveDir != "" {
