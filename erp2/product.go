@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/gosimple/slug"
+	"github.com/hiscaler/gox/filepathx"
 	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/gox/keyx"
@@ -167,28 +168,15 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		imageExt = filepath.Ext(img)
 	}
 	name := strings.NewReplacer("-", "", "_", "").Replace(slug.Make(p.SKU))
-	maxDirLevels := 2
-	dirs := make([]string, 0)
-	if saveDir != "" {
-		maxDirLevels++
-		dirs = append(dirs, saveDir)
-	}
-
-	n := len(name)
-	for i := 0; i < n; i += 2 {
-		j := 2
-		if i >= n {
-			j = 1
-		}
-		dirs = append(dirs, name[i:j])
-		if len(dirs) >= maxDirLevels {
-			break
-		}
-	}
 	if name == "" {
 		// If SKU is empty after slug then generate random file name
 		name = randx.Letter(8, false)
 	}
+	dirs := make([]string, 0)
+	if saveDir != "" {
+		dirs = append(dirs, saveDir)
+	}
+	dirs = append(dirs, filepathx.GenerateDirNames(name, 2, 2, true)...)
 	filename := path.Join(dirs...)
 	if !filex.Exists(filename) {
 		if err = os.MkdirAll(filename, os.ModePerm); err != nil {
