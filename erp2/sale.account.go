@@ -66,6 +66,9 @@ ERROR: %s
 			items = res.Datas.Array
 			for i, item := range items {
 				items[i].StatusBoolean = item.Status == "1"
+				if items[i].SiteIds == nil {
+					items[i].SiteIds = []string{}
+				}
 			}
 			isLastPage = len(items) < params.PageSize
 		}

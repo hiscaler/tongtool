@@ -1,6 +1,7 @@
 package erp2
 
 // 平台代码
+// https://xingqiu.tongtool.com/myaccount/commonAccount/index.htm
 const (
 	PlatformAmazon     = "amazon"        // 亚马逊
 	PlatformEBay       = "ebay"          // eBya
@@ -9,4 +10,8 @@ const (
 	Platform1688       = "alibaba_api"   // 1688
 	PlatformShopify    = "shopify_api"   // Shopify
 	PlatformTopHatter  = "tophatter_api" // TopHatter
+	PlatformFunPinPin  = "funpinpin_api" // FunPinPin
+	PlatformCouPang    = "coupang_api"   // CouPang
+	PlatformWalmart    = "walmart_api"   // Walmart
+	PlatformVOVA       = "vova_api"      // VOVA
 )
