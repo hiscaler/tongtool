@@ -108,17 +108,17 @@ func (p Product) GoodsDetailIndex() int {
 }
 
 // Image 商品图片
-func (p Product) Image() (path string) {
+func (p Product) Image() string {
+	path := ""
 	n := len(p.ProductImgList)
-	if n == 0 {
-		return
+	if n > 0 {
+		index := p.GoodsDetailIndex()
+		if index >= 0 && index < n {
+			// 0 ~ n-1
+			path = p.ProductImgList[index].ImageGroupId
+		}
 	}
-	index := p.GoodsDetailIndex()
-	if index >= 0 && index < n {
-		// 0 ~ n-1
-		path = p.ProductImgList[index].ImageGroupId
-	}
-	return
+	return path
 }
 
 // ImageIsNormalized 图片地址是否规范
@@ -143,6 +143,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		err = errors.New("未找到该产品相关的图片")
 		return
 	}
+
 	response, err := http.Get(img)
 	if err != nil {
 		return
