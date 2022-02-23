@@ -63,6 +63,7 @@ func (s service) ShopifyOrders(params ShopifyOrdersQueryParams) (items []Shopify
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
