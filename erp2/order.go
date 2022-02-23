@@ -542,6 +542,7 @@ func (s service) UpdateOrder(req UpdateOrderRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
+
 	req.MerchantId = s.tongTool.MerchantId
 
 	res := struct {

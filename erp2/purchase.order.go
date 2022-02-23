@@ -266,6 +266,7 @@ func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
+
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		tongtool.Response

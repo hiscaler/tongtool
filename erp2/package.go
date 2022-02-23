@@ -239,6 +239,7 @@ func (s service) PackageDeliver(req PackageDeliverRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
+
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		tongtool.Response
