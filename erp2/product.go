@@ -365,6 +365,7 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
+
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		tongtool.Response

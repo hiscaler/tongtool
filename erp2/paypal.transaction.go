@@ -3,8 +3,10 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 )
 
 // Paypal 付款记录查询
@@ -23,14 +25,25 @@ type PaypalTransaction struct {
 
 type PaypalTransactionsQueryParams struct {
 	Paging
-	MerchantId          string `json:"merchantId"`          // 商户ID
-	PaypalTransactionId string `json:"paypalTransactionId"` // Paypal记录ID
-	UpdatedDateBegin    string `json:"updatedDateBegin"`    // 下载更新起始时间
-	UpdatedDateEnd      string `json:"updatedDateEnd"`      // 下载更新结束时间
+	MerchantId          string `json:"merchantId"`                    // 商户ID
+	PaypalTransactionId string `json:"paypalTransactionId,omitempty"` // Paypal记录ID
+	UpdatedDateBegin    string `json:"updatedDateBegin,omitempty"`    // 下载更新起始时间
+	UpdatedDateEnd      string `json:"updatedDateEnd,omitempty"`      // 下载更新结束时间
 }
 
-// PaypalTransaction Paypal 付款记录查询
-func (s service) PaypalTransaction(params PaypalTransactionsQueryParams) (items []PaypalTransaction, isLastPage bool, err error) {
+func (m PaypalTransactionsQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.UpdatedDateBegin, validation.When(m.UpdatedDateBegin != "", validation.Date(constant.DatetimeFormat).Error("无效的下载更新起始时间格式"))),
+		validation.Field(&m.UpdatedDateEnd, validation.When(m.UpdatedDateEnd != "", validation.Date(constant.DatetimeFormat).Error("无效的下载更新结束时间格式"))),
+	)
+}
+
+// PaypalTransactions Paypal 付款记录查询
+func (s service) PaypalTransactions(params PaypalTransactionsQueryParams) (items []PaypalTransaction, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string

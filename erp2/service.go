@@ -43,7 +43,7 @@ type Service interface {
 	PurchaseSuggestions(params PurchaseSuggestionsQueryParams) (items []PurchaseSuggestion, isLastPage bool, err error)                         // 采购建议列表
 	QuotePrices(params QuotedPricesQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 供应商报价查询
 	AfterSales(params AfterSalesQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
-	PaypalTransaction(params PaypalTransactionsQueryParams) (items []PaypalTransaction, isLastPage bool, err error)                             // Paypal 付款记录查询
+	PaypalTransactions(params PaypalTransactionsQueryParams) (items []PaypalTransaction, isLastPage bool, err error)                            // Paypal 付款记录查询
 }
 
 func NewService(tt *tongtool.TongTool) Service {
