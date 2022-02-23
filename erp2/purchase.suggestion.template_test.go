@@ -10,6 +10,7 @@ func TestService_PurchaseSuggestionTemplates(t *testing.T) {
 	params := PurchaseSuggestionTemplatesQueryParams{
 		Names: []string{"test"},
 	}
+	params.PageNo = 1
 	templates := make([]PurchaseSuggestionTemplate, 0)
 	for {
 		pageTemplates, isLastPage, err := ttService.PurchaseSuggestionTemplates(params)

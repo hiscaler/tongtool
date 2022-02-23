@@ -585,6 +585,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 		MerchantId:  s.tongTool.MerchantId,
 		ProductType: typ,
 	}
+	params.PageNo = 1
 	if isAlias {
 		params.SKUAliases = []string{sku}
 	} else {

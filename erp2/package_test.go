@@ -13,6 +13,7 @@ func TestService_Packages(t *testing.T) {
 		AssignTimeTo:   "2021-12-30 23:59:59",
 		PackageStatus:  PackageStatusWaitDeliver,
 	}
+	params.PageNo = 1
 	packages, _, err := ttService.Packages(params)
 	if err == nil {
 		fmt.Println(jsonx.ToJson(packages, "[]"))

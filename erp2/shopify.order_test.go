@@ -11,6 +11,7 @@ func TestService_ShopifyOrders(t *testing.T) {
 		PayDateFrom: "2021-12-01 00:00:00",
 		PayDateTo:   "2021-12-11 23:59:59",
 	}
+	params.PageNo = 1
 	orders := make([]ShopifyOrder, 0)
 	for {
 		pageOrders, isLastPage, err := ttService.ShopifyOrders(params)

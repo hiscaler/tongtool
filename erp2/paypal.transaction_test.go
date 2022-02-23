@@ -6,6 +6,7 @@ import (
 
 func TestService_PaypalTransaction(t *testing.T) {
 	params := PaypalTransactionsQueryParams{}
+	params.PageNo = 1
 	transactions := make([]PaypalTransaction, 0)
 	for {
 		pageOrders, isLastPage, err := ttService.PaypalTransaction(params)

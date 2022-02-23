@@ -8,6 +8,7 @@ import (
 
 func TestService_Stocks(t *testing.T) {
 	params := StocksQueryParams{}
+	params.PageNo = 1
 	stocks := make([]Stock, 0)
 	for {
 		pageItems, isLastPage, err := ttService.Stocks(params)
@@ -30,6 +31,7 @@ func TestService_StockChangeLogs(t *testing.T) {
 		UpdatedDateFrom: "2018-01-01 00:00:00",
 		WarehouseName:   "万邑通美国西岸仓",
 	}
+	params.PageNo = 1
 	logs := make([]StockChangeLog, 0)
 	for {
 		pageLogs, isLastPage, err := ttService.StockChangeLogs(params)

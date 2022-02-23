@@ -14,6 +14,7 @@ func TestService_Orders(t *testing.T) {
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-31 23:59:59",
 	}
+	params.PageNo = 1
 	orders := make([]Order, 0)
 	for {
 		pageOrders, isLastPage, err := ttService.Orders(params)

@@ -11,6 +11,7 @@ func TestService_FBAOrders(t *testing.T) {
 		PurchaseDateFrom: "2021-12-01 00:00:00",
 		PurchaseDateTo:   "2021-12-10 23:59:59",
 	}
+	params.PageNo = 1
 	for {
 		orders, isLastPage, err := ttService.FBAOrders(params)
 		if err != nil {

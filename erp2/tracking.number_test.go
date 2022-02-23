@@ -10,6 +10,7 @@ func TestService_TrackingNumbers(t *testing.T) {
 	params := TrackingNumbersQueryParams{
 		OrderIds: []string{"bad.order.id1", "bad.order.id2", "L-M20211221152430918", "US-12345", "US-abcd"},
 	}
+	params.PageNo = 1
 	trackingNumbers := make([]TrackingNumber, 0)
 	for {
 		pageTrackingNumbers, isLastPage, err := ttService.TrackingNumbers(params)

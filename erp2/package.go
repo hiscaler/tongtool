@@ -163,6 +163,7 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, exist
 		MerchantId:  s.tongTool.MerchantId,
 		OrderNumber: strings.TrimSpace(orderNumber),
 	}
+	params.PageNo = 1
 	for {
 		packages := make([]Package, 0)
 		isLastPage := false

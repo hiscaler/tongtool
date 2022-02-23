@@ -330,6 +330,7 @@ func (s service) Order(orderId string) (item Order, exists bool, err error) {
 	}
 
 	params := OrdersQueryParams{OrderId: orderId}
+	params.PageNo = 1
 	for {
 		items := make([]Order, 0)
 		isLastPage := false

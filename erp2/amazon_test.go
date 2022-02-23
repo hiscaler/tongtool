@@ -10,6 +10,7 @@ func TestService_AmazonAccountSites(t *testing.T) {
 	params := AmazonAccountSitesQueryParams{
 		Account: "a",
 	}
+	params.PageNo = 1
 	logs := make([]string, 0)
 	for {
 		pageLogs, isLastPage, err := ttService.AmazonAccountSites(params)

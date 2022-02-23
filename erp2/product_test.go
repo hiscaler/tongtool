@@ -34,6 +34,7 @@ func TestService_Products(t *testing.T) {
 		ProductType: ProductTypeNormal,
 		SKUs:        []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"},
 	}
+	params.PageNo = 1
 	products, _, err := ttService.Products(params)
 	if err != nil {
 		t.Errorf("ttService.Products error: %s", err.Error())

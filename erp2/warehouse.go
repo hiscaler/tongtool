@@ -101,6 +101,7 @@ func (s service) Warehouse(id string) (item Warehouse, err error) {
 	}
 
 	params := WarehousesQueryParams{}
+	params.PageNo = 1
 	exists := false
 	for {
 		items := make([]Warehouse, 0)

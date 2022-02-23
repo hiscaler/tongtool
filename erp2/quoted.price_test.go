@@ -8,6 +8,7 @@ func TestService_QuotePrices(t *testing.T) {
 		QuotedPriceDateEnd:   "2018-01-02 00:00:00",
 		SKU:                  "Lillian201309130003",
 	}
+	params.PageNo = 1
 	quotedPrices := make([]QuotedPrice, 0)
 	for {
 		pageQuotedPrices, isLastPage, err := ttService.QuotePrices(params)

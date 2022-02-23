@@ -13,6 +13,7 @@ func TestService_PurchaseOrders(t *testing.T) {
 	params := PurchaseOrdersQueryParams{
 		PurchaseOrderCode: number,
 	}
+	params.PageNo = 1
 	orders, _, err := ttService.PurchaseOrders(params)
 	if err == nil {
 		exists := false
@@ -37,6 +38,7 @@ func TestService_PurchaseOrdersByStatus(t *testing.T) {
 	params := PurchaseOrdersQueryParams{
 		POrderStatus: status,
 	}
+	params.PageNo = 1
 	orders, _, err := ttService.PurchaseOrders(params)
 	if err == nil {
 		fmt.Println(jsonx.ToJson(orders, "[]"))
@@ -77,6 +79,7 @@ func TestService_PurchaseOrderStockInLogs(t *testing.T) {
 		WarehousingDateFrom: "2021-11-01 00:00:00",
 		WarehousingDateTo:   "2021-12-31 23:59:59",
 	}
+	params.PageNo = 1
 	orders := make([]PurchaseOrderLog, 0)
 	for {
 		pageOrders, isLastPage, err := ttService.PurchaseOrderStockInLogs(params)
