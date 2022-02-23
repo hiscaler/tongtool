@@ -4,7 +4,7 @@ package erp2
 // https://xingqiu.tongtool.com/myaccount/commonPlatform/index.htm
 const (
 	PlatformAmazon               = "amazon"            // 亚马逊
-	PlatformEBay                 = "ebay"              // eBya
+	PlatformEBay                 = "ebay"              // eBay
 	PlatformWish                 = "wish_api"          // Wish
 	PlatformAliExpress           = "alixpress"         // 速卖通
 	Platform1688                 = "alibaba_api"       // 1688
@@ -21,7 +21,7 @@ const (
 	PlatformRakutenFR            = "priceminister_api" // rakuten.fr
 	PlatformDHgate               = "dhgate_api"        // 敦煌
 	PlatformShopee               = "shopee_api"        // Shopee
-	PlatformMercadolibre         = "mercadolibre_api"  // Mercadolibre
+	PlatformMercadoLibre         = "mercadolibre_api"  // Mercado Libre
 	PlatformJoom                 = "joom_api"          // Joom
 	PlatformMyCom                = "mycom_api"         // My.com
 	PlatformFactoryMarket        = "factoryMarket_api" // FactoryMarket
@@ -38,11 +38,11 @@ const (
 	PlatformBackmarket           = "backmarket_api"    // backmarket
 	PlatformThisShop             = "thisshop_api"      // Thisshop
 	PlatformKauflandDE           = "real_api"          // kaufland.de
-	PlatformMercadolibreGlobal   = "mlglobal_api"      // Mercadolibre(global)
+	PlatformMercadoLibreGlobal   = "mlglobal_api"      // Mercado Libre(global)
 	PlatformRakutenDE            = "rakuten_api"       // rakuten.de
 	PlatformXShoppy              = "xshoppy_api"       // XShoppy
 	PlatformPassfeed             = "passfeed_api"      // Passfeed
-	PlatformShopLazza            = "shoplazza_api"     // 店匠
+	PlatformShopLazza            = "shoplazza_api"     // 店匠（ShopLazza）
 	PlatformDaraz                = "daraz_api"         // Daraz
 	PlatformTaoBao               = "taobao_api"        // 淘宝
 	PlatformLinio                = "linio_api"         // Linio
