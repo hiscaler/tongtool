@@ -27,7 +27,7 @@ type SaleAccountsQueryParams struct {
 
 func (m SaleAccountsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.PlatformId, validation.When(m.PlatformId != "", validation.In(PlatformAmazon, PlatformEBay, PlatformWish, PlatformAliExpress, Platform1688, PlatformShopify, PlatformTopHatter, PlatformFunPinPin, PlatformCouPang, PlatformWalmart, PlatformVOVA).Error("无效的平台代码"))),
+		validation.Field(&m.PlatformId, validation.When(m.PlatformId != "", validation.In(PlatformAmazon, PlatformEBay, PlatformWish, PlatformAliExpress, Platform1688, PlatformShopify, PlatformTopHatter, PlatformFunPinPin, PlatformCouPang, PlatformWalmart, PlatformVOVA, PlatformLazada, PlatformJDInternational, PlatformCdiscount, PlatformNewegg, PlatformRakutenFR, PlatformDHgate, PlatformShopee, PlatformMercadolibre, PlatformJoom, PlatformMyCom, PlatformFactoryMarket, PlatformYandex, PlatformFXXT, PlatformJDIT, PlatformJDGlobal, PlatformTeezily, PlatformAlibabaInternational, PlatformMeesho, PlatformShopline, PlatformJDTH, PlatformAllegro, PlatformBackmarket, PlatformThisShop, PlatformKauflandDE, PlatformMercadolibreGlobal, PlatformRakutenDE, PlatformXShoppy, PlatformPassfeed, PlatformShopLazza, PlatformDaraz, PlatformTaoBao, PlatformLinio, PlatformB2W, PlatformFunPinPin2, PlatformShopBase, PlatformFordeal, PlatformShoplus, PlatformOnBuy, PlatformManoMano, PlatformShoptima, PlatformShoprises).Error("无效的平台代码"))),
 	)
 }
 
