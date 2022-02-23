@@ -3,6 +3,7 @@ package erp2
 import (
 	"encoding/json"
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 )
@@ -20,12 +21,23 @@ type SaleAccount struct {
 
 type SaleAccountsQueryParams struct {
 	Paging
-	MerchantId string `json:"merchantId"` // 商户ID
+	MerchantId string `json:"merchantId"`            // 商户ID
+	PlatformId string `json:"platform_id,omitempty"` // 平台 id
+}
+
+func (m SaleAccountsQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.PlatformId, validation.When(m.PlatformId != "", validation.In(PlatformAmazon, PlatformEBay, PlatformWish, PlatformAliExpress, Platform1688, PlatformShopify, PlatformTopHatter, PlatformFunPinPin, PlatformCouPang, PlatformWalmart, PlatformVOVA).Error("无效的平台代码"))),
+	)
 }
 
 // SaleAccounts 商户账号列表
 // https://open.tongtool.com/apiDoc.html#/?docId=1e81e4bbae0b4d60b5f7777fc629ba2a
 func (s service) SaleAccounts(params SaleAccountsQueryParams) (items []SaleAccount, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string
@@ -63,14 +75,17 @@ ERROR: %s
 
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-			items = res.Datas.Array
-			for i, item := range items {
-				items[i].StatusBoolean = item.Status == "1"
-				if items[i].SiteIds == nil {
-					items[i].SiteIds = []string{}
+			for _, item := range res.Datas.Array {
+				if params.PlatformId != "" && item.PlatformId != params.PlatformId {
+					continue
 				}
+				item.StatusBoolean = item.Status == "1"
+				if item.SiteIds == nil {
+					item.SiteIds = []string{}
+				}
+				items = append(items, item)
 			}
-			isLastPage = len(items) < params.PageSize
+			isLastPage = len(res.Datas.Array) < params.PageSize
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {

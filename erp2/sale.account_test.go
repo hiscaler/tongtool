@@ -7,11 +7,15 @@ import (
 )
 
 func TestService_SaleAccounts(t *testing.T) {
-	params := SaleAccountsQueryParams{}
+	params := SaleAccountsQueryParams{
+		PlatformId: PlatformCouPang,
+	}
+	params.PageNo = 1
+	var accounts []SaleAccount
 	for {
-		accounts, isLastPage, err := ttService.SaleAccounts(params)
+		pageAccounts, isLastPage, err := ttService.SaleAccounts(params)
 		if err == nil {
-			fmt.Println(jsonx.ToJson(accounts, "[]"))
+			accounts = append(accounts, pageAccounts...)
 		} else {
 			t.Errorf("ttService.SaleAccounts error: %s", err.Error())
 		}
@@ -20,4 +24,5 @@ func TestService_SaleAccounts(t *testing.T) {
 		}
 		params.PageNo++
 	}
+	fmt.Println(jsonx.ToJson(accounts, "[]"))
 }
