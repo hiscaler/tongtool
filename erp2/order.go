@@ -564,7 +564,6 @@ func (s service) UpdateOrder(req UpdateOrderRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 

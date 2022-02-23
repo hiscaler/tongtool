@@ -385,7 +385,6 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
@@ -456,7 +455,6 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 			}
 		}
 	}
-
 	return err
 }
 
