@@ -130,15 +130,17 @@ func (p Product) ImageIsNormalized() bool {
 		return false
 	}
 
-	re, _ := regexp.Compile(`^(?i)http[s]?://[a-zA-Z0-9.-/]+$`)
-	return re.MatchString(s)
+	if re, err := regexp.Compile(`^(?i)http[s]?://[a-zA-Z0-9.-/]+$`); err == nil {
+		return re.MatchString(s)
+	}
+	return false
 }
 
 // SaveImage 下载并保存图片
 func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 	img := p.Image()
 	if img == "" {
-		err = errors.New("image path is empty")
+		err = errors.New("未找到该产品相关的图片")
 		return
 	}
 	response, err := http.Get(img)
