@@ -17,7 +17,7 @@ type SaleAccount struct {
 	PlatformId       string   `json:"platformId"`       // 平台id
 	SiteIds          []string `json:"siteIds"`          // 站点id列表
 	SiteCountryCodes []string `json:"siteCountryCodes"` // 站点国家代码列表
-	Status           string   `json:"status"`           // 账号状态 0停用,1 启用
+	Status           string   `json:"status"`           // 账号状态（0：停用、1：启用）
 	StatusBoolean    bool     `json:"statusBoolean"`    // 账号状态布尔值
 }
 
@@ -81,6 +81,7 @@ ERROR: %s
 				if params.PlatformId != "" && item.PlatformId != params.PlatformId {
 					continue
 				}
+
 				item.StatusBoolean = item.Status == "1"
 				if item.SiteIds == nil {
 					item.SiteIds = []string{}
@@ -131,7 +132,7 @@ func getSiteCountryCodeById(siteId string) string {
 	case "100002":
 		code = constant.CountryCodeAmerica
 	case "100003":
-		code = constant.CountryCodeUK
+		code = constant.CountryCodeUnitedKingdom
 	case "100004":
 		code = constant.CountryCodeCanada
 	case "100005":

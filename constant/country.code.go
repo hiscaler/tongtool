@@ -6,7 +6,7 @@ const (
 	CountryCodeAmerica            = "US" // 美国
 	CountryCodeCanada             = "CA" // 加拿大
 	CountryCodeGermany            = "DE" // 德国
-	CountryCodeUK                 = "GB" // 英国
+	CountryCodeUnitedKingdom      = "GB" // 英国
 	CountryCodeFrance             = "FR" // 法国
 	CountryCodeSpain              = "ES" // 西班牙
 	CountryCodeItaly              = "IT" // 意大利
