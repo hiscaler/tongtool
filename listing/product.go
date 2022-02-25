@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 )
 
@@ -363,19 +364,36 @@ func (m ProductsQueryParams) Validate() error {
 }
 
 // Products 批量获取售卖详情
-func (s service) Products(req ProductsQueryParams) (items []Product, err error) {
-	if err = req.Validate(); err != nil {
+func (s service) Products(params ProductsQueryParams) (items []Product, err error) {
+	if err = params.Validate(); err != nil {
 		return
 	}
 
-	req.MerchantId = s.tongTool.MerchantId
+	params.MerchantId = s.tongTool.MerchantId
+	var cacheKey string
+	if s.tongTool.EnableCache {
+		cacheKey = keyx.Generate(params)
+		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
+			if e = json.Unmarshal(b, &items); e == nil {
+				return
+			} else {
+				s.tongTool.Logger.Printf(`cache data unmarshal error
+ DATA: %s
+ERROR: %s
+`, string(b), e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
+		}
+	}
+
 	res := struct {
 		tongtool.Response
 		Datas []Product `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
-		SetBody(req).
+		SetBody(params).
 		Post("/openapi/tongtool/listing/product/getProductInfoByParamList")
 	if err != nil {
 		return
@@ -392,6 +410,21 @@ func (s service) Products(req ProductsQueryParams) (items []Product, err error) 
 			err = errors.New(resp.Status())
 		}
 	}
+	if err != nil {
+		return
+	}
+
+	if s.tongTool.EnableCache && len(items) > 0 {
+		if b, e := json.Marshal(&items); e == nil {
+			e = s.tongTool.Cache.Set(cacheKey, b)
+			if e != nil {
+				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
+			}
+		} else {
+			s.tongTool.Logger.Printf("items marshal error: %s", err.Error())
+		}
+	}
+
 	return
 }
 
@@ -412,19 +445,19 @@ func (m ProductQueryParams) Validate() error {
 }
 
 // Product 获取售卖基本资料
-func (s service) Product(req ProductQueryParams) (item Product, exists bool, err error) {
-	if err = req.Validate(); err != nil {
+func (s service) Product(params ProductQueryParams) (item Product, exists bool, err error) {
+	if err = params.Validate(); err != nil {
 		return
 	}
 
-	req.MerchantId = s.tongTool.MerchantId
+	params.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		tongtool.Response
 		Datas []Product `json:"datas"`
 	}{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
-		SetBody(req).
+		SetBody(params).
 		Post("/openapi/tongtool/listing/product/getProductInfoByParam")
 	if err != nil {
 		return
