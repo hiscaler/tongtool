@@ -6,17 +6,19 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
+	"github.com/hiscaler/tongtool/constant"
 )
 
 // SaleAccount 商户账号信息
 type SaleAccount struct {
-	SaleAccountId string   `json:"saleAccountId"` // 通途账户id
-	Account       string   `json:"account"`       // 账户
-	AccountCode   string   `json:"accountCode"`   // 账户简码
-	PlatformId    string   `json:"platformId"`    // 平台id
-	SiteIds       []string `json:"siteIds"`       // 站点id列表
-	Status        string   `json:"status"`        // 账号状态 0停用,1 启用
-	StatusBoolean bool     `json:"statusBoolean"` // 账号状态布尔值
+	SaleAccountId    string   `json:"saleAccountId"`    // 通途账户id
+	Account          string   `json:"account"`          // 账户
+	AccountCode      string   `json:"accountCode"`      // 账户简码
+	PlatformId       string   `json:"platformId"`       // 平台id
+	SiteIds          []string `json:"siteIds"`          // 站点id列表
+	SiteCountryCodes []string `json:"siteCountryCodes"` // 站点国家代码列表
+	Status           string   `json:"status"`           // 账号状态 0停用,1 启用
+	StatusBoolean    bool     `json:"statusBoolean"`    // 账号状态布尔值
 }
 
 type SaleAccountsQueryParams struct {
@@ -82,6 +84,13 @@ ERROR: %s
 				item.StatusBoolean = item.Status == "1"
 				if item.SiteIds == nil {
 					item.SiteIds = []string{}
+					item.SiteCountryCodes = []string{}
+				} else {
+					siteCountryCodes := make([]string, len(item.SiteIds))
+					for i, siteId := range item.SiteIds {
+						siteCountryCodes[i] = getSiteCountryCodeById(siteId)
+					}
+					item.SiteCountryCodes = siteCountryCodes
 				}
 				items = append(items, item)
 			}
@@ -109,4 +118,54 @@ ERROR: %s
 		}
 	}
 	return
+}
+
+// 根据站点 id 获取站点所在国家代码
+func getSiteCountryCodeById(siteId string) string {
+	if siteId == "" {
+		return ""
+	}
+
+	code := ""
+	switch siteId {
+	case "100002":
+		code = constant.CountryCodeAmerica
+	case "100003":
+		code = constant.CountryCodeUK
+	case "100004":
+		code = constant.CountryCodeCanada
+	case "100005":
+		code = constant.CountryCodeGermany
+	case "100006":
+		code = constant.CountryCodeSpain
+	case "100007":
+		code = constant.CountryCodeFrance
+	case "100008":
+		code = constant.CountryCodeItaly
+	case "100009":
+		code = constant.CountryCodeJapan
+	case "100010":
+		code = constant.CountryCodeMexico
+	case "100011":
+		code = constant.CountryCodeAustralian
+	case "100012":
+		code = constant.CountryCodeIndia
+	case "100013":
+		code = constant.CountryCodeUnitedArabEmirates
+	case "100014":
+		code = constant.CountryCodeTurkey
+	case "100015":
+		code = constant.CountryCodeSingapore
+	case "100016":
+		code = constant.CountryCodeNetherlands
+	case "100017":
+		code = constant.CountryCodeBrazil
+	case "100018":
+		code = constant.CountryCodeSaudiArabia
+	case "100019":
+		code = constant.CountryCodeSweden
+	case "100020":
+		code = constant.CountryCodePoland
+	}
+	return code
 }

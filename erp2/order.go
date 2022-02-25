@@ -155,50 +155,9 @@ type Order struct {
 
 // StoreCountryCode 获取订单店铺所在国家代码
 func (o Order) StoreCountryCode() string {
-	code := ""
-	if o.WebStoreItemSite != "" {
-		switch o.WebStoreItemSite {
-		case "100002":
-			code = constant.CountryCodeAmerica
-		case "100003":
-			code = constant.CountryCodeUK
-		case "100004":
-			code = constant.CountryCodeCanada
-		case "100005":
-			code = constant.CountryCodeGermany
-		case "100006":
-			code = constant.CountryCodeSpain
-		case "100007":
-			code = constant.CountryCodeFrance
-		case "100008":
-			code = constant.CountryCodeItaly
-		case "100009":
-			code = constant.CountryCodeJapan
-		case "100010":
-			code = constant.CountryCodeMexico
-		case "100011":
-			code = constant.CountryCodeAustralian
-		case "100012":
-			code = constant.CountryCodeIndia
-		case "100013":
-			code = constant.CountryCodeUnitedArabEmirates
-		case "100014":
-			code = constant.CountryCodeTurkey
-		case "100015":
-			code = constant.CountryCodeSingapore
-		case "100016":
-			code = constant.CountryCodeNetherlands
-		case "100017":
-			code = constant.CountryCodeBrazil
-		case "100018":
-			code = constant.CountryCodeSaudiArabia
-		case "100019":
-			code = constant.CountryCodeSweden
-		case "100020":
-			code = constant.CountryCodePoland
-		}
-	} else if o.BuyerCountry != "" {
-		// Todo 美国的买家买的加拿大站点的怎么办？
+	code := getSiteCountryCodeById(o.WebStoreItemSite)
+	if code == "" && o.BuyerCountry != "" {
+		// Todo 美国的买家买的加拿大站点的怎么办？或者国际站的也会判断不正确
 		country := strings.TrimSpace(o.BuyerCountry)
 		if country != "" {
 			if inx.StringIn(country, constant.CountryCodeAmerica, constant.CountryCodeCanada, constant.CountryCodeGermany, constant.CountryCodeUK, constant.CountryCodeFrance, constant.CountryCodeSpain, constant.CountryCodeItaly, constant.CountryCodeJapan, constant.CountryCodeMexico, constant.CountryCodeAustralian, constant.CountryCodeIndia, constant.CountryCodeUnitedArabEmirates, constant.CountryCodeTurkey, constant.CountryCodeSingapore, constant.CountryCodeNetherlands, constant.CountryCodeBrazil, constant.CountryCodeSaudiArabia, constant.CountryCodeSweden, constant.CountryCodePoland) {
