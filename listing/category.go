@@ -92,6 +92,7 @@ ERROR: %s
 	return
 }
 
+// Create/Update/Delete Category
 type CUDCategory struct {
 	CategoryId       string `json:"categoryId"`       // 类目编号
 	CategoryName     string `json:"categoryName"`     // 类目名称
@@ -113,7 +114,7 @@ func (m CreateCategoryRequest) Validate() error {
 	)
 }
 
-// CreateCategory 修改产品类目
+// CreateCategory 添加产品类目
 func (s service) CreateCategory(req CreateCategoryRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
