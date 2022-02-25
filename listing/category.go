@@ -92,7 +92,7 @@ ERROR: %s
 	return
 }
 
-// Create/Update/Delete Category
+// CUDCategory Create/Update/Delete Category
 type CUDCategory struct {
 	CategoryId       string `json:"categoryId"`       // 类目编号
 	CategoryName     string `json:"categoryName"`     // 类目名称
@@ -128,15 +128,17 @@ func (s service) CreateCategory(req CreateCategoryRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/productCategory/createProductCategory")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
@@ -170,15 +172,17 @@ func (s service) UpdateCategory(req UpdateCategoryRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/productCategory/changeProductCategory")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
@@ -212,15 +216,17 @@ func (s service) DeleteCategory(req DeleteCategoryRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/productCategory/delProductCategory")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err

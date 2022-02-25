@@ -178,15 +178,17 @@ func (s service) UpsertStockProduct(req UpsertStockProductRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/stock/saveStockProductInfo")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err

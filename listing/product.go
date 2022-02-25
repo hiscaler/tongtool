@@ -286,15 +286,17 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/product/updateProductInfo")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
@@ -328,15 +330,17 @@ func (s service) DeleteProduct(req DeleteProductRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/product/deleteProductInfo")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
@@ -422,22 +426,24 @@ func (s service) Product(req ProductQueryParams) (item Product, exists bool, err
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/listing/product/getProductInfoByParam")
-	if err == nil {
-		if resp.IsSuccess() {
-			if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-				if len(res.Datas) == 0 {
-					err = tongtool.ErrNotFound
-				} else {
-					item = res.Datas[0]
-					exists = true
-				}
-			}
-		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
+	if err != nil {
+		return
+	}
+
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			if len(res.Datas) == 0 {
+				err = tongtool.ErrNotFound
 			} else {
-				err = errors.New(resp.Status())
+				item = res.Datas[0]
+				exists = true
 			}
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
 		}
 	}
 	return
