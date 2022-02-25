@@ -35,6 +35,7 @@ func TestService_GoroutineOrders(t *testing.T) {
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-01 23:59:59",
 	}
+	params.PageNo = 1
 	var wg sync.WaitGroup
 	for i := 0; i <= 10; i++ {
 		wg.Add(1)
