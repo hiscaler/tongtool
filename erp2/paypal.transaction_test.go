@@ -9,9 +9,9 @@ func TestService_PaypalTransaction(t *testing.T) {
 	params.PageNo = 1
 	transactions := make([]PaypalTransaction, 0)
 	for {
-		pageOrders, isLastPage, err := ttService.PaypalTransaction(params)
+		pageOrders, isLastPage, err := ttService.PaypalTransactions(params)
 		if err != nil {
-			t.Errorf("ttService.PaypalTransaction error: %s", err.Error())
+			t.Errorf("ttService.PaypalTransactions error: %s", err.Error())
 		} else {
 			transactions = append(transactions, pageOrders...)
 		}
