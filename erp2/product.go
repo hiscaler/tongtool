@@ -18,7 +18,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -155,21 +154,6 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		return
 	}
 
-	var imageExt string
-	switch http.DetectContentType(b) {
-	case "image/jpeg":
-		imageExt = ".jpg"
-	case "image/png":
-		imageExt = ".png"
-	case "image/gif":
-		imageExt = ".gif"
-	case "image/bmp":
-		imageExt = ".bmp"
-	case "image/webp":
-		imageExt = ".webp"
-	default:
-		imageExt = filepath.Ext(img)
-	}
 	name := strings.NewReplacer("-", "", "_", "").Replace(slug.Make(p.SKU))
 	if name == "" {
 		// If SKU is empty after slug then generate random file name
@@ -187,7 +171,7 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		}
 	}
 
-	imagePath = path.Join(filename, name+imageExt)
+	imagePath = path.Join(filename, name+filepathx.Ext("", b))
 	err = os.WriteFile(imagePath, b, 0666)
 	return
 }
