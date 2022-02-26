@@ -27,7 +27,7 @@ const (
 	PlatformFactoryMarket        = "factoryMarket_api" // FactoryMarket
 	PlatformYandex               = "yandex_api"        // Yandex
 	PlatformFXXT                 = "fxxt_api"          // 分销平台
-	PlatformJDIT                 = "jdid_api"          // 京东印尼
+	PlatformJDID                 = "jdid_api"          // 京东印尼
 	PlatformJDGlobal             = "jdept_api"         // 京东全球售
 	PlatformTeezily              = "teezily_api"       // Teezily
 	PlatformAlibabaInternational = "alibabagj_api"     // 阿里巴巴国际站
@@ -35,7 +35,7 @@ const (
 	PlatformShopline             = "shopline_api"      // Shopline
 	PlatformJDTH                 = "jdth_api"          // 京东泰国
 	PlatformAllegro              = "allegro_api"       // allegro
-	PlatformBackmarket           = "backmarket_api"    // backmarket
+	PlatformBackMarket           = "backmarket_api"    // Back Market
 	PlatformThisShop             = "thisshop_api"      // Thisshop
 	PlatformKauflandDE           = "real_api"          // kaufland.de
 	PlatformMercadoLibreGlobal   = "mlglobal_api"      // Mercado Libre(global)
