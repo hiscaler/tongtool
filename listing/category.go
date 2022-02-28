@@ -121,9 +121,7 @@ func (s service) CreateCategory(req CreateCategoryRequest) error {
 	}
 
 	req.MerchantId = s.tongTool.MerchantId
-	res := struct {
-		tongtool.Response
-	}{}
+	res := tongtool.Response{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
 		SetBody(req).
@@ -165,9 +163,7 @@ func (s service) UpdateCategory(req UpdateCategoryRequest) error {
 	}
 
 	req.MerchantId = s.tongTool.MerchantId
-	res := struct {
-		tongtool.Response
-	}{}
+	res := tongtool.Response{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
 		SetBody(req).
@@ -209,9 +205,7 @@ func (s service) DeleteCategory(req DeleteCategoryRequest) error {
 	}
 
 	req.MerchantId = s.tongTool.MerchantId
-	res := struct {
-		tongtool.Response
-	}{}
+	res := tongtool.Response{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
 		SetBody(req).

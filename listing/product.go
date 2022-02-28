@@ -280,9 +280,7 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 	}
 
 	req.MerchantId = s.tongTool.MerchantId
-	res := struct {
-		tongtool.Response
-	}{}
+	res := tongtool.Response{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
 		SetBody(req).
@@ -324,9 +322,7 @@ func (s service) DeleteProduct(req DeleteProductRequest) error {
 	}
 
 	req.MerchantId = s.tongTool.MerchantId
-	res := struct {
-		tongtool.Response
-	}{}
+	res := tongtool.Response{}
 	resp, err := s.tongTool.Client.R().
 		SetResult(&res).
 		SetBody(req).
