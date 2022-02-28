@@ -164,15 +164,14 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		dirs = append(dirs, saveDir)
 	}
 	dirs = append(dirs, filepathx.GenerateDirNames(name, 2, 2, true)...)
-	filename := path.Join(dirs...)
-	if !filex.Exists(filename) {
-		if err = os.MkdirAll(filename, os.ModePerm); err != nil {
+	savedPath := path.Join(dirs...)
+	if !filex.Exists(savedPath) {
+		if err = os.MkdirAll(savedPath, os.ModePerm); err != nil {
 			return
 		}
 	}
 
-	imagePath = path.Join(filename, name+filepathx.Ext("", b))
-	err = os.WriteFile(imagePath, b, 0666)
+	err = os.WriteFile(path.Join(savedPath, name+filepathx.Ext("", b)), b, 0666)
 	return
 }
 
