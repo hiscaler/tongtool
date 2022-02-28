@@ -34,11 +34,11 @@ func TestService_Warehouses(t *testing.T) {
 
 func TestService_Warehouse(t *testing.T) {
 	id := "a"
-	warehouse, err := ttService.Warehouse(id)
-	if err != nil {
-		t.Errorf(err.Error())
-	} else {
+	warehouse, exists, err := ttService.Warehouse(id)
+	if exists {
 		fmt.Println(jsonx.ToJson(warehouse, "[]"))
+	} else if err != nil {
+		t.Errorf(err.Error())
 	}
 }
 

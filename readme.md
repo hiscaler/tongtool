@@ -38,7 +38,7 @@
 - Stocks(params StocksQueryParams) (items []Stock, isLastPage bool, err error)                                                                // 库存列表
 - StockChangeLogs(params StockChangeLogsQueryParams) (items []StockChangeLog, isLastPage bool, err error)                                     //  库存变动查询
 - Warehouses(params WarehousesQueryParams) (items []Warehouse, isLastPage bool, err error)                                                    // 仓库列表
-- Warehouse(id string) (item Warehouse, err error)                                                                                            // 仓库列表
+- Warehouse(id string) (item Warehouse, exists bool, err error)                                                                               // 仓库列表
 - ShippingMethods(params ShippingMethodsQueryParams) (items []ShippingMethod, isLastPage bool, err error)                                     // 仓库物流渠道列表
 - TrackingNumbers(params TrackingNumbersQueryParams) (items []TrackingNumber, isLastPage bool, err error)                                     // 订单物流单号列表
 - Platforms() (items []Platform, err error)                                                                                                   // 平台及站点信息

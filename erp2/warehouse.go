@@ -94,15 +94,14 @@ ERROR: %s
 }
 
 // Warehouse 查询指定仓库
-func (s service) Warehouse(id string) (item Warehouse, err error) {
+func (s service) Warehouse(id string) (item Warehouse, exists bool, err error) {
 	if id == "" {
-		err = errors.New("invalid id params value")
+		err = errors.New("无效的 id 参数值")
 		return
 	}
 
 	params := WarehousesQueryParams{}
 	params.PageNo = 1
-	exists := false
 	for {
 		items := make([]Warehouse, 0)
 		isLastPage := false
