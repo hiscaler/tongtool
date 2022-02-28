@@ -12,7 +12,7 @@ type Platform struct {
 	PlatformId            string         `json:"platformId"`            // 平台id
 	PlatformName          string         `json:"platformName"`          // 平台名称
 	PlatformSites         []PlatformSite `json:"platformSites"`         // 平台对应站点
-	PlatformStatus        string         `json:"platformStatus"`        // 平台状态 :0、有效 1、失效
+	PlatformStatus        string         `json:"platformStatus"`        // 平台状态（0：有效、1：失效）
 	PlatformStatusBoolean bool           `json:"platformStatusBoolean"` // 平台状态
 }
 
