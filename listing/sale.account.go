@@ -116,7 +116,10 @@ type UpsertSaleAccountRequest struct {
 func (m UpsertSaleAccountRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.AccountCode, validation.Required.Error("账户简码不能为空")),
-		validation.Field(&m.PlatformId, validation.Required.Error("平台编号不能为空"), validation.In("amazon", "ebay", "aliexpress", "wish").Error("无效的平台简码")),
+		validation.Field(&m.PlatformId,
+			validation.Required.Error("平台编号不能为空"),
+			validation.In("amazon", "ebay", "aliexpress", "wish").Error("无效的平台编号"),
+		),
 	)
 }
 

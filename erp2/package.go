@@ -68,7 +68,7 @@ func (m PackagesQueryParams) Validate() error {
 		validation.Field(&m.AssignTimeTo, validation.When(m.AssignTimeTo != "", validation.Date(constant.DatetimeFormat).Error("配货结束时间日期格式无效"))),
 		validation.Field(&m.DespatchTimeFrom, validation.When(m.DespatchTimeFrom != "", validation.Date(constant.DatetimeFormat).Error("发货开始时间日期格式无效"))),
 		validation.Field(&m.DespatchTimeTo, validation.When(m.DespatchTimeTo != "", validation.Date(constant.DatetimeFormat).Error("发货结束时间日期格式无效"))),
-		validation.Field(&m.PackageStatus, validation.In(PackageStatusWaitPrint, PackageStatusWaitDeliver, PackageStatusDelivered, PackageStatusCancel)),
+		validation.Field(&m.PackageStatus, validation.In(PackageStatusWaitPrint, PackageStatusWaitDeliver, PackageStatusDelivered, PackageStatusCancel).Error("无效的包裹状态")),
 	)
 }
 

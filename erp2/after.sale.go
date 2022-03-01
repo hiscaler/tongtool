@@ -74,7 +74,7 @@ func (m AfterSalesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CreatedDateFrom, validation.Date(constant.DatetimeFormat).Error("售后创建开始时间格式无效")),
 		validation.Field(&m.CreatedDateTo, validation.Date(constant.DatetimeFormat).Error("售后创建结束时间格式无效")),
-		validation.Field(&m.ZhiXingStatus, validation.In(AfterSaleExecutionStatusRefunded, AfterSaleExecutionStatusRefundFail, AfterSaleExecutionStatusDepatchOneMore, AfterSaleExecutionStatusRGoodStockInCancel)),
+		validation.Field(&m.ZhiXingStatus, validation.In(AfterSaleExecutionStatusRefunded, AfterSaleExecutionStatusRefundFail, AfterSaleExecutionStatusDepatchOneMore, AfterSaleExecutionStatusRGoodStockInCancel).Error("无效的执行状态")),
 	)
 }
 

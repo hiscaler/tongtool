@@ -47,8 +47,14 @@ type FBAOrdersQueryParams struct {
 
 func (m FBAOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.PurchaseDateFrom, validation.Required.Error("订单购买开始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("无效的订单购买开始时间格式")),
-		validation.Field(&m.PurchaseDateTo, validation.Required.Error("订单购买结束时间不能为空"), validation.Date(constant.DatetimeFormat).Error("无效的订单购买结束时间格式")),
+		validation.Field(&m.PurchaseDateFrom,
+			validation.Required.Error("订单购买开始时间不能为空"),
+			validation.Date(constant.DatetimeFormat).Error("无效的订单购买开始时间格式"),
+		),
+		validation.Field(&m.PurchaseDateTo,
+			validation.Required.Error("订单购买结束时间不能为空"),
+			validation.Date(constant.DatetimeFormat).Error("无效的订单购买结束时间格式"),
+		),
 	)
 }
 

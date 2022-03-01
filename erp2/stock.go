@@ -134,16 +134,19 @@ type StockChangeLogsQueryParams struct {
 
 func (m StockChangeLogsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.UpdatedDateFrom, validation.Required.Error("变动起始时间不能为空"), validation.Date(constant.DatetimeFormat).Error("变动起始时间格式错误"), validation.By(func(value interface{}) error {
-			t, err := time.Parse(constant.DatetimeFormat, value.(string))
-			if err != nil {
-				return err
-			}
-			if time.Now().Sub(t).Hours() > 24*7 {
-				return errors.New("变动起始时间只能输入距当前时间 7 天内的值")
-			}
-			return nil
-		})),
+		validation.Field(&m.UpdatedDateFrom,
+			validation.Required.Error("变动起始时间不能为空"),
+			validation.Date(constant.DatetimeFormat).Error("变动起始时间格式错误"), validation.By(func(value interface{}) error {
+				t, err := time.Parse(constant.DatetimeFormat, value.(string))
+				if err != nil {
+					return err
+				}
+				if time.Now().Sub(t).Hours() > 24*7 {
+					return errors.New("变动起始时间只能输入距当前时间 7 天内的值")
+				}
+				return nil
+			}),
+		),
 		validation.Field(&m.WarehouseName, validation.Required.Error("仓库名称不能为空")),
 	)
 }

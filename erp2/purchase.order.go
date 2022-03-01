@@ -185,7 +185,7 @@ func (m CreatePurchaseOrderRequest) Validate() error {
 			}
 			return validation.ValidateStruct(&item,
 				validation.Field(&item.GoodsDetailId, validation.Required.Error("通途货品 ID 不能为空")),
-				validation.Field(&item.Quantity, validation.Required.Error("采购数量不能小于 1")),
+				validation.Field(&item.Quantity, validation.Min(1).Error("采购数量不能小于 {{.threshold}}")),
 			)
 		}))),
 		validation.Field(&m.PurchaseUserId, validation.Required.Error("采购员 ID 不能为空")),
@@ -257,7 +257,7 @@ func (m PurchaseOrderStockInRequest) Validate() error {
 			}
 			return nil
 		}))),
-		validation.Field(&m.PurchaseOrderId, validation.Required.Error("采购单 ID不能为空")),
+		validation.Field(&m.PurchaseOrderId, validation.Required.Error("采购单 ID 不能为空")),
 	)
 }
 

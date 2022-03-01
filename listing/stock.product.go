@@ -151,15 +151,18 @@ type UpsertStockProductRequest struct {
 
 func (m UpsertStockProductRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DataType, validation.Required.Error("数据内容不能为空"), validation.By(func(value interface{}) error {
-			s, _ := value.(string)
-			for _, typ := range strings.Split(s, ",") {
-				if !inx.StringIn(typ, "baseInfo", "picture", "description") {
-					return fmt.Errorf("%s 数据内容无效", typ)
+		validation.Field(&m.DataType,
+			validation.Required.Error("数据内容不能为空"),
+			validation.By(func(value interface{}) error {
+				s, _ := value.(string)
+				for _, typ := range strings.Split(s, ",") {
+					if !inx.StringIn(typ, "baseInfo", "picture", "description") {
+						return fmt.Errorf("%s 数据内容无效", typ)
+					}
 				}
-			}
-			return nil
-		})),
+				return nil
+			}),
+		),
 		validation.Field(&m.RequestType, validation.In(CreateStockProduct, UpdateStockProduct).Error("错误的请求类型")),
 	)
 }
