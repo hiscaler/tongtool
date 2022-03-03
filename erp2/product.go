@@ -171,7 +171,8 @@ func (p Product) SaveImage(saveDir string) (imagePath string, err error) {
 		}
 	}
 
-	err = os.WriteFile(path.Join(savedPath, name+filepathx.Ext("", b)), b, 0666)
+	imagePath = path.Join(savedPath, name+filepathx.Ext("", b))
+	err = os.WriteFile(imagePath, b, 0666)
 	return
 }
 
