@@ -357,15 +357,17 @@ func (s service) CreateProduct(req CreateProductRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/createProduct")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
@@ -427,15 +429,17 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 		SetResult(&res).
 		SetBody(req).
 		Post("/openapi/tongtool/updateProduct")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err

@@ -207,21 +207,22 @@ func (s service) CreatePurchaseOrder(req CreatePurchaseOrderRequest) (number str
 	cpr := createPurchaseOrderResponse{}
 	req.MerchantId = s.tongTool.MerchantId
 	r, err := s.tongTool.Client.R().SetResult(&cpr).SetBody(req).Post("/openapi/tongtool/purchaseOrderCreate")
-	if err == nil {
-		if r.IsSuccess() {
-			if cpr.Code == tongtool.OK {
-				number = strings.TrimSpace(cpr.Datas)
-				if number == "" {
-					err = errors.New("not found number in http response")
-				}
-			} else {
-				err = errors.New(cpr.Message)
-			}
-		} else {
-			err = errors.New(r.Status())
-		}
+	if err != nil {
+		return
 	}
 
+	if r.IsSuccess() {
+		if cpr.Code == tongtool.OK {
+			number = strings.TrimSpace(cpr.Datas)
+			if number == "" {
+				err = errors.New("not found number in http response")
+			}
+		} else {
+			err = errors.New(cpr.Message)
+		}
+	} else {
+		err = errors.New(r.Status())
+	}
 	return
 }
 
@@ -276,15 +277,17 @@ func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error {
 		SetBody(req).
 		SetResult(&res).
 		Post("/openapi/tongtool/purchaseOrderStockIn")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
@@ -435,15 +438,17 @@ func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) error {
 		SetBody(req).
 		SetResult(&res).
 		Post("/openapi/tongtool/purchaseArrival")
-	if err == nil {
-		if resp.IsSuccess() {
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
-			if e := json.Unmarshal(resp.Body(), &res); e == nil {
-				err = tongtool.ErrorWrap(res.Code, res.Message)
-			} else {
-				err = errors.New(resp.Status())
-			}
+			err = errors.New(resp.Status())
 		}
 	}
 	return err
