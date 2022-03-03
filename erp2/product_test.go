@@ -60,6 +60,29 @@ func TestService_ProductByNormalType(t *testing.T) {
 	}
 }
 
+func TestService_ProductByBindingType(t *testing.T) {
+	typ := ProductTypeBinding
+	sku := "tt-sku-a"
+	isAlias := false
+	_, exists, err := ttService.Product(typ, sku, isAlias)
+	if !exists {
+		t.Error("not exists")
+	} else if err != nil {
+		t.Error(err)
+	}
+}
+func TestService_ProductByAssembleType(t *testing.T) {
+	typ := ProductTypeAssemble
+	sku := "tt-sku-a"
+	isAlias := false
+	_, exists, err := ttService.Product(typ, sku, isAlias)
+	if !exists {
+		t.Error("not exists")
+	} else if err != nil {
+		t.Error(err)
+	}
+}
+
 // 变体商品查询
 func TestService_ProductByVariableType(t *testing.T) {
 	typ := ProductTypeVariable

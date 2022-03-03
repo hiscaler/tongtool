@@ -35,6 +35,7 @@ const (
 	ProductTypeNormal   = "0" // 0 普通销售
 	ProductTypeVariable = "1" // 1 变参销售
 	ProductTypeBinding  = "2" // 2 捆绑销售
+	ProductTypeAssemble = "3" // 3 组装产品
 )
 
 const (
@@ -458,7 +459,7 @@ type ProductsQueryParams struct {
 func (m ProductsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductStatus, validation.In("1", "2").Error("无效的商品状态")),
-		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding)),
+		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding, ProductTypeAssemble)),
 		validation.Field(&m.SKUs, validation.When(len(m.SKUs) > 0, validation.By(func(value interface{}) error {
 			items, ok := value.([]string)
 			if !ok {
@@ -560,7 +561,7 @@ ERROR: %s
 
 // Product 根据 SKU 或 SKU 别名查询单个商品
 func (s service) Product(typ string, sku string, isAlias bool) (item Product, exists bool, err error) {
-	if !inx.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding) {
+	if !inx.StringIn(typ, ProductTypeNormal, ProductTypeVariable, ProductTypeBinding, ProductTypeAssemble) {
 		typ = ProductTypeNormal
 	}
 	params := ProductsQueryParams{
@@ -583,7 +584,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 			} else {
 				for _, p := range items {
 					switch typ {
-					case ProductTypeVariable:
+					case ProductTypeVariable, ProductTypeBinding:
 						if strings.EqualFold(sku, p.ProductCode) || strings.EqualFold(sku, p.SKU) {
 							exists = true
 							item = p
@@ -606,11 +607,9 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 										break
 									}
 								}
-							} else {
-								if strings.EqualFold(sku, p.SKU) {
-									exists = true
-									item = p
-								}
+							} else if strings.EqualFold(sku, p.SKU) {
+								exists = true
+								item = p
 							}
 						}
 					}
