@@ -415,7 +415,7 @@ func (m CreateOrderRequest) Validate() error {
 				}
 				return validation.ValidateStruct(&item,
 					validation.Field(&item.SKU, validation.When(item.GoodsDetailId == "", validation.Required.Error("货品 ID 与 SKU 必传其中一个"))),
-					validation.Field(&item.Quantity, validation.Min(1).Error("数量必须大于 {{.threshold}}")),
+					validation.Field(&item.Quantity, validation.Min(1).Error("数量不能小于 {{.threshold}}")),
 				)
 			})),
 		),

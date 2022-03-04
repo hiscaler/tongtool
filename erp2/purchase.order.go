@@ -178,16 +178,19 @@ type CreatePurchaseOrderRequest struct {
 func (m CreatePurchaseOrderRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Currency, validation.Required.Error("币种不能为空")),
-		validation.Field(&m.GoodsDetail, validation.Required.Error("采购货品信息不能为空"), validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
-			item, ok := value.(PurchaseOrderGoodDetail)
-			if !ok {
-				return errors.New("无效的采购货品信息")
-			}
-			return validation.ValidateStruct(&item,
-				validation.Field(&item.GoodsDetailId, validation.Required.Error("通途货品 ID 不能为空")),
-				validation.Field(&item.Quantity, validation.Min(1).Error("采购数量不能小于 {{.threshold}}")),
-			)
-		}))),
+		validation.Field(&m.GoodsDetail,
+			validation.Required.Error("采购货品信息不能为空"),
+			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+				item, ok := value.(PurchaseOrderGoodDetail)
+				if !ok {
+					return errors.New("无效的采购货品信息")
+				}
+				return validation.ValidateStruct(&item,
+					validation.Field(&item.GoodsDetailId, validation.Required.Error("通途货品 ID 不能为空")),
+					validation.Field(&item.Quantity, validation.Min(1).Error("采购数量不能小于 {{.threshold}}")),
+				)
+			})),
+		),
 		validation.Field(&m.PurchaseUserId, validation.Required.Error("采购员 ID 不能为空")),
 		validation.Field(&m.SupplierId, validation.Required.Error("通途供应商 ID 不能为空")),
 		validation.Field(&m.WarehouseIdKey, validation.Required.Error("通途仓库 ID 不能为空")),
@@ -245,19 +248,22 @@ type PurchaseOrderStockInRequest struct {
 
 func (m PurchaseOrderStockInRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ArrivalInfoList, validation.Required.Error("到货货品信息不能为空"), validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
-			item, ok := value.(PurchaseOrderStockInItem)
-			if !ok {
-				return errors.New("无效的到货商品")
-			}
-			if strings.TrimSpace(item.GoodsDetailId) == "" {
-				return errors.New("通途货品 ID 不能为空")
-			}
-			if item.Quantity < 1 {
-				return errors.New("采购数量不能小于 1")
-			}
-			return nil
-		}))),
+		validation.Field(&m.ArrivalInfoList,
+			validation.Required.Error("到货货品信息不能为空"),
+			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+				item, ok := value.(PurchaseOrderStockInItem)
+				if !ok {
+					return errors.New("无效的到货商品")
+				}
+				if strings.TrimSpace(item.GoodsDetailId) == "" {
+					return errors.New("通途货品 ID 不能为空")
+				}
+				if item.Quantity < 1 {
+					return errors.New("采购数量不能小于 1")
+				}
+				return nil
+			})),
+		),
 		validation.Field(&m.PurchaseOrderId, validation.Required.Error("采购单 ID 不能为空")),
 	)
 }

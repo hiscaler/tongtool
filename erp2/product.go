@@ -293,8 +293,14 @@ func (m CreateProductRequest) Validate() error {
 		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
 		validation.Field(&m.ProductCode, validation.Required.Error("商品 SKU 不能为空")),
 		validation.Field(&m.EnablePackageNum, validation.Min(1).Error("可包装数量不能小于 {{.threshold}}")),
-		validation.Field(&m.ProductStatus, validation.Required.Error("商品状态不可为空"), validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态")),
-		validation.Field(&m.SalesType, validation.Required.Error("销售类型不可为空"), validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型")),
+		validation.Field(&m.ProductStatus,
+			validation.Required.Error("商品状态不可为空"),
+			validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态"),
+		),
+		validation.Field(&m.SalesType,
+			validation.Required.Error("销售类型不可为空"),
+			validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型"),
+		),
 		validation.Field(&m.Goods, validation.When(m.SalesType == ProductSaleTypeVariable, validation.Required.Error("变参货品不能为空"))),
 		validation.Field(&m.Accessories, validation.When(len(m.Accessories) > 0, validation.By(func(value interface{}) error {
 			items, ok := value.([]ProductAccessory)
@@ -407,8 +413,14 @@ func (m UpdateProductRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
 		validation.Field(&m.EnablePackageNum, validation.Min(1).Error("可包装数量不能小于 {{.threshold}}")),
-		validation.Field(&m.ProductStatus, validation.Required.Error("商品状态不可为空"), validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态")),
-		validation.Field(&m.SalesType, validation.Required.Error("销售类型不可为空"), validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型")),
+		validation.Field(&m.ProductStatus,
+			validation.Required.Error("商品状态不可为空"),
+			validation.In(ProductStatusHaltSales, ProductStatusOnSale, ProductStatusTrySale, ProductStatusClearanceSale).Error("无效的商品状态"),
+		),
+		validation.Field(&m.SalesType,
+			validation.Required.Error("销售类型不可为空"),
+			validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型"),
+		),
 	)
 }
 
