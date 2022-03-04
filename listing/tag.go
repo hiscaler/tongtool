@@ -9,11 +9,64 @@ import (
 )
 
 const (
-	ProductTag                  = "product"           // 产品资料标签
-	ProductEbayDraftTag         = "ebayDraft"         // eBay草稿标签
-	ProductEbayListingTag       = "ebayListing"       // eBay在线标签
-	ProductAliexpressDraftTag   = "aliexpressDraft"   // 速卖通草稿标签
-	ProductAliexpressListingTag = "aliexpressListing" // 速卖通在线标签
+	ProductTag                   = "product"                   // 产品资料标签
+	EbayDraftTag                 = "ebayDraft"                 // eBay草稿标签
+	EbayListingTag               = "ebayListing"               // eBay在线标签
+	AliExpressDraftTag           = "aliexpressDraft"           // 速卖通草稿标签
+	AliExpressListingTag         = "aliexpressListing"         // 速卖通在线标签
+	AmazonDraftTag               = "amazonDraft"               // 亚马逊草稿标签
+	AmazonListingTag             = "amazonListing"             // 亚马逊在线标签
+	WishDraftTag                 = "wishDraft"                 // Wish草稿标签
+	WishListingTag               = "wishListing"               // Wish在线标签
+	LazadaDraftTag               = "lazadaDraft"               // Lazada草稿标签
+	LazadaListingTag             = "lazadaListing"             // Lazada在线标签
+	PmDraftTag                   = "pmDraft"                   // PM草稿标签
+	PmListingTag                 = "pmListing"                 // PM在线标签
+	NeweggDraftTag               = "neweggDraft"               // newegg草稿标签
+	NeweggListing                = "neweggListing"             // newegg在线标签
+	MercadolibreDraftTag         = "mercadolibreDraft"         // Mercadolibre草稿标签
+	MercadolibreListingTag       = "mercadolibreListing"       // Mercadolibre在线标签
+	ShopeeDraftTag               = "shopeeDraft"               // shopee草稿标签
+	ShopeeListingTag             = "shopeeListing"             // shopee在线标签
+	JoomDraftTag                 = "joomDraft"                 // joom草稿标签
+	JoomListingTag               = "joomListing"               // joom在线标签
+	YandexDraftTag               = "yandexDraft"               // yandex草稿标签
+	TeezilyDraftTag              = "teezilyDraft"              // teezily草稿标签
+	TeezilyListingTag            = "teezilyListing"            // Teezily在线标签
+	ListingTemplateTag           = "listingTemplate"           // 刊登模板标签
+	ShopifyDraftTag              = "shopifyDraft"              // Shopify草稿标签
+	ShopifyListingTag            = "shopifyListing"            // Shopify在线标签
+	JdeptDraftTag                = "jdeptDraft"                // 京东全球售草稿标签
+	JdeptListingTag              = "jdeptListing"              // 京东全球售在线标签
+	jdidDraftTag                 = "jdidDraft"                 // 京东全球售在线标签
+	JdidListingTag               = "jdidListing"               // 京东印尼在线标签
+	ShoplineDraftTag             = "shoplineDraft"             // SHOPLINE草稿标签
+	ShoplineListingTag           = "shoplineListing"           // Shopline在线标签
+	ShoplusDraftTag              = "shoplusDraft"              // SHOPLUS草稿标签
+	ShoplusListingTag            = "shoplusListing"            // SHOPLUS在线标签
+	VovaDraftTag                 = "vovaDraft"                 // Vova草稿标签
+	VovaListingTag               = "vovaListing"               // Vova在线标签
+	EtsyDraftTag                 = "etsyDraft"                 // Etsy草稿标签
+	EtsyListingTag               = "etsyListing"               // Etsy在线标签
+	DataCollectionTag            = "dataCollection"            // 数据采集标签
+	ThisshopDraftTag             = "thisshopDraft"             // Thisshop草稿标签
+	ThisshopListingTag           = "thisshopListing"           // Thisshop在线标签
+	MycomDraftTag                = "mycomDraft"                // Mycom草稿标签
+	MycomListingTag              = "mycomListing"              // Mycom在线标签
+	AllegroDraftTag              = "allegroDraft"              // Allegro草稿标签
+	AllegroListingTag            = "allegroListing"            // Allegro在线标签
+	GlobalMercadolibreDraftTag   = "globalMercadolibreDraft"   // GlobalMercadolibre草稿标签
+	GlobalMercadolibreListingTag = "globalMercadolibreListing" // GlobalMercadolibre在线标签
+	PassfeedDraftTag             = "passfeedDraft"             // passfeed 在线标签
+	passfeedListingTag           = "passfeedListing"           // passfeed 在线标签
+	AlibabagjDraftTag            = "alibabagjDraft"            // 阿里巴巴国际草稿标签
+	AlibabagjListingTag          = "alibabagjListing"          // 阿里巴巴国际在线标签
+	ShoplazzaDraftTag            = "shoplazzaDraft"            // 店匠草稿标签
+	ShoplazzaListingTag          = "shoplazzaListing"          // 店匠在线标签
+	TbgspDraftTag                = "tbgspDraft"                // 阿里分销草稿标签
+	TbgspListingTag              = "tbgspListing"              // 阿里分销在线标签
+	B2wDraftTag                  = "b2wDraft"                  // B2W草稿标签
+	B2wListingTag                = "b2wListing"                // B2W草稿标签
 )
 
 type Tag struct {
@@ -34,7 +87,39 @@ type TagsQueryParams struct {
 
 func (m TagsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.LabelType, validation.When(m.LabelType != "", validation.In(ProductTag, ProductEbayDraftTag, ProductEbayListingTag, ProductAliexpressDraftTag, ProductAliexpressListingTag).Error("无效的标签类别"))),
+		validation.Field(&m.LabelType, validation.When(m.LabelType != "", validation.In(
+			ProductTag,
+			EbayDraftTag, EbayListingTag,
+			AliExpressDraftTag, AliExpressListingTag,
+			AmazonDraftTag, AmazonListingTag,
+			WishDraftTag, WishListingTag,
+			LazadaDraftTag, LazadaListingTag,
+			PmDraftTag, PmListingTag,
+			NeweggDraftTag, NeweggListing,
+			MercadolibreDraftTag, MercadolibreListingTag,
+			ShopeeDraftTag, ShopeeListingTag,
+			JoomDraftTag, JoomListingTag,
+			YandexDraftTag,
+			TeezilyDraftTag, TeezilyListingTag,
+			ListingTemplateTag,
+			ShopifyDraftTag, ShopifyListingTag,
+			JdeptDraftTag, JdeptListingTag,
+			jdidDraftTag, JdidListingTag,
+			ShoplineDraftTag, ShoplineListingTag,
+			ShoplusDraftTag, ShoplusListingTag,
+			VovaDraftTag, VovaListingTag,
+			EtsyDraftTag, EtsyListingTag,
+			DataCollectionTag,
+			ThisshopDraftTag, ThisshopListingTag,
+			MycomDraftTag, MycomListingTag,
+			AllegroDraftTag, AllegroListingTag,
+			GlobalMercadolibreDraftTag, GlobalMercadolibreListingTag,
+			PassfeedDraftTag, passfeedListingTag,
+			AlibabagjDraftTag, AlibabagjListingTag,
+			ShoplazzaDraftTag, ShoplazzaListingTag,
+			TbgspDraftTag, TbgspListingTag,
+			B2wDraftTag, B2wListingTag,
+		).Error("无效的标签类别"))),
 	)
 }
 
