@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	UserOperatingTypeAdd    = "add"
-	UserOperatingTypeEdit   = "edit"
-	UserOperatingTypeUpdate = "update"
+	UserOperationTypeAdd    = "add"    // 新增
+	UserOperationTypeEdit   = "edit"   // 编辑
+	UserOperationTypeUpdate = "update" // 启用/停用
 )
 
 // 保存用户信息
@@ -32,16 +32,16 @@ func (m UpsertUserRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Email,
 			validation.When(m.Email != "", is.Email.Error("无效的邮箱地址")),
-			validation.When(m.OperatingType == UserOperatingTypeAdd, validation.Required.Error("邮箱地址不能为空")),
+			validation.When(m.OperatingType == UserOperationTypeAdd, validation.Required.Error("邮箱地址不能为空")),
 		),
-		validation.Field(&m.ListingStatus, validation.When(m.OperatingType == UserOperatingTypeUpdate,
+		validation.Field(&m.ListingStatus, validation.When(m.OperatingType == UserOperationTypeUpdate,
 			validation.Required.Error("刊登系统状态不能为空"),
 			validation.In("0", "1").Error("无效的刊登系统状态")),
 		),
-		validation.Field(&m.OperatingType, validation.In(UserOperatingTypeAdd, UserOperatingTypeEdit, UserOperatingTypeUpdate).Error("无效的操作类型")),
-		validation.Field(&m.Password, validation.When(m.OperatingType == UserOperatingTypeAdd, validation.Required.Error("密码不能为空"))),
-		validation.Field(&m.UserId, validation.When(m.OperatingType == UserOperatingTypeEdit, validation.Required.Error("用户 ID 不能为空"))),
-		validation.Field(&m.UserName, validation.When(m.OperatingType == UserOperatingTypeAdd, validation.Required.Error("姓名不能为空"))),
+		validation.Field(&m.OperatingType, validation.In(UserOperationTypeAdd, UserOperationTypeEdit, UserOperationTypeUpdate).Error("无效的操作类型")),
+		validation.Field(&m.Password, validation.When(m.OperatingType == UserOperationTypeAdd, validation.Required.Error("密码不能为空"))),
+		validation.Field(&m.UserId, validation.When(m.OperatingType == UserOperationTypeEdit, validation.Required.Error("用户 ID 不能为空"))),
+		validation.Field(&m.UserName, validation.When(m.OperatingType == UserOperationTypeAdd, validation.Required.Error("姓名不能为空"))),
 	)
 }
 
