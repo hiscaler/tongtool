@@ -462,11 +462,11 @@ func (s service) UpdateProduct(req UpdateProductRequest) error {
 type ProductsQueryParams struct {
 	Paging
 	CategoryName     string   `json:"category_name,omitempty"`    // 分类名称
-	MerchantId       string   `json:"merchantId"`                 // 商户ID
-	ProductStatus    string   `json:"productStatus,omitempty"`    // 商品状态：1试卖、2正常
-	ProductType      string   `json:"productType"`                // 销售类型：0, 普通销售/1,变参销售/2,捆绑销售
-	SKUAliases       []string `json:"skuAliases,omitempty"`       // SKU别名数组，长度不超过10
-	SKUs             []string `json:"skus,omitempty"`             // SKU数组，长度不超过10
+	MerchantId       string   `json:"merchantId"`                 // 商户 ID
+	ProductStatus    string   `json:"productStatus,omitempty"`    // 商品状态（1：试卖、2：正常）
+	ProductType      string   `json:"productType"`                // 销售类型（0：普通销售、1：变参销售、2：捆绑销售、3：组装产品）
+	SKUAliases       []string `json:"skuAliases,omitempty"`       // SKU 别名数组，长度不超过 10
+	SKUs             []string `json:"skus,omitempty"`             // SKU 数组，长度不超过 10
 	SupplierName     string   `json:"supplierName,omitempty"`     // 供应商
 	UpdatedDateBegin string   `json:"updatedDateBegin,omitempty"` // 更新时间查询的起始时间
 	UpdatedDateEnd   string   `json:"updatedDateEnd,omitempty"`   // 更新时间查询的结束时间
@@ -475,7 +475,7 @@ type ProductsQueryParams struct {
 func (m ProductsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductStatus, validation.In("1", "2").Error("无效的商品状态")),
-		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding, ProductTypeAssemble)),
+		validation.Field(&m.ProductType, validation.In(ProductTypeNormal, ProductTypeVariable, ProductTypeBinding, ProductTypeAssemble).Error("无效的销售类型")),
 		validation.Field(&m.SKUs, validation.When(len(m.SKUs) > 0, validation.By(func(value interface{}) error {
 			items, ok := value.([]string)
 			if !ok {

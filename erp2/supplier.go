@@ -13,7 +13,7 @@ type Supplier struct {
 	BillingCycle        float64 `json:"billingCycle"`        // 结算周期
 	BillingCycleUnit    string  `json:"billingCycleUnit"`    // 结算周期单位
 	CityCnName          string  `json:"cityCnName"`          // 市中文名称
-	ClearingForm        string  `json:"clearingForm"`        // 结算方式 :货到付款、款到发货、快递代收、定期结算
+	ClearingForm        string  `json:"clearingForm"`        // 结算方式（货到付款、款到发货、快递代收、定期结算）
 	ClearingRemark      string  `json:"clearingRemark"`      // 结算方式备注
 	CorporationFullName string  `json:"corporationFullname"` // 企业全称
 	CountryCnName       string  `json:"countryCnName"`       // 国家中文名称

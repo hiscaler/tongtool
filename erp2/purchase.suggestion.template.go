@@ -21,9 +21,9 @@ type PurchaseSuggestionTemplate struct {
 	PurchaseTemplateId   string `json:"purchaseTemplateId"`   // 采购建议模板ID
 	PurchaseTemplateName string `json:"purchaseTemplateName"` // 采购建议模板名称
 	SuggestionType       string `json:"suggestionType"`       // 模版类型 FBA:FBA模版 other:其他模版
-	WarehouseIdKeys      string `json:"warehouseIdKeys"`      // 业务ID 如果业务类型为warehouse则 ALW:所有本地仓库, AOW:所有海外仓库, ATPW:所有第三方仓库 , AFBA:所有FBA仓
+	WarehouseIdKeys      string `json:"warehouseIdKeys"`      // 业务ID 如果业务类型为warehouse则 ALW：所有本地仓库、AOW：所有海外仓库、ATPW：所有第三方仓库、AFBA：所有FBA仓
 	WarehouseName        string `json:"warehouseName"`        // 仓库名称
-	WarehouseType        string `json:"warehouseType"`        // 仓库类型 owner/本地仓库、thirdParty/第三方仓库
+	WarehouseType        string `json:"warehouseType"`        // 仓库类型（owner：本地仓库、thirdParty：第三方仓库）
 }
 
 type PurchaseSuggestionTemplatesQueryParams struct {

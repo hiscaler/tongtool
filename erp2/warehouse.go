@@ -135,11 +135,11 @@ func (s service) Warehouse(id string) (item Warehouse, exists bool, err error) {
 
 type ShippingMethod struct {
 	CarrierName                 string `json:"carrierName"`                 // 物流商简称
-	CarrierStatus               string `json:"carrierStatus"`               // 物流商状态0-失效1-有效
+	CarrierStatus               string `json:"carrierStatus"`               // 物流商状态（0：失效、1：有效）
 	CarrierStatusBoolean        bool   `json:"carrierStatusBoolean"`        // 物流商状态
 	ShippingMethodId            string `json:"shippingMethodId"`            // 渠道ID
 	ShippingMethodShortname     string `json:"shippingMethodShortname"`     // 渠道名称
-	ShippingMethodStatus        string `json:"shippingMethodStatus"`        // 渠道状态0-失效1-有效
+	ShippingMethodStatus        string `json:"shippingMethodStatus"`        // 渠道状态（0：失效、1：有效）
 	ShippingMethodStatusBoolean bool   `json:"shippingMethodStatusBoolean"` // 渠道状态
 	WarehouseId                 string `json:"warehouseId"`                 // 仓库id
 	WarehouseName               string `json:"warehouseName"`               // 仓库名称

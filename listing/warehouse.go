@@ -19,12 +19,12 @@ type Warehouse struct {
 	Country             string `json:"country"`             // 国家
 	CreatedBy           string `json:"createdBy"`           // 创建人
 	CreatedDate         string `json:"createdDate"`         // 创建时间
-	IsSyncErpPercentage string `json:"isSyncErpPercentage"` // 是否同步ERP仓库库存数的xx%;Y,N
+	IsSyncErpPercentage string `json:"isSyncErpPercentage"` // 是否同步ERP仓库库存数的xx%;（Y、N）
 	MerchantId          string `json:"merchantId"`          // 商户编号
 	PostalCode          string `json:"postalCode"`          // 邮编
-	Status              string `json:"status"`              // 状态（1生效，0失效）
+	Status              string `json:"status"`              // 状态（1：生效、0：失效）
 	SyncErpPercentage   int    `json:"syncErpPercentage"`   // 同步ERP仓库库存数的xx
-	SyncErpType         string `json:"syncErpType"`         // A-只同步可用库存数,B-同步可用库存数+在途库存
+	SyncErpType         string `json:"syncErpType"`         // 同步类型（A：只同步可用库存数、B：同步可用库存数+在途库存）
 	SyncTime            string `json:"syncTime"`            // 上次同步ERP库存时间
 	UpdatedBy           string `json:"updatedBy"`           // 修改人
 	UpdatedDate         string `json:"updatedDate"`         // 修改时间
@@ -37,7 +37,7 @@ type Warehouse struct {
 
 type WarehousesQueryParams struct {
 	MerchantId    string `json:"merchantId"`              // 商户编号
-	Status        string `json:"status,omitempty"`        // 状态（1生效，0失效）
+	Status        string `json:"status,omitempty"`        // 状态（1：生效、0：失效）
 	WarehouseName string `json:"warehouseName,omitempty"` // 仓库名称
 }
 

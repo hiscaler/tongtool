@@ -22,9 +22,9 @@ const (
 type StockProductBaseInfo struct {
 	CreatedBy           string  `json:"createdBy,omitempty"`           // 创建人
 	CreatedDate         string  `json:"createdDate,omitempty"`         // 创建时间
-	FromType            string  `json:"fromType,omitempty"`            // 来源：L系统，N新品开发系统
+	FromType            string  `json:"fromType,omitempty"`            // 来源（L：系统、N：新品开发系统）
 	FullText            string  `json:"fullText,omitempty"`            // 全文检索(分词)
-	IsSimpleMode        string  `json:"isSimpleMode,omitempty"`        // 图库是否简易模式:Y是，N否
+	IsSimpleMode        string  `json:"isSimpleMode,omitempty"`        // 图库是否简易模式（Y：是、N：否）
 	MerchantId          string  `json:"merchantId,omitempty"`          // 商户编号
 	PrimaryAttribute    string  `json:"primaryAttribute,omitempty"`    // 主属性(橱窗图属性名称)
 	ProductCategoryId   string  `json:"productCategoryId,omitempty"`   // 产品类目Id
@@ -33,8 +33,8 @@ type StockProductBaseInfo struct {
 	ProductId           string  `json:"productId"`                     // 商品ID
 	ProductLength       int     `json:"productLength,omitempty"`       // 商品长度
 	ProductName         string  `json:"productName,omitempty"`         // 商品名称
-	ProductRegisterType string  `json:"productRegisterType,omitempty"` // 是否带电 1:带电
-	ProductType         string  `json:"productType,omitempty"`         // 产品类型 1-单属性,2-多属性,3-捆绑,4-多属性单卖
+	ProductRegisterType string  `json:"productRegisterType,omitempty"` // 是否带电（1：带电）
+	ProductType         string  `json:"productType,omitempty"`         // 产品类型（1：单属性、2：多属性、3：捆绑、4：多属性单卖）
 	ProductWeight       int     `json:"productWeight,omitempty"`       // 商品重量(克)
 	ProductWidth        float64 `json:"productWidth,omitempty"`        // 商品宽度
 	PurchaseCost        float64 `json:"purchaseCost,omitempty"`        // 采购成本(元)
@@ -58,7 +58,7 @@ type StockProductDescription struct {
 	CreatedBy         string `json:"createdBy"`         // 创建人
 	CreatedDate       string `json:"createdDate"`       // 创建时间
 	Highlights        string `json:"highlights"`        // 亮点描述
-	Language          string `json:"language"`          // 单选:EN英语,GER德语,FRA法语,SPN西班牙语,IT意大利语,POR葡萄牙语,CN中文,RUS俄语,TH泰语,AR阿拉伯语
+	Language          string `json:"language"`          // 单选（EN：英语、GER：德语、FRA：法语、SPN：西班牙语、IT：意大利语、POR：葡萄牙语、CN：中文、RUS：俄语、TH：泰语、AR：阿拉伯语）
 	MerchantId        string `json:"merchantId"`        // 商户编号
 	PackageContent    string `json:"packageContent"`    // 包裹信息(描述)
 	ProductDescribeId string `json:"productDescribeId"` // 商品描述Id
@@ -78,7 +78,7 @@ type StockProductGoodsInfo struct {
 	MerchantId       string  `json:"merchantId"`       // 商户编号
 	ProductId        string  `json:"productId"`        // 图片组顺序号
 	SKU              string  `json:"sku"`              // 属性SKU
-	SortNo           int     `json:"sortNo"`           // 排序号(同一商品下，从1开始递增)
+	SortNo           int     `json:"sortNo"`           // 排序号（同一商品下，从 1 开始递增）
 }
 
 // StockProductNote 库存商品备注
@@ -110,11 +110,11 @@ type StockProductImage struct {
 	CreatedBy      string `json:"createdBy"`      // 创建人
 	CreatedDate    string `json:"createdDate"`    // 创建时间
 	ImageAddress   string `json:"imageAddress"`   // 图片地址
-	ImageType      string `json:"imageType"`      // 图片类型(A-图库,D-描述图,V-属性图)
+	ImageType      string `json:"imageType"`      // 图片类型(A：图库、D：描述图、V：属性图)
 	MerchantId     string `json:"merchantId"`     // 商户Id
 	ProductId      string `json:"productId"`      // 图片组顺序号
 	ProductImageId string `json:"productImageId"` // 图片顺序号
-	SortNo         int    `json:"sortNo"`         // 图片顺序(同一商品下从1开始递增)
+	SortNo         int    `json:"sortNo"`         // 图片顺序（同一商品下从1开始递增）
 	UpdatedBy      string `json:"updatedBy"`      // 创建人
 	UpdatedDate    string `json:"updatedDate"`    // 更新时间
 }
@@ -145,7 +145,7 @@ type UpsertStockProductRequest struct {
 	VariationImagesList []StockProductVariationImage `json:"variationImagesList,omitempty"` // 库存产品主属性图片信息
 	DataType            string                       `json:"dataType"`                      // 数据内容（"baseInfo,picture,description"）包含其中的一个或多个,逗号分隔
 	MerchantId          string                       `json:"merchantId"`                    // 商户编号
-	RequestType         int                          `json:"requestType"`                   // 请求类型-0创建，1更新
+	RequestType         int                          `json:"requestType"`                   // 请求类型（0：创建、1：更新）
 	UploadPicToTongTool bool                         `json:"uploadPicToTongtool"`           // 是否上传图片至通途空间
 }
 

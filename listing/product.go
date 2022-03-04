@@ -14,8 +14,8 @@ import (
 // ProductBaseInfo 基础信息
 type ProductBaseInfo struct {
 	FullText            string  `json:"fullText"`            // 全文检索(分词)
-	IsSimpleMode        string  `json:"isSimpleMode"`        // 图库是否简易模式(N,Y)
-	IsStockProduct      string  `json:"isStockProduct"`      // 是否库存商品(N,Y)
+	IsSimpleMode        string  `json:"isSimpleMode"`        // 图库是否简易模式（N,Y）
+	IsStockProduct      string  `json:"isStockProduct"`      // 是否库存商品（N,Y）
 	MerchantId          string  `json:"merchantId"`          // 商户编号
 	PackageHeight       float64 `json:"packageHeight"`       // 包装高度
 	PackageLength       float64 `json:"packageLength"`       // 包装长度
@@ -28,9 +28,9 @@ type ProductBaseInfo struct {
 	ProductId           string  `json:"productId"`           // 产品顺序号
 	ProductLength       float64 `json:"productLength"`       // 商品长度
 	ProductName         string  `json:"productName"`         // 商品名称
-	ProductRegisterType string  `json:"productRegisterType"` // 是否带电 1:带电
-	ProductStatus       string  `json:"productStatus"`       // 商品状态0-停售,1-在售,2-试卖,3-部分停售,4-清仓库,5-部分清仓
-	ProductType         string  `json:"productType"`         // 产品类型 1-单属性,2-多属性,3-捆绑,4-多属性单卖
+	ProductRegisterType string  `json:"productRegisterType"` // 是否带电（1：带电）
+	ProductStatus       string  `json:"productStatus"`       // 商品状态（0：停售、1：在售、2：试卖、3：部分停售、4：清仓库、5：部分清仓）
+	ProductType         string  `json:"productType"`         // 产品类型（1：单属性、2：多属性、3：捆绑,4：多属性单卖）
 	ProductWeight       int     `json:"productWeight"`       // 商品重量(克)
 	ProductWidth        float64 `json:"productWidth"`        // 商品宽度
 	PurchaseCost        string  `json:"purchaseCost"`        // 采购成本
@@ -128,7 +128,7 @@ type ProductVideoGallery struct {
 	SortNo              int            `json:"sortNo"`              // 视频组顺序
 	UpdatedBy           string         `json:"updatedBy"`           // 创建人
 	UpdatedDate         string         `json:"updatedDate"`         // 更新时间
-	VideoGroupType      string         `json:"videoGroupType"`      // 视频组类型,A-视频库,L-视频组
+	VideoGroupType      string         `json:"videoGroupType"`      // 视频组类型（A：视频库、L：视频组）
 	VideoList           []ProductVideo `json:"videoList"`           // 视频列表
 }
 
@@ -203,7 +203,7 @@ type ProductImage struct {
 
 // ProductImageGroup 图片分组
 type ProductImageGroup struct {
-	ImageGroupType      string         `json:"imageGroupType"`      // 图片组类型,A-橱窗图,D-描述图(详情图)，V-多属性图,L-图片组列表,
+	ImageGroupType      string         `json:"imageGroupType"`      // 图片组类型（A：橱窗图、D：描述图(详情图)、V：多属性图、L：图片组列表）
 	MerchantId          string         `json:"merchantId"`          // 商户编号
 	ProductId           string         `json:"productId"`           // 图片组顺序号
 	ProductImageGroupId string         `json:"productImageGroupId"` // 图片组顺序号
@@ -349,7 +349,7 @@ func (s service) DeleteProduct(req DeleteProductRequest) error {
 type ProductsQueryParams struct {
 	MerchantId    string   `json:"merchantId"`    // 商户号
 	ProductIdList []string `json:"productIdList"` // 产品Id
-	SKUList       []string `json:"skuList"`       // 产品sku
+	SKUList       []string `json:"skuList"`       // 产品 SKU
 }
 
 func (m ProductsQueryParams) Validate() error {

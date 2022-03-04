@@ -31,7 +31,7 @@ type Package struct {
 	CarrierPostage        float64       `json:"carrierPostage"`        // 物流商运费
 	CarrierWeight         float64       `json:"carrierWeight"`         // 物流商称重重量,单位g
 	GoodsDetails          []PackageItem `json:"goodsDetails"`          // 包裹商品项目
-	IsChecked             string        `json:"isChecked"`             // 包裹是否校验Y/已校验 、 null or N/未校验
+	IsChecked             string        `json:"isChecked"`             // 包裹是否校验（Y：已校验 、null,N：未校验）
 	IsCheckedBoolean      bool          `json:"isCheckedBoolean"`      // 包裹是否校验布尔值
 	MerchantId            string        `json:"merchantId"`            // 商户id
 	PackageId             string        `json:"packageId"`             // 包裹id
@@ -58,7 +58,7 @@ type PackagesQueryParams struct {
 	DespatchTimeTo     string `json:"despatchTimeTo,omitempty"`     // 发货结束时间
 	MerchantId         string `json:"merchantId"`                   // 商户ID
 	OrderNumber        string `json:"orderId,omitempty"`            // 订单号
-	PackageStatus      string `json:"packageStatus,omitempty"`      // 包裹状态： waitPrint 等待打印 waitDeliver 等待发货 delivered 已发货 cancel 作废
+	PackageStatus      string `json:"packageStatus,omitempty"`      // 包裹状态（waitPrint：等待打印、waitDeliver：等待发货、delivered：已发货、cancel：作废）
 	ShippingMethodName string `json:"shippingMethodName,omitempty"` // 邮寄方式名称
 }
 

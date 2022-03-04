@@ -13,7 +13,7 @@ import (
 // AliExpressAccount aliexpress店铺信息
 type AliExpressAccount struct {
 	AliexpressAccountId string `json:"aliexpressAccountId"` // 速卖通账户顺序号
-	AliexpressStatus    string `json:"aliexpressStatus"`    // 速卖通账号是否有效1-有效 0-失效 2-未知
+	AliexpressStatus    string `json:"aliexpressStatus"`    // 速卖通账号是否有效（1：有效、0：失效、2：未知）
 	AppKey              string `json:"appKey"`              // APP KEY
 	AppSecret           string `json:"appSecret"`           // 密钥
 	CreatedBy           string `json:"createdBy"`           // 创建人
@@ -23,7 +23,7 @@ type AliExpressAccount struct {
 	RefreshToken        string `json:"refreshToken"`        // 授权token
 	RefreshTokenTime    string `json:"refreshTokenTime"`    // 过期时间
 	SaleAccountId       string `json:"saleAccountId"`       // 店铺账户编号
-	SellerAliId         string `json:"sellerAliId"`         // sellerAliId(用于获取access token)
+	SellerAliId         string `json:"sellerAliId"`         // sellerAliId（用于获取access token）
 	UpdatedBy           string `json:"updatedBy"`           // 修改人
 	UpdatedDate         string `json:"updatedDate"`         // 修改时间
 }
@@ -60,7 +60,7 @@ type WishAccount struct {
 	UpdatedBy             string `json:"updatedBy"`             // 修改人
 	UpdatedDate           string `json:"updatedDate"`           // 修改时间
 	WishAccountId         string `json:"wishAccountId"`         // wish账户顺序号
-	WishStatus            string `json:"wishStatus"`            // wish账号是否有效1-有效 0-失效 2-未知
+	WishStatus            string `json:"wishStatus"`            // wish账号是否有效（0：失效、1：有效、2：未知）
 }
 
 // EbayAccount ebay店铺信息
@@ -70,15 +70,15 @@ type EbayAccount struct {
 	AppKey                  string `json:"appKey"`                  // APP KEY
 	AppSecret               string `json:"appSecret"`               // 密钥
 	ApplyDate               string `json:"applyDate"`               // 大中华卖家申请时间
-	ApplyStatus             string `json:"applyStatus"`             // 大中华卖家申请状态; 0：未申请，1：申请成功，2：申请中，3：申请失败
+	ApplyStatus             string `json:"applyStatus"`             // 大中华卖家申请状态（0：未申请、1：申请成功、2：申请中、3：申请失败）
 	CreatedBy               string `json:"createdBy"`               // 创建人
 	CreatedDate             string `json:"createdDate"`             // 创建时间
 	DeveloperId             string `json:"developerId"`             // 开发者ID
 	EbayAccountId           string `json:"ebayAccountId"`           // ebay店铺账号主键ID
 	EIASToken               string `json:"eiasToken"`               // ebay用户唯一标识EIASToken（操作amazon账号时必填）
-	IsAboutToExpire         string `json:"isAboutToExpire"`         // 密钥是否即将过期(1-即将过期) 单选：0,1
+	IsAboutToExpire         string `json:"isAboutToExpire"`         // 密钥是否即将过期(1-即将过期) 单选（0,1）
 	MerchantId              string `json:"merchantId"`              // 商户ID
-	NoticeState             string `json:"noticeState"`             // 通知开启状态，0：未开启，1：开启
+	NoticeState             string `json:"noticeState"`             // 通知开启状态（0：未开启、1：开启）
 	RefreshToken            string `json:"refreshToken"`            // ebay Access Tokens
 	RefreshTokenInvalidDate string `json:"refreshTokenInvalidDate"` // refreshToken失效日期
 	RegisterDate            string `json:"registerDate"`            // ebay账号注册时间
@@ -103,10 +103,10 @@ type UpsertSaleAccountRequest struct {
 	DisableTime           string            `json:"disableTime,omitempty"`           // 停用时间
 	EnableTime            string            `json:"enableTime,omitempty"`            // 启用时间
 	MerchantId            string            `json:"merchantId"`                      // 商户编号
-	OutOfStock            string            `json:"outOfStock,omitempty"`            // ebay零库存是否不下架,Y-不下架,N-下架
-	PlatformId            string            `json:"platformId"`                      // 平台编号（amazon,ebay,aliexpress,wish其中一个）
+	OutOfStock            string            `json:"outOfStock,omitempty"`            // ebay零库存是否不下架（Y：不下架、N：下架）
+	PlatformId            string            `json:"platformId"`                      // 平台编号（amazon、ebay、aliexpress、wish 其中一个）
 	SaleAccountId         string            `json:"saleAccountId,omitempty"`         // 店铺账户编号
-	Status                string            `json:"status,omitempty"`                // 账户状态(停用0，启用1)
+	Status                string            `json:"status,omitempty"`                // 账户状态(0：停用、1：启用)
 	StoreName             string            `json:"storeName,omitempty"`             // 店铺名称
 	UpdatedBy             string            `json:"updatedBy,omitempty"`             // 修改人
 	UpdatedDate           string            `json:"updatedDate,omitempty"`           // 修改时间

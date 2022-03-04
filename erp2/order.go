@@ -45,7 +45,7 @@ type OrderDetail struct {
 type OrderPackage struct {
 	PackageId            string `json:"packageId"`            // 包裹号
 	TrackingNumber       string `json:"trackingNumber"`       // 物流跟踪号
-	TrackingNumberStatus string `json:"trackingNumberStatus"` // 物流跟踪号获取状态(00:未就绪 01:就绪 02:处理中 03:处理成功 04:处理失败)
+	TrackingNumberStatus string `json:"trackingNumberStatus"` // 物流跟踪号获取状态(00：未就绪、01：就绪、02：处理中、03：处理成功、04：处理失败)
 	TrackingNumberTime   int    `json:"trackingNumberTime"`   // 物流跟踪号获取时间
 }
 
@@ -54,33 +54,33 @@ type PlatformGoodsInfo struct {
 	ProductId           string `json:"product_id"`          // 商品顺序号
 	Quantity            int    `json:"quantity"`            // 原始sku数量
 	WebTransactionId    string `json:"webTransactionId"`    // 平台订单产品交易号
-	WebStoreCustomLabel string `json:"webstoreCustomLabel"` // 原始sku
-	WebStoreItemId      string `json:"webstoreItemId"`      // 平台订单产品ItemId
+	WebStoreCustomLabel string `json:"webstoreCustomLabel"` // 原始 SKU
+	WebStoreItemId      string `json:"webstoreItemId"`      // 平台订单产品 ItemId
 	WebStoreSKU         string `json:"webstoreSku"`         // 通途sku
 }
 
 // TongToolGoodsInfo 通途商品信息
 type TongToolGoodsInfo struct {
 	GoodsAverageCost     float64 `json:"goodsAverageCost"`     // 货品平均成本
-	GoodsCurrentCost     float64 `json:"goodsCurrentCost"`     // 货品成本(最新成本)
+	GoodsCurrentCost     float64 `json:"goodsCurrentCost"`     // 货品成本（最新成本）
 	GoodsImageGroupId    string  `json:"goodsImageGroupId"`    // 商品图片
 	GoodsPackagingCost   float64 `json:"goodsPackagingCost"`   // 货品包装成本
 	GoodsPackagingWeight float64 `json:"goodsPackagingWeight"` // 货品包装重量(克)
-	GoodsSKU             string  `json:"goodsSku"`             // 货品sku
+	GoodsSKU             string  `json:"goodsSku"`             // 货品 SKU
 	GoodsTitle           string  `json:"goodsTitle"`           // 商品规格
-	GoodsWeight          float64 `json:"goodsWeight"`          // 货品重量(克)
-	PackageHeight        float64 `json:"packageHeight"`        // 包裹尺寸(高cm)
-	PackageLength        float64 `json:"packageLength"`        // 包裹尺寸(长cm)
-	PackageWidth         float64 `json:"packageWidth"`         // 包裹尺寸(宽cm)
+	GoodsWeight          float64 `json:"goodsWeight"`          // 货品重量（克）
+	PackageHeight        float64 `json:"packageHeight"`        // 包裹尺寸（高cm）
+	PackageLength        float64 `json:"packageLength"`        // 包裹尺寸（长cm）
+	PackageWidth         float64 `json:"packageWidth"`         // 包裹尺寸（宽cm）
 	PackagingCost        float64 `json:"packagingCost"`        // 货品包装成本
-	PackagingWeight      float64 `json:"packagingWeight"`      // 商品包装重量(克)
+	PackagingWeight      float64 `json:"packagingWeight"`      // 商品包装重量（克）
 	ProductAverageCost   float64 `json:"productAverageCost"`   // 商品平均成本
 	ProductCurrentCost   float64 `json:"productCurrentCost"`   // 商品成本
-	ProductHeight        float64 `json:"productHeight"`        // 商品尺寸(高cm)
-	ProductLength        float64 `json:"productLength"`        // 商品尺寸(长cm)
+	ProductHeight        float64 `json:"productHeight"`        // 商品尺寸（高cm）
+	ProductLength        float64 `json:"productLength"`        // 商品尺寸（长cm）
 	ProductName          string  `json:"productName"`          // 商品名称
-	ProductWeight        float64 `json:"productWeight"`        // 商品重量(克)
-	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸(宽cm)
+	ProductWeight        float64 `json:"productWeight"`        // 商品重量（克）
+	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸（宽cm）
 	Quantity             int     `json:"quantity"`             // 货品数量
 	WotId                string  `json:"wotId"`                // 平台交易编号
 }
@@ -94,7 +94,7 @@ type GoodsInfo struct {
 type Order struct {
 	ActualTotalPrice          float64        `json:"actualTotalPrice"`          // 实付金额
 	AssignStockCompleteTime   string         `json:"assignstockCompleteTime"`   // 配货时间
-	BuyerAccountId            string         `json:"buyerAccountId"`            // 买家id
+	BuyerAccountId            string         `json:"buyerAccountId"`            // 买家 ID
 	BuyerCity                 string         `json:"buyerCity"`                 // 买家城市
 	BuyerCountry              string         `json:"buyerCountry"`              // 买家国家
 	BuyerEmail                string         `json:"buyerEmail"`                // 买家邮箱
@@ -104,7 +104,7 @@ type Order struct {
 	BuyerPhone                string         `json:"buyerPhone"`                // 买家电话
 	BuyerState                string         `json:"buyerState"`                // 买家省份
 	Carrier                   string         `json:"carrier"`                   // 上传物流的carrier
-	CarrierType               string         `json:"carrierType"`               // 物流商类型 (0:通途API对接、 1:通途Excel文件导出、 2:通途离线生成跟踪号、3:无对接、 4:自定义Excel对接)
+	CarrierType               string         `json:"carrierType"`               // 物流商类型 (0：通途API对接、1：通途Excel文件导出、2：通途离线生成跟踪号、3：无对接、4：自定义Excel对接)
 	CarrierURL                string         `json:"carrierUrl"`                // 物流网络地址
 	DespatchCompleteTime      string         `json:"despatchCompleteTime"`      // 订单发货完成时间
 	DispatchTypeName          string         `json:"dispathTypeName"`           // 邮寄方式名称
@@ -114,15 +114,15 @@ type Order struct {
 	GoodsInfo                 GoodsInfo      `json:"goodsInfo"`                 // 订单商品信息
 	InsuranceIncome           float64        `json:"insuranceIncome"`           // 买家所付保费
 	InsuranceIncomeCurrency   string         `json:"insuranceIncomeCurrency"`   // 买家所付保费币种
-	IsInvalid                 string         `json:"isInvalid"`                 // 是否作废(0,''，null 未作废，1 手工作废 2 订单任务下载永久作废 3 拆分单主单作废 4 拆分单子单作废)
-	IsSuspended               string         `json:"isSuspended"`               // 是否需要人工审核 (1需要人工审核，0或null不需要)
+	IsInvalid                 string         `json:"isInvalid"`                 // 是否作废（0,'',null：未作废、1：手工作废、2：订单任务下载永久作废、3：拆分单主单作废、4：拆分单子单作废）
+	IsSuspended               string         `json:"isSuspended"`               // 是否需要人工审核 (1：需要人工审核、0或null：不需要)
 	MerchantCarrierShortname  string         `json:"merchantCarrierShortname"`  // 承运人简称
-	OrderAmount               float64        `json:"orderAmount"`               // 订单总金额(商品金额+运费+保费)
+	OrderAmount               float64        `json:"orderAmount"`               // 订单总金额（商品金额+运费+保费）
 	OrderAmountCurrency       string         `json:"orderAmountCurrency"`       // 订单金额币种
 	OrderDetails              []OrderDetail  `json:"orderDetails"`              // 订单明细
 	OrderIdCode               string         `json:"orderIdCode"`               // 通途订单号
-	OrderIdKey                string         `json:"orderIdKey"`                // 通途订单id key
-	OrderStatus               string         `json:"orderStatus"`               // 订单状态（waitPacking/等待配货 ,waitPrinting/等待打印 ,waitingDespatching/等待发货 ,despatched/已发货）
+	OrderIdKey                string         `json:"orderIdKey"`                // 通途订单 ID key
+	OrderStatus               string         `json:"orderStatus"`               // 订单状态（waitPacking：等待配货、waitPrinting：等待打印、waitingDespatching：等待发货、despatched：已发货）
 	PackageInfoList           []OrderPackage `json:"packageInfoList"`           // 订单包裹信息
 	PaidTime                  string         `json:"paidTime"`                  // 订单付款完成时间
 	ParentOrderId             string         `json:"parentOrderId"`             // 父订单号
@@ -131,7 +131,7 @@ type Order struct {
 	PostalCode                string         `json:"postalCode"`                // 买家邮编
 	PrintCompleteTime         string         `json:"printCompleteTime"`         // 订单打印完成时间
 	ProductsTotalCurrency     string         `json:"productsTotalCurrency"`     // 金额小计币种
-	ProductsTotalPrice        float64        `json:"productsTotalPrice"`        // 金额小计(只商品金额)
+	ProductsTotalPrice        float64        `json:"productsTotalPrice"`        // 金额小计（只商品金额）
 	ReceiveAddress            string         `json:"receiveAddress"`            // 收货地址
 	RefundedTime              string         `json:"refundedTime"`              // 退款时间
 	SaleAccount               string         `json:"saleAccount"`               // 卖家账号
@@ -143,11 +143,11 @@ type Order struct {
 	ShippingLimitDate         string         `json:"shippingLimiteDate"`        // 发货截止时间
 	TaxCurrency               string         `json:"taxCurrency"`               // 税费币种
 	TaxIncome                 float64        `json:"taxIncome"`                 // 税费
-	WarehouseIdKey            string         `json:"warehouseIdKey"`            // 通途仓库id key
+	WarehouseIdKey            string         `json:"warehouseIdKey"`            // 通途仓库 ID key
 	WarehouseName             string         `json:"warehouseName"`             // 仓库名称
 	WebFinalFee               float64        `json:"webFinalFee"`               // 平台佣金
 	WebStoreOrderId           string         `json:"webstoreOrderId"`           // 平台交易号
-	WebStoreItemSite          string         `json:"webstore_item_site"`        // 平台站点id
+	WebStoreItemSite          string         `json:"webstore_item_site"`        // 平台站点 ID
 	// 自定义属性
 	IsInvalidBoolean   bool `json:"isInvalidBoolean"`   // 是否作废布尔值
 	IsSuspendedBoolean bool `json:"isSuspendedBoolean"` // 是否需要人工审核布尔值
@@ -174,7 +174,7 @@ type OrdersQueryParams struct {
 	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
 	MerchantId       string `json:"merchantId"`                 // 商户ID
 	OrderId          string `json:"orderId,omitempty"`          // 订单号
-	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态 waitPacking/等待配货 ,waitPrinting/等待打印,waitingDespatching/等待发货 ,despatched/已发货,unpaid/未付款,payed/已付款,
+	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态（waitPacking：等待配货、waitPrinting：等待打印、waitingDespatching：等待发货、despatched：已发货、unpaid：未付款、payed：已付款）
 	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
 	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
 	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
@@ -182,7 +182,7 @@ type OrdersQueryParams struct {
 	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
 	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
 	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
-	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”）
+	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”：查询活跃表、”1”：为查询1年表、”2”：为查询归档表，默认为”0”）
 	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
@@ -354,7 +354,7 @@ type OrderPayment struct {
 
 // OrderTransaction 订单交易信息
 type OrderTransaction struct {
-	GoodsDetailId              string  `json:"goodsDetailId"`              // 货品ID,与SKU二传一即可;如果与SKU都传值了，以这个字段值为准
+	GoodsDetailId              string  `json:"goodsDetailId"`              // 货品ID，与SKU二传一即可;如果与SKU都传值了，以这个字段值为准
 	GoodsDetailRemark          string  `json:"goodsDetailRemark"`          // 货品备注
 	ProductsTotalPrice         float64 `json:"productsTotalPrice"`         // 商品总金额
 	ProductsTotalPriceCurrency string  `json:"productsTotalPriceCurrency"` // 商品总金额币种
@@ -362,7 +362,7 @@ type OrderTransaction struct {
 	ShipType                   string  `json:"shipType"`                   // 买家选择的运输方式
 	ShippingFeeIncome          float64 `json:"shippingFeeIncome"`          // 买家所支付的运费
 	ShippingFeeIncomeCurrency  string  `json:"shippingFeeIncomeCurrency"`  // 买家所支付的运费币种
-	SKU                        string  `json:"sku"`                        // 商品 sku
+	SKU                        string  `json:"sku"`                        // 商品 SKU
 }
 
 type CreateOrderRequest struct {
@@ -370,7 +370,7 @@ type CreateOrderRequest struct {
 	Currency                string             `json:"currency"`                // 币种
 	InsuranceIncome         float64            `json:"insuranceIncome"`         // 买家支付的保险
 	InsuranceIncomeCurrency string             `json:"insuranceIncomeCurrency"` // 买家支付的保险币种
-	NeedReturnOrderId       string             `json:"needReturnOrderId"`       // 是否需要返回通途订单ID,0-不需要1-需要 默认0不需要;如果需要返回订单ID那么返回结果集是一个Object:{"orderId":"","saleRecordNum":""},否则返回一个字符串，内容是saleRecordNum
+	NeedReturnOrderId       string             `json:"needReturnOrderId"`       // 是否需要返回通途订单ID（0：不需要、1：需要）默认0不需要;如果需要返回订单ID那么返回结果集是一个Object:{"orderId":"","saleRecordNum":""},否则返回一个字符串，内容是saleRecordNum
 	Notes                   string             `json:"notes"`                   // 买家留言
 	OrderCurrency           string             `json:"ordercurrency"`           // 订单币种
 	PaymentInfos            []OrderPayment     `json:"paymentInfos"`            // 付款信息

@@ -120,15 +120,15 @@ ERROR: %s
 
 type StockChangeLog struct {
 	AvailableStockQuantity int    `json:"availableStockQuantity"` // 当前可用库存
-	ChangeQuantity         int    `json:"changeQuantity"`         // 变动数量；正数增加，负数减少
-	GoodsSKU               string `json:"goodsSku"`               // 商品sku
+	ChangeQuantity         int    `json:"changeQuantity"`         // 变动数量（正数增加，负数减少）
+	GoodsSKU               string `json:"goodsSku"`               // 商品 SKU
 }
 
 type StockChangeLogsQueryParams struct {
 	Paging
 	MerchantId      string   `json:"merchantId"`      // 商户 ID
 	SKUs            []string `json:"skus,omitempty"`  // SKU 列表
-	UpdatedDateFrom string   `json:"updatedDateFrom"` // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间7天内的值
+	UpdatedDateFrom string   `json:"updatedDateFrom"` // 变动起始时间；统计此时间以后的库存变动，只能输入距当前时间 7 天内的值
 	WarehouseName   string   `json:"warehouseName"`   // 仓库名称
 }
 

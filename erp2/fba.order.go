@@ -40,7 +40,7 @@ type FBAOrder struct {
 type FBAOrdersQueryParams struct {
 	Paging
 	Account          string `json:"account,omitempty"`          // 速卖通登录账号
-	MerchantId       string `json:"merchantId"`                 // 商户ID
+	MerchantId       string `json:"merchantId"`                 // 商户 ID
 	PurchaseDateFrom string `json:"purchaseDateFrom,omitempty"` // 订单购买时间开始时间
 	PurchaseDateTo   string `json:"purchaseDateTo,omitempty"`   // 订单购买时间结束时间
 }
