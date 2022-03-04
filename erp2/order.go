@@ -429,6 +429,7 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 	if err = req.Validate(); err != nil {
 		return
 	}
+
 	orderReq := struct {
 		MerchantId string             `json:"merchantId"` // 商户ID
 		Order      CreateOrderRequest `json:"order"`      // 订单信息
@@ -558,6 +559,7 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 	if err = req.Validate(); err != nil {
 		return
 	}
+
 	req.MerchantId = s.tongTool.MerchantId
 	res := struct {
 		tongtool.Response
