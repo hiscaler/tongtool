@@ -31,7 +31,7 @@ type UpsertUserRequest struct {
 func (m UpsertUserRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Email,
-			validation.When(m.Email != "", is.Email.Error("无效的邮箱地址")),
+			validation.When(m.Email != "", is.EmailFormat.Error("无效的邮箱格式")),
 			validation.When(m.OperatingType == UserOperationTypeAdd, validation.Required.Error("邮箱地址不能为空")),
 		),
 		validation.Field(&m.ListingStatus, validation.When(m.OperatingType == UserOperationTypeUpdate,
