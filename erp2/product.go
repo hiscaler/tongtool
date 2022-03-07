@@ -239,7 +239,7 @@ type ProductGoods struct {
 // ProductDetailDescription 详细描述
 type ProductDetailDescription struct {
 	Content      string `json:"content"`      // 详细描述内容
-	DescLanguage string `json:"descLanguage"` // 详细描述语言，德语:de-de,英语(英国):en-gb,英语(美国):en-us,西班牙语:es-es,法语:fr-fr,意大利语:it-it,波兰语:pl-pl,葡萄牙语:pt-pt,俄语:ru-ru,简体中文:zh-cn
+	DescLanguage string `json:"descLanguage"` // 详细描述语言（德语：de-de、英语(英国)：en-gb、英语(美国)：en-us、西班牙语：es-es、法语：fr-fr、意大利语：it-it、波兰语：pl-pl、葡萄牙语：pt-pt、俄语：ru-ru、简体中文：zh-cn）
 	Title        string `json:"title"`        // 详细描述标题
 }
 
@@ -260,7 +260,7 @@ type CreateProductRequest struct {
 	DeveloperName        string                     `json:"developerName"`        // 业务开发员,请输入通途erp中存在的用户名称，不存在的将不保存
 	EnablePackageNum     int                        `json:"enablePackageNum"`     // 可包装个数
 	HsCode               string                     `json:"hsCode"`               // 海关编码
-	ImgUrls              []string                   `json:"imgUrls"`              // 商品图片url列表，第一个图片默认为主图
+	ImgUrls              []string                   `json:"imgUrls"`              // 商品图片 url 列表，第一个图片默认为主图
 	InquirerName         string                     `json:"inquirerName"`         // 采购询价员,请输入通途erp中存在的用户名称，不存在的将不保存
 	MerchantId           string                     `json:"merchantId"`           // 商户ID
 	PackageHeight        float64                    `json:"packageHeight"`        // 包裹尺寸(高cm)
@@ -281,11 +281,11 @@ type CreateProductRequest struct {
 	ProductPackingEnName string                     `json:"productPackingEnName"` // 英文配货名称
 	ProductPackingName   string                     `json:"productPackingName"`   // 中文配货名称
 	ProductRemark        string                     `json:"productRemark"`        // 产品备注
-	ProductStatus        string                     `json:"productStatus"`        // 商品状态；停售：0，在售：1，试卖：2，清仓：4
+	ProductStatus        string                     `json:"productStatus"`        // 商品状态（0：停售、1：在售、2：试卖、4：清仓）
 	ProductWeight        int                        `json:"productWeight"`        // 商品重量
 	ProductWidth         float64                    `json:"productWidth"`         // 商品尺寸(宽cm)
 	PurchaserName        string                     `json:"purchaserName"`        // 采购员,请输入通途erp中存在的用户名称，不存在的将不保存
-	SalesType            string                     `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
+	SalesType            string                     `json:"salesType"`            // 销售类型（0：普通销售、1：变参销售）暂不支持其他类型
 }
 
 func (m CreateProductRequest) Validate() error {
@@ -318,7 +318,7 @@ func (m CreateProductRequest) Validate() error {
 			return nil
 		}))),
 		validation.Field(&m.DetailImageUrls, validation.When(len(m.DetailImageUrls) > 0), validation.Each(is.URL.Error("无效的地址"))),
-		validation.Field(&m.ImgUrls, validation.When(len(m.ImgUrls) > 0), validation.Each(is.URL.Error("无效的地址"))),
+		validation.Field(&m.ImgUrls, validation.When(len(m.ImgUrls) > 0), validation.Each(is.URL.Error("无效的图片地址"))),
 		validation.Field(&m.DetailDescriptions, validation.When(len(m.DetailDescriptions) > 0, validation.By(func(value interface{}) error {
 			items, ok := value.([]ProductDetailDescription)
 			if !ok {
@@ -403,10 +403,10 @@ type UpdateProductRequest struct {
 	ProductPackingEnName string  `json:"productPackingEnName"` // 英文配货名称
 	ProductPackingName   string  `json:"productPackingName"`   // 中文配货名称
 	ProductRemark        string  `json:"productRemark"`        // 产品备注
-	ProductStatus        string  `json:"productStatus"`        // 商品状态；停售：0，在售：1，试卖：2，清仓：4
+	ProductStatus        string  `json:"productStatus"`        // 商品状态（0：停售、1：在售、2：试卖、4：清仓）
 	ProductWeight        int     `json:"productWeight"`        // 商品重量
 	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸(宽cm)
-	SalesType            string  `json:"salesType"`            // 销售类型；普通销售：0，变参销售：1；暂不支持其他类型
+	SalesType            string  `json:"salesType"`            // 销售类型（0：普通销售、1：变参销售）暂不支持其他类型
 }
 
 func (m UpdateProductRequest) Validate() error {
