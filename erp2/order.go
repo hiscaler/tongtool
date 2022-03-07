@@ -4,12 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"strings"
+	"time"
 )
 
 // 订单状态
@@ -160,7 +163,7 @@ func (o Order) StoreCountryCode() string {
 		// Todo 美国的买家买的加拿大站点的怎么办？或者国际站的也会判断不正确
 		country := strings.TrimSpace(o.BuyerCountry)
 		if country != "" {
-			if inx.StringIn(country, constant.CountryCodeAmerica, constant.CountryCodeCanada, constant.CountryCodeGermany, constant.CountryCodeUnitedKingdom, constant.CountryCodeFrance, constant.CountryCodeSpain, constant.CountryCodeItaly, constant.CountryCodeJapan, constant.CountryCodeMexico, constant.CountryCodeAustralian, constant.CountryCodeIndia, constant.CountryCodeUnitedArabEmirates, constant.CountryCodeTurkey, constant.CountryCodeSingapore, constant.CountryCodeNetherlands, constant.CountryCodeBrazil, constant.CountryCodeSaudiArabia, constant.CountryCodeSweden, constant.CountryCodePoland) {
+			if inx.StringIn(country, constant.CountryCodeAmerica, constant.CountryCodeCanada, constant.CountryCodeGermany, constant.CountryCodeUnitedKingdom, constant.CountryCodeFrance, constant.CountryCodeSpain, constant.CountryCodeItaly, constant.CountryCodeJapan, constant.CountryCodeMexico, constant.CountryCodeAustralian, constant.CountryCodeIndia, constant.CountryCodeUnitedArabEmirates, constant.CountryCodeTurkey, constant.CountryCodeSingapore, constant.CountryCodeNetherlands, constant.CountryCodeBrazil, constant.CountryCodeSaudiArabia, constant.CountryCodeSweden, constant.CountryCodePoland, constant.CountryCodeChina) {
 				code = strings.ToUpper(country)
 			}
 		}
@@ -172,7 +175,7 @@ type OrdersQueryParams struct {
 	Paging
 	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
 	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
-	MerchantId       string `json:"merchantId"`                 // 商户ID
+	MerchantId       string `json:"merchantId"`                 // 商户 ID
 	OrderId          string `json:"orderId,omitempty"`          // 订单号
 	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态（waitPacking：等待配货、waitPrinting：等待打印、waitingDespatching：等待发货、despatched：已发货、unpaid：未付款、payed：已付款）
 	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
@@ -182,7 +185,7 @@ type OrdersQueryParams struct {
 	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
 	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
 	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
-	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询1年表和归档表数据（根据时间参数或者全量查询订单的时候使用该参数，”0”：查询活跃表、”1”：为查询1年表、”2”：为查询归档表，默认为”0”）
+	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询 1 年表或归档表数据（根据时间参数或者全量查询订单的时候使用该参数，0：活跃表、1：1 年表、2：归档表，默认为 0）
 	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
@@ -190,8 +193,85 @@ type OrdersQueryParams struct {
 func (m OrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.AccountCode, validation.When(m.OrderId == "", validation.Required.Error("帐户代码不能为空"))),
+		validation.Field(&m.BuyerEmail, validation.When(m.BuyerEmail != "", is.EmailFormat.Error("无效的邮箱"))),
 		validation.Field(&m.StoreFlag, validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围"))),
 		validation.Field(&m.OrderStatus, validation.When(m.OrderStatus != "", validation.In(OrderStatusWaitPacking, OrderStatusWaitPrinting, OrderStatusWaitingDespatching, OrderStatusDespatched, OrderStatusUnpaid, OrderStatusPaid).Error("无效的订单状态"))),
+		validation.Field(&m.PayDateFrom, validation.When(m.PayDateTo != "", validation.Date(constant.DatetimeFormat).Error("无效的付款起始时间"))),
+		validation.Field(&m.PayDateTo, validation.When(m.PayDateTo != "",
+			validation.Date(constant.DatetimeFormat).Error("无效的付款结束时间"),
+			validation.By(func(value interface{}) error {
+				var err error
+				var fromDate, toDate time.Time
+				t, _ := value.(string)
+				if toDate, err = time.Parse(constant.DatetimeFormat, t); err != nil {
+					return err
+				}
+				if fromDate, err = time.Parse(constant.DatetimeFormat, m.PayDateFrom); err != nil {
+					return err
+				}
+				if toDate.Before(fromDate) {
+					return fmt.Errorf("付款结束时间 %s 不能小于开始时间 %s", m.PayDateTo, m.PayDateFrom)
+				}
+				return nil
+			}),
+		)),
+		validation.Field(&m.RefundedDateFrom, validation.When(m.RefundedDateFrom != "", validation.Date(constant.DatetimeFormat).Error("无效的退款起始时间"))),
+		validation.Field(&m.RefundedDateTo, validation.When(m.RefundedDateTo != "",
+			validation.Date(constant.DatetimeFormat).Error("无效的退款结束时间"),
+			validation.By(func(value interface{}) error {
+				var err error
+				var fromDate, toDate time.Time
+				t, _ := value.(string)
+				if toDate, err = time.Parse(constant.DatetimeFormat, t); err != nil {
+					return err
+				}
+				if fromDate, err = time.Parse(constant.DatetimeFormat, m.RefundedDateFrom); err != nil {
+					return err
+				}
+				if toDate.Before(fromDate) {
+					return fmt.Errorf("退款结束时间 %s 不能小于开始时间 %s", m.RefundedDateTo, m.RefundedDateFrom)
+				}
+				return nil
+			}),
+		)),
+		validation.Field(&m.SaleDateFrom, validation.When(m.SaleDateFrom != "", validation.Date(constant.DatetimeFormat).Error("无效的销售起始时间"))),
+		validation.Field(&m.SaleDateTo, validation.When(m.SaleDateTo != "",
+			validation.Date(constant.DatetimeFormat).Error("无效的销售结束时间"),
+			validation.By(func(value interface{}) error {
+				var err error
+				var fromDate, toDate time.Time
+				t, _ := value.(string)
+				if toDate, err = time.Parse(constant.DatetimeFormat, t); err != nil {
+					return err
+				}
+				if fromDate, err = time.Parse(constant.DatetimeFormat, m.SaleDateFrom); err != nil {
+					return err
+				}
+				if toDate.Before(fromDate) {
+					return fmt.Errorf("销售结束时间 %s 不能小于开始时间 %s", m.SaleDateTo, m.SaleDateFrom)
+				}
+				return nil
+			}),
+		)),
+		validation.Field(&m.UpdatedDateFrom, validation.When(m.UpdatedDateFrom != "", validation.Date(constant.DatetimeFormat).Error("无效的更新起始时间"))),
+		validation.Field(&m.UpdatedDateTo, validation.When(m.UpdatedDateTo != "",
+			validation.Date(constant.DatetimeFormat).Error("无效的更新结束时间"),
+			validation.By(func(value interface{}) error {
+				var err error
+				var fromDate, toDate time.Time
+				t, _ := value.(string)
+				if toDate, err = time.Parse(constant.DatetimeFormat, t); err != nil {
+					return err
+				}
+				if fromDate, err = time.Parse(constant.DatetimeFormat, m.UpdatedDateFrom); err != nil {
+					return err
+				}
+				if toDate.Before(fromDate) {
+					return fmt.Errorf("更新结束时间 %s 不能小于开始时间 %s", m.UpdatedDateTo, m.UpdatedDateFrom)
+				}
+				return nil
+			}),
+		)),
 	)
 }
 

@@ -22,4 +22,5 @@ const (
 	CountryCodeSaudiArabia        = "SA" // 沙特阿拉伯
 	CountryCodeSweden             = "SE" // 瑞典
 	CountryCodePoland             = "PL" // 波兰
+	CountryCodeChina              = "CN" // 中国
 )
