@@ -90,7 +90,7 @@ type Product struct {
 	PurchaseName         string          `json:"purchaseName"`         // 采购员名称
 	PurchaserId          string          `json:"purchaserId"`          // 采购员id
 	SKU                  string          `json:"sku"`                  // 商品sku
-	Status               string          `json:"status"`               // 商品删除状态,1:删除,null或0：未删除
+	Status               string          `json:"status"`               // 商品删除状态（1：删除、null或0：未删除）
 	SupplierName         string          `json:"supplierName"`         // 供应商名称
 	UpdatedDate          int             `json:"updatedDate"`          // 产品信息修改时间
 	// 自定义字段
