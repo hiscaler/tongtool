@@ -8,7 +8,7 @@ func PurchaseOrderStatusNtoS(n string) (s string) {
 	case PurchaseOrderNumberStatusPReceivedAndWaitM:
 		s = PurchaseOrderStatusPReceivedAndWaitM
 	case PurchaseOrderNumberStatusPartialReceived:
-		s = PurchaseOrderStatusPartialReceivedM
+		s = PurchaseOrderStatusPartialReceived
 	case PurchaseOrderNumberStatusReceived:
 		s = PurchaseOrderStatusReceived
 	case PurchaseOrderNumberStatusCancel:

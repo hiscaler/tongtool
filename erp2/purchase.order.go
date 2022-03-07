@@ -24,7 +24,7 @@ const (
 const (
 	PurchaseOrderStatusDelivering        = "delivering"        // 等待到货
 	PurchaseOrderStatusPReceivedAndWaitM = "pReceivedAndWaitM" // 部分到货等待剩余
-	PurchaseOrderStatusPartialReceivedM  = "partialReceived"   // 部分到货不等待剩余
+	PurchaseOrderStatusPartialReceived   = "partialReceived"   // 部分到货不等待剩余
 	PurchaseOrderStatusReceived          = "Received"          // 全部到货
 	PurchaseOrderStatusCancel            = "cancel"            // 已作废
 	PurchaseOrderStatusNotPaymentApply   = "NotPaymentApply"   // 未申请付款
@@ -74,7 +74,7 @@ type PurchaseOrdersQueryParams struct {
 
 func (m PurchaseOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.POrderStatus, validation.When(m.POrderStatus != "", validation.In(PurchaseOrderStatusDelivering, PurchaseOrderStatusPReceivedAndWaitM, PurchaseOrderStatusPartialReceivedM, PurchaseOrderStatusReceived, PurchaseOrderStatusCancel, PurchaseOrderStatusNotPaymentApply, PurchaseOrderStatusPaymentApply, PurchaseOrderStatusPaymentCancel, PurchaseOrderStatusPayed, PurchaseOrderStatusPartialPayed).Error("无效的采购单状态"))),
+		validation.Field(&m.POrderStatus, validation.When(m.POrderStatus != "", validation.In(PurchaseOrderStatusDelivering, PurchaseOrderStatusPReceivedAndWaitM, PurchaseOrderStatusPartialReceived, PurchaseOrderStatusReceived, PurchaseOrderStatusCancel, PurchaseOrderStatusNotPaymentApply, PurchaseOrderStatusPaymentApply, PurchaseOrderStatusPaymentCancel, PurchaseOrderStatusPayed, PurchaseOrderStatusPartialPayed).Error("无效的采购单状态"))),
 		validation.Field(&m.PurchaseDateFrom, validation.When(m.PurchaseDateFrom != "", validation.Date(constant.DatetimeFormat).Error("采购日期开始时间格式有误"))),
 		validation.Field(&m.PurchaseDateTo, validation.When(m.PurchaseDateTo != "", validation.Date(constant.DatetimeFormat).Error("采购日期结束时间格式有误"))),
 		validation.Field(&m.SKUs, validation.When(len(m.SKUs) > 0, validation.By(func(value interface{}) error {
