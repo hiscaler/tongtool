@@ -185,7 +185,7 @@ type OrdersQueryParams struct {
 	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
 	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
 	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
-	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询 1 年表或归档表数据（根据时间参数或者全量查询订单的时候使用该参数，0：活跃表、1：1 年表、2：归档表，默认为 0）
+	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询 1 年表或归档表数据（根据时间参数或者全量查询订单的时候使用该参数，0：活跃表、1：一年表、2：归档表，默认为 0）
 	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
 	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
 }
@@ -285,10 +285,6 @@ func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage boo
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	if !inx.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
-		// ”0”查询活跃表，”1”为查询1年表，”2”为查询归档表，默认为”0”
-		// 活跃表：3个月内
-		// 1年表：3个月到15个月
-		// 归档表：15个月以前
 		params.StoreFlag = OrderStoreFlagActive
 	}
 	if params.OrderId != "" {
