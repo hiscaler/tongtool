@@ -31,8 +31,9 @@ type orderAmountConfig struct {
 }
 
 type OrderAmount struct {
-	Number                 string                 `json:"number"` // 订单号
 	config                 orderAmountConfig      // 设置
+	Number                 string                 `json:"number"`                   // 订单号
+	Currency               string                 `json:"currency"`                 // 货币
 	TotalQuantity          int                    `json:"total_quantity"`           // 商品总数量
 	IncomeAmount           OrderIncomeAmount      `json:"income_amount"`            // 收入
 	ExpenditureAmount      OrderExpenditureAmount `json:"expenditure_amount"`       // 支出
@@ -40,19 +41,25 @@ type OrderAmount struct {
 	TotalExpenditureAmount float64                `json:"total_expenditure_amount"` // 总支出成本
 }
 
-// 兑换
+// 货币金额转换
 func currencyExchange(value float64, exchangeRate map[string]float64, currency string) decimal.Decimal {
 	decimalValue := decimal.NewFromFloat(value)
 	if rate, ok := exchangeRate[currency]; ok {
-		decimalValue = decimalValue.Mul(decimal.NewFromFloat(rate))
+		decimalValue = decimalValue.Div(decimal.NewFromFloat(rate))
 	}
 	return decimalValue
 }
 
+// NewOrderAmount
+//
+// exchangeRates 以人民币为基准，比如美元兑人民币 1:6.3，对应的设置为：
+// map[string]float64{"USD": 0.1587}
+// 默认情况下，转换后的币种为人民币，如果需要转换为其他币种，请使用 ExchangeTo 函数获取
 func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32) *OrderAmount {
 	oa := &OrderAmount{
-		Number:        order.OrderIdCode,
 		config:        orderAmountConfig{rates: exchangeRates, precision: precision},
+		Number:        order.OrderIdCode,
+		Currency:      CNY,
 		TotalQuantity: 0,
 		IncomeAmount: OrderIncomeAmount{
 			Product:     0,
@@ -126,19 +133,42 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 
 // ExchangeTo 兑换
 func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error) {
-	if _, ok := oa.config.rates[currency]; ok {
-		cfg := oa.config
+	if v, ok := oa.config.rates[currency]; ok {
+		precision := oa.config.precision
+		rate := decimal.NewFromFloat(1).Div(decimal.NewFromFloat(v))
 		newOA = oa
-		newOA.IncomeAmount.Product, _ = currencyExchange(newOA.IncomeAmount.Product, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.IncomeAmount.ProductTax, _ = currencyExchange(newOA.IncomeAmount.ProductTax, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.IncomeAmount.Shipping, _ = currencyExchange(newOA.IncomeAmount.Shipping, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.IncomeAmount.ShippingTax, _ = currencyExchange(newOA.IncomeAmount.ShippingTax, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.ExpenditureAmount.Product, _ = currencyExchange(newOA.ExpenditureAmount.Product, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.ExpenditureAmount.Channel, _ = currencyExchange(newOA.ExpenditureAmount.Channel, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.ExpenditureAmount.VAT, _ = currencyExchange(newOA.ExpenditureAmount.VAT, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.ExpenditureAmount.Shipping, _ = currencyExchange(newOA.ExpenditureAmount.Shipping, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.TotalIncomeAmount, _ = currencyExchange(newOA.TotalIncomeAmount, cfg.rates, currency).Round(cfg.precision).Float64()
-		newOA.TotalExpenditureAmount, _ = currencyExchange(newOA.TotalExpenditureAmount, cfg.rates, currency).Round(cfg.precision).Float64()
+		newOA.Currency = currency
+
+		if newOA.IncomeAmount.Product > 0 {
+			newOA.IncomeAmount.Product, _ = decimal.NewFromFloat(newOA.IncomeAmount.Product).Div(rate).Round(precision).Float64()
+		}
+		if newOA.IncomeAmount.ProductTax > 0 {
+			newOA.IncomeAmount.ProductTax, _ = decimal.NewFromFloat(newOA.IncomeAmount.ProductTax).Div(rate).Round(precision).Float64()
+		}
+		if newOA.IncomeAmount.Shipping > 0 {
+			newOA.IncomeAmount.Shipping, _ = decimal.NewFromFloat(newOA.IncomeAmount.Shipping).Div(rate).Round(precision).Float64()
+		}
+		if newOA.IncomeAmount.ShippingTax > 0 {
+			newOA.IncomeAmount.ShippingTax, _ = decimal.NewFromFloat(newOA.IncomeAmount.ShippingTax).Div(rate).Round(precision).Float64()
+		}
+		if newOA.ExpenditureAmount.Product > 0 {
+			newOA.ExpenditureAmount.Product, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Product).Div(rate).Round(precision).Float64()
+		}
+		if newOA.ExpenditureAmount.Channel > 0 {
+			newOA.ExpenditureAmount.Channel, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Channel).Div(rate).Round(precision).Float64()
+		}
+		if newOA.ExpenditureAmount.VAT > 0 {
+			newOA.ExpenditureAmount.VAT, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.VAT).Div(rate).Round(precision).Float64()
+		}
+		if newOA.ExpenditureAmount.Shipping > 0 {
+			newOA.ExpenditureAmount.Shipping, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Shipping).Div(rate).Round(precision).Float64()
+		}
+		if newOA.TotalIncomeAmount > 0 {
+			newOA.TotalIncomeAmount, _ = decimal.NewFromFloat(newOA.TotalIncomeAmount).Div(rate).Round(precision).Float64()
+		}
+		if newOA.TotalExpenditureAmount > 0 {
+			newOA.TotalExpenditureAmount, _ = decimal.NewFromFloat(newOA.TotalExpenditureAmount).Div(rate).Round(precision).Float64()
+		}
 	} else {
 		err = fmt.Errorf("无效的币种：%s", currency)
 	}

@@ -15,11 +15,11 @@ func TestOrderAmount(t *testing.T) {
 		ShippingFeeIncomeCurrency: USD,
 	}
 	orderAmount := NewOrderAmount(order, map[string]float64{
-		USD: 6.3,
+		USD: 0.1587,
 		CNY: 1,
 	}, 2)
 	assert.Equal(t, 14.73, orderAmount.TotalExpenditureAmount, "order 1")
-	assert.Equal(t, 31.5, orderAmount.IncomeAmount.Shipping, "order 2")
+	assert.Equal(t, 31.51, orderAmount.IncomeAmount.Shipping, "order 2")
 	newOrder, err := orderAmount.ExchangeTo(USD)
 	assert.Equal(t, nil, err, "newOrder 1")
 	fmt.Println(jsonx.ToJson(orderAmount, "{}"))
