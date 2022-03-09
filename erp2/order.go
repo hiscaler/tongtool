@@ -171,6 +171,12 @@ func (o Order) StoreCountryCode() string {
 	return code
 }
 
+// Amount 获取订单金额数据
+func (o Order) Amount(exchangeRates map[string]float64, precision int32) *OrderAmount {
+	oa := NewOrderAmount(o, exchangeRates, precision)
+	return oa
+}
+
 type OrdersQueryParams struct {
 	Paging
 	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
