@@ -1,6 +1,12 @@
 package erp2
 
-import "github.com/hiscaler/tongtool/constant"
+import (
+	"github.com/hiscaler/tongtool/constant"
+	"github.com/shopspring/decimal"
+)
+
+// 订单金额计算
+// 计算后的值统一为人民币，如果需要使用其他币种，需要自行转换
 
 // OrderIncomeAmount 订单收入
 type OrderIncomeAmount struct {
@@ -28,14 +34,16 @@ type OrderAmount struct {
 	TotalExpenditureAmount float64                `json:"total_expenditure_amount"` // 总支出成本
 }
 
-func exchangeAfter(value float64, exchangeRate map[string]float64, currency string) float64 {
+// 兑换
+func currencyExchange(value float64, exchangeRate map[string]float64, currency string) decimal.Decimal {
+	decimalValue := decimal.NewFromFloat(value)
 	if rate, ok := exchangeRate[currency]; ok {
-		return value * rate
+		decimalValue = decimalValue.Mul(decimal.NewFromFloat(rate))
 	}
-	return value
+	return decimalValue
 }
 
-func NewOrderAmount(order Order, exchangeRates map[string]float64) *OrderAmount {
+func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32) *OrderAmount {
 	oa := &OrderAmount{
 		Number:                 order.OrderIdCode,
 		ExchangeRates:          exchangeRates,
@@ -45,22 +53,35 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64) *OrderAmount 
 		TotalIncomeAmount:      0,
 		TotalExpenditureAmount: 0,
 	}
-	var totalIncomeAmount float64
+	tmp := decimal.NewFromFloat(0)
+	totalIncomeAmount := decimal.NewFromFloat(0)
+	incomeProduct := decimal.NewFromFloat(0)
 	for _, detail := range order.OrderDetails {
-		value := exchangeAfter(detail.TransactionPrice, exchangeRates, order.OrderAmountCurrency) * float64(detail.Quantity)
-		oa.IncomeAmount.Product += value
-		totalIncomeAmount += value
+		value := currencyExchange(detail.TransactionPrice, exchangeRates, order.OrderAmountCurrency).Mul(decimal.NewFromInt(int64(detail.Quantity)))
+		incomeProduct.Add(value)
+		totalIncomeAmount.Add(value)
 		oa.TotalQuantity += detail.Quantity
 	}
-	oa.TotalIncomeAmount = totalIncomeAmount
-	oa.IncomeAmount.Shipping = exchangeAfter(order.ShippingFeeIncome, exchangeRates, order.ShippingFeeIncomeCurrency)
+	oa.IncomeAmount.Product, _ = incomeProduct.Round(precision).Float64() // 商品收入
+	tmp = currencyExchange(order.ShippingFeeIncome, exchangeRates, order.ShippingFeeIncomeCurrency)
+	oa.IncomeAmount.Shipping, _ = tmp.Round(precision).Float64()
+	totalIncomeAmount = totalIncomeAmount.Add(tmp)
+	oa.TotalIncomeAmount, _ = totalIncomeAmount.Round(precision).Float64()
 	oa.ExpenditureAmount.Shipping = order.ShippingFee
-	oa.ExpenditureAmount.Channel = (oa.IncomeAmount.Product + oa.IncomeAmount.Shipping) * 0.15
+	oa.ExpenditureAmount.Channel, _ = incomeProduct.Add(decimal.NewFromFloat(oa.ExpenditureAmount.Shipping)).
+		Mul(decimal.NewFromFloat(0.15)).
+		Round(precision).
+		Float64()
 	if order.StoreCountryCode() == constant.CountryCodeUnitedKingdom {
 		// ((商品金额 + 客户支付的运费) / 1.2 * 0.2) 简化后为 ((商品金额 + 客户支付的运费) / 6)
-		oa.ExpenditureAmount.VAT = (oa.IncomeAmount.Product + oa.IncomeAmount.Shipping) / 6
+		oa.ExpenditureAmount.VAT, _ = incomeProduct.Add(decimal.NewFromFloat(oa.ExpenditureAmount.Shipping)).
+			Div(decimal.NewFromInt(6)).
+			Round(precision).
+			Float64()
 	}
+
 	// 商品成本
+	productAmount := decimal.NewFromFloat(0)
 	for _, good := range order.GoodsInfo.TongToolGoodsInfoList {
 		var costPrice float64
 		if good.ProductCurrentCost > 0 {
@@ -70,11 +91,17 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64) *OrderAmount 
 		} else {
 			costPrice = good.GoodsCurrentCost
 		}
-		oa.ExpenditureAmount.Product = costPrice
+		if costPrice > 0 {
+			productAmount.Add(decimal.NewFromFloat(costPrice).Mul(decimal.NewFromInt(int64(good.Quantity))))
+		}
 	}
-	oa.TotalExpenditureAmount = oa.ExpenditureAmount.Product +
-		oa.ExpenditureAmount.VAT +
-		oa.ExpenditureAmount.Shipping +
-		oa.ExpenditureAmount.Channel
+	oa.ExpenditureAmount.Product, _ = productAmount.Round(precision).Float64()
+	oa.TotalExpenditureAmount, _ = decimal.NewFromFloat(oa.ExpenditureAmount.Product).
+		Add(decimal.NewFromFloat(oa.ExpenditureAmount.VAT)).
+		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Shipping)).
+		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Channel)).
+		Round(precision).
+		Float64()
+
 	return oa
 }

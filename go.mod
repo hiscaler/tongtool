@@ -8,6 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/gosimple/slug v1.12.0
 	github.com/hiscaler/gox v0.0.0-20220307054931-b0cf4021783a
+	github.com/shopspring/decimal v1.3.1
 )
 
 require (
