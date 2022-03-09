@@ -21,19 +21,18 @@ type OrderIncomeAmount struct {
 type OrderExpenditureAmount struct {
 	Product  float64 `json:"product"`  // 商品成本
 	Channel  float64 `json:"channel"`  // 渠道收费
-	VAT      float64 `json:"vat"`      // VAT（订单总金额 * VAT 汇率）
+	VAT      float64 `json:"vat"`      // 增值税（订单总金额 * 汇率）
 	Shipping float64 `json:"shipping"` // 运费
 }
 
-type config struct {
+type orderAmountConfig struct {
 	rates     map[string]float64 // 汇率转换
 	precision int32              // 保留精度
 }
 
 type OrderAmount struct {
-	Number string `json:"number"` // 订单号
-	config config
-	// ExchangeRates          map[string]float64     `json:"exchange_rates"`           // 汇率转换
+	Number                 string                 `json:"number"` // 订单号
+	config                 orderAmountConfig      // 设置
 	TotalQuantity          int                    `json:"total_quantity"`           // 商品总数量
 	IncomeAmount           OrderIncomeAmount      `json:"income_amount"`            // 收入
 	ExpenditureAmount      OrderExpenditureAmount `json:"expenditure_amount"`       // 支出
@@ -53,7 +52,7 @@ func currencyExchange(value float64, exchangeRate map[string]float64, currency s
 func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32) *OrderAmount {
 	oa := &OrderAmount{
 		Number:        order.OrderIdCode,
-		config:        config{rates: exchangeRates, precision: precision},
+		config:        orderAmountConfig{rates: exchangeRates, precision: precision},
 		TotalQuantity: 0,
 		IncomeAmount: OrderIncomeAmount{
 			Product:     0,
@@ -88,14 +87,13 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	oa.IncomeAmount.Shipping, _ = incomeShipping.Round(precision).Float64()
 	totalIncomeAmount = totalIncomeAmount.Add(incomeShipping)
 	oa.TotalIncomeAmount, _ = totalIncomeAmount.Round(precision).Float64()
-	expenditureShipping := decimal.NewFromFloat(oa.ExpenditureAmount.Shipping)
-	oa.ExpenditureAmount.Channel, _ = incomeProduct.Add(expenditureShipping).
+	oa.ExpenditureAmount.Channel, _ = totalIncomeAmount.
 		Mul(decimal.NewFromFloat(0.15)).
 		Round(precision).
 		Float64()
 	if order.StoreCountryCode() == constant.CountryCodeUnitedKingdom {
 		// ((商品金额 + 客户支付的运费) / 1.2 * 0.2) 简化后为 ((商品金额 + 客户支付的运费) / 6)
-		oa.ExpenditureAmount.VAT, _ = incomeProduct.Add(expenditureShipping).
+		oa.ExpenditureAmount.VAT, _ = incomeProduct.Add(incomeShipping).
 			Div(decimal.NewFromInt(6)).
 			Round(precision).
 			Float64()
