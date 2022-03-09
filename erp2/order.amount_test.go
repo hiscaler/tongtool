@@ -3,6 +3,7 @@ package erp2
 import (
 	"fmt"
 	"github.com/hiscaler/gox/jsonx"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -17,11 +18,10 @@ func TestOrderAmount(t *testing.T) {
 		USD: 6.3,
 		CNY: 1,
 	}, 2)
-	if orderAmount.TotalExpenditureAmount != 14.73 {
-		t.Errorf("TotalExpenditureAmount excepted %f, actual %f", 10.0, orderAmount.TotalExpenditureAmount)
-	}
-	if orderAmount.IncomeAmount.Shipping != 31.5 {
-		t.Errorf("IncomeAmount.Shipping excepted %f, actual %f", 10.0, orderAmount.IncomeAmount.Shipping)
-	}
+	assert.Equal(t, 14.73, orderAmount.TotalExpenditureAmount, "order 1")
+	assert.Equal(t, 31.5, orderAmount.IncomeAmount.Shipping, "order 2")
+	newOrder, err := orderAmount.ExchangeTo(USD)
+	assert.Equal(t, nil, err, "newOrder 1")
 	fmt.Println(jsonx.ToJson(orderAmount, "{}"))
+	fmt.Println(jsonx.ToJson(newOrder, "{}"))
 }
