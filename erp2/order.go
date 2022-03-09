@@ -200,7 +200,10 @@ func (m OrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.AccountCode, validation.When(m.OrderId == "", validation.Required.Error("帐户代码不能为空"))),
 		validation.Field(&m.BuyerEmail, validation.When(m.BuyerEmail != "", is.EmailFormat.Error("无效的邮箱格式"))),
-		validation.Field(&m.StoreFlag, validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围"))),
+		validation.Field(&m.StoreFlag,
+			validation.Required.Error("查询范围不能为空"),
+			validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围")),
+		),
 		validation.Field(&m.OrderStatus, validation.When(m.OrderStatus != "", validation.In(OrderStatusWaitPacking, OrderStatusWaitPrinting, OrderStatusWaitingDespatching, OrderStatusDespatched, OrderStatusUnpaid, OrderStatusPaid).Error("无效的订单状态"))),
 		validation.Field(&m.PayDateFrom, validation.When(m.PayDateTo != "", validation.Date(constant.DatetimeFormat).Error("无效的付款起始时间"))),
 		validation.Field(&m.PayDateTo, validation.When(m.PayDateTo != "",
@@ -284,6 +287,9 @@ func (m OrdersQueryParams) Validate() error {
 // Orders 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error) {
+	if params.StoreFlag == "" {
+		params.StoreFlag = OrderStoreFlagActive
+	}
 	if err = params.Validate(); err != nil {
 		return
 	}
