@@ -22,6 +22,7 @@ type OrderIncomeAmount struct {
 type OrderExpenditureAmount struct {
 	Product  float64 `json:"product"`  // 商品成本
 	Channel  float64 `json:"channel"`  // 渠道收费
+	Platform float64 `json:"platform"` // 平台佣金
 	VAT      float64 `json:"vat"`      // 增值税（订单总金额 * 汇率）
 	Package  float64 `json:"package"`  // 包装
 	Shipping float64 `json:"shipping"` // 运费
@@ -88,18 +89,22 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		TotalExpenditureAmount: 0,
 	}
 	items := make([]orderItem, len(order.OrderDetails))
+	// 收入
 	totalIncomeAmount := decimal.NewFromFloat(0)
 	incomeProduct := decimal.NewFromFloat(0)
 	for i, detail := range order.OrderDetails {
 		items[i] = orderItem{
-			SKU:      detail.GoodsMatchedSKU,
-			Price:    detail.TransactionPrice,
-			Quantity: detail.Quantity,
-			Amount:   0,
+			WebStoreSKU: detail.WebStoreSKU,
+			SKU:         detail.GoodsMatchedSKU,
+			Quantity:    detail.Quantity,
 		}
-		value := currencyExchange(detail.TransactionPrice, exchangeRates, order.OrderAmountCurrency).Mul(decimal.NewFromInt(int64(detail.Quantity)))
-		incomeProduct.Add(value)
-		totalIncomeAmount.Add(value)
+		quantity := decimal.NewFromInt(int64(detail.Quantity))
+		price := currencyExchange(detail.TransactionPrice, exchangeRates, order.OrderAmountCurrency)
+		amount := price.Mul(quantity)
+		items[i].Price, _ = price.Round(precision).Float64()
+		items[i].Amount, _ = amount.Round(precision).Float64()
+		incomeProduct = incomeProduct.Add(amount)
+		totalIncomeAmount = totalIncomeAmount.Add(amount)
 		oa.TotalQuantity += detail.Quantity
 	}
 	oa.Items = items
@@ -111,8 +116,16 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	}
 	incomeShipping := currencyExchange(order.ShippingFeeIncome, exchangeRates, order.ShippingFeeIncomeCurrency)
 	oa.IncomeAmount.Shipping, _ = incomeShipping.Round(precision).Float64()
-	totalIncomeAmount = totalIncomeAmount.Add(incomeShipping)
-	oa.TotalIncomeAmount, _ = totalIncomeAmount.Round(precision).Float64()
+	incomeInsurance := currencyExchange(order.OrderAmount, exchangeRates, order.OrderAmountCurrency).
+		Sub(incomeProduct).
+		Sub(incomeShipping)
+	oa.IncomeAmount.Insurance, _ = incomeInsurance.Round(precision).Float64()
+	oa.TotalIncomeAmount, _ = totalIncomeAmount.Add(incomeShipping).
+		Add(incomeInsurance).
+		Round(precision).
+		Float64()
+
+	// 支出
 	oa.ExpenditureAmount.Channel, _ = totalIncomeAmount.
 		Mul(decimal.NewFromFloat(0.15)).
 		Round(precision).
