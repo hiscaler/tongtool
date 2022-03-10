@@ -13,8 +13,9 @@ import (
 type OrderIncomeAmount struct {
 	Product     float64 `json:"product"`      // 商品金额
 	ProductTax  float64 `json:"product_tax"`  // 商品税金
-	Shipping    float64 `json:"shipping"`     // 实付运费
-	ShippingTax float64 `json:"shipping_tax"` // 实付运费税金
+	Shipping    float64 `json:"shipping"`     // 运费
+	ShippingTax float64 `json:"shipping_tax"` // 运费税金
+	Insurance   float64 `json:"insurance"`    // 保费
 }
 
 // OrderExpenditureAmount 订单支出
@@ -22,6 +23,7 @@ type OrderExpenditureAmount struct {
 	Product  float64 `json:"product"`  // 商品成本
 	Channel  float64 `json:"channel"`  // 渠道收费
 	VAT      float64 `json:"vat"`      // 增值税（订单总金额 * 汇率）
+	Package  float64 `json:"package"`  // 包装
 	Shipping float64 `json:"shipping"` // 运费
 }
 
@@ -30,9 +32,18 @@ type orderAmountConfig struct {
 	precision int32              // 保留精度
 }
 
+type orderItem struct {
+	WebStoreSKU string  `json:"web_store_sku"`
+	SKU         string  `json:"sku"`
+	Price       float64 `json:"price"`
+	Quantity    int     `json:"quantity"`
+	Amount      float64 `json:"amount"`
+}
+
 type OrderAmount struct {
 	config                 orderAmountConfig      // 设置
 	Number                 string                 `json:"number"`                   // 订单号
+	Items                  []orderItem            `json:"items"`                    // 详情
 	Currency               string                 `json:"currency"`                 // 货币
 	TotalQuantity          int                    `json:"total_quantity"`           // 商品总数量
 	IncomeAmount           OrderIncomeAmount      `json:"income_amount"`            // 收入
@@ -76,14 +87,22 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		TotalIncomeAmount:      0,
 		TotalExpenditureAmount: 0,
 	}
+	items := make([]orderItem, len(order.OrderDetails))
 	totalIncomeAmount := decimal.NewFromFloat(0)
 	incomeProduct := decimal.NewFromFloat(0)
-	for _, detail := range order.OrderDetails {
+	for i, detail := range order.OrderDetails {
+		items[i] = orderItem{
+			SKU:      detail.GoodsMatchedSKU,
+			Price:    detail.TransactionPrice,
+			Quantity: detail.Quantity,
+			Amount:   0,
+		}
 		value := currencyExchange(detail.TransactionPrice, exchangeRates, order.OrderAmountCurrency).Mul(decimal.NewFromInt(int64(detail.Quantity)))
 		incomeProduct.Add(value)
 		totalIncomeAmount.Add(value)
 		oa.TotalQuantity += detail.Quantity
 	}
+	oa.Items = items
 	oa.IncomeAmount.Product, _ = incomeProduct.Round(precision).Float64() // 商品收入
 	if order.TaxIncome > 0 {
 		incomeProductTax := currencyExchange(order.TaxIncome, exchangeRates, order.TaxCurrency)
@@ -106,26 +125,36 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 			Float64()
 	}
 
-	// 商品成本
-	expenditureProduct := decimal.NewFromFloat(0)
+	expenditureProduct := decimal.NewFromFloat(0) // 商品成本
+	expenditurePacking := decimal.NewFromFloat(0) // 包装成本
 	for _, good := range order.GoodsInfo.TongToolGoodsInfoList {
 		var costPrice float64
 		if good.ProductCurrentCost > 0 {
-			costPrice = good.ProductCurrentCost
+			costPrice = good.ProductCurrentCost // 商品成本
 		} else if good.GoodsAverageCost > 0 {
-			costPrice = good.GoodsAverageCost
+			costPrice = good.GoodsAverageCost // 平均成本
 		} else {
-			costPrice = good.GoodsCurrentCost
+			costPrice = good.GoodsCurrentCost // 最新成本
 		}
 		if costPrice > 0 && good.Quantity > 0 {
 			expenditureProduct.Add(decimal.NewFromFloat(costPrice).Mul(decimal.NewFromInt(int64(good.Quantity))))
 		}
+		// 包装成本
+		if good.GoodsPackagingCost > 0 {
+			expenditurePacking.Add(decimal.NewFromFloat(good.GoodsPackagingCost))
+		}
 	}
-	oa.ExpenditureAmount.Product, _ = expenditureProduct.Round(precision).Float64()
+	if !expenditureProduct.IsZero() {
+		oa.ExpenditureAmount.Product, _ = expenditureProduct.Round(precision).Float64()
+	}
+	if !expenditurePacking.IsZero() {
+		oa.ExpenditureAmount.Package, _ = expenditurePacking.Round(precision).Float64()
+	}
 	oa.TotalExpenditureAmount, _ = decimal.NewFromFloat(oa.ExpenditureAmount.Product).
 		Add(decimal.NewFromFloat(oa.ExpenditureAmount.VAT)).
 		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Shipping)).
 		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Channel)).
+		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Package)).
 		Round(precision).
 		Float64()
 	return oa
@@ -162,6 +191,9 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 		}
 		if newOA.ExpenditureAmount.Shipping > 0 {
 			newOA.ExpenditureAmount.Shipping, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Shipping).Div(rate).Round(precision).Float64()
+		}
+		if newOA.ExpenditureAmount.Package > 0 {
+			newOA.ExpenditureAmount.Package, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Package).Div(rate).Round(precision).Float64()
 		}
 		if newOA.TotalIncomeAmount > 0 {
 			newOA.TotalIncomeAmount, _ = decimal.NewFromFloat(newOA.TotalIncomeAmount).Div(rate).Round(precision).Float64()
