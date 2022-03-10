@@ -22,6 +22,6 @@ func TestOrderAmount(t *testing.T) {
 	assert.Equal(t, 31.51, orderAmount.IncomeAmount.Shipping, "order 2")
 	newOrder, err := orderAmount.ExchangeTo(USD)
 	assert.Equal(t, nil, err, "newOrder 1")
-	fmt.Println(jsonx.ToJson(orderAmount, "{}"))
-	fmt.Println(jsonx.ToJson(newOrder, "{}"))
+	fmt.Println(jsonx.ToPrettyJson(orderAmount))
+	fmt.Println(jsonx.ToPrettyJson(newOrder))
 }
