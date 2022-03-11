@@ -25,7 +25,7 @@ func TestOrderAmount(t *testing.T) {
 		orderAmount := NewOrderAmount(order, map[string]float64{
 			USD: 6.3927,
 			CNY: 1,
-		}, 2, 22.45)
+		}, 2, 22.45, 10)
 		assert.Equal(t, 8.35, orderAmount.Summary.Expenditure, "order 1")
 		assert.Equal(t, 98.72, orderAmount.Summary.Income, "order 2")
 		newOrder, err := orderAmount.ExchangeTo(USD)

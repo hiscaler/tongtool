@@ -30,6 +30,7 @@ type orderExpenditure struct {
 	VAT      float64 `json:"vat"`       // 增值税（只有欧洲才有）
 	Package  float64 `json:"package"`   // 包装
 	Shipping float64 `json:"shipping"`  // 运费（卖家支付）
+	Other    float64 `json:"other"`     // 其他（比如后端费用等）
 }
 
 type orderAmountConfig struct {
@@ -61,14 +62,15 @@ type proportion struct {
 	Shipping float64 `json:"shipping"`
 	Platform float64 `json:"platform"`
 	Profit   float64 `json:"profit"`
+	Other    float64 `json:"other"`
 }
 
 type OrderAmount struct {
 	config            orderAmountConfig      // 设置
 	Number            string                 `json:"number"`             // 订单号
-	Items             []orderItem            `json:"items"`              // 详情
 	Currency          string                 `json:"currency"`           // 货币
 	TotalQuantity     int                    `json:"total_quantity"`     // 商品总数量
+	Items             []orderItem            `json:"items"`              // 详情
 	IncomeExpenditure orderIncomeExpenditure `json:"income_expenditure"` // 收入支出
 	Summary           orderSummary           `json:"summary"`            // 汇总
 	Proportion        proportion             `json:"proportion"`         // 占比
@@ -88,7 +90,8 @@ func currencyExchange(value float64, exchangeRate map[string]float64, currency s
 // exchangeRates 以人民币为基准，比如美元兑人民币 1:6.3，对应的设置为：
 // map[string]float64{"USD": 6.3}
 // 默认情况下，转换后的币种为人民币，如果需要转换为其他币种，请使用 ExchangeTo 函数获取
-func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32, shippingFee float64) *OrderAmount {
+// 在传参过程中请注意，shippingFee, otherFee 均为人民币
+func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32, shippingFee, otherFee float64) *OrderAmount {
 	oa := &OrderAmount{
 		config:        orderAmountConfig{rates: exchangeRates, precision: precision},
 		Number:        order.OrderIdCode,
@@ -106,6 +109,7 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 				VAT:      0,
 				Package:  0,
 				Shipping: shippingFee,
+				Other:    otherFee,
 			},
 		},
 		Summary: orderSummary{
@@ -191,7 +195,8 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		Add(decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.VAT)).
 		Add(decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Shipping)).
 		Add(decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Platform)).
-		Add(decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Package))
+		Add(decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Package)).
+		Add(decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Other))
 	oa.Summary.Expenditure, _ = summaryExpenditure.Round(precision).Float64()
 	summaryProfit := totalIncomeAmount.Sub(summaryExpenditure)
 	oa.Summary.Profit, _ = summaryProfit.Round(precision).Float64()
@@ -201,6 +206,11 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		Round(precision).
 		Float64()
 	oa.Proportion.Shipping, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Shipping).
+		Div(totalIncomeAmount).
+		Mul(decimal100).
+		Round(precision).
+		Float64()
+	oa.Proportion.Other, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Other).
 		Div(totalIncomeAmount).
 		Mul(decimal100).
 		Round(precision).
@@ -242,6 +252,9 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 		}
 		if newOA.IncomeExpenditure.Expenditure.Shipping > 0 {
 			newOA.IncomeExpenditure.Expenditure.Shipping, _ = decimal.NewFromFloat(newOA.IncomeExpenditure.Expenditure.Shipping).Div(rate).Round(precision).Float64()
+		}
+		if newOA.IncomeExpenditure.Expenditure.Other > 0 {
+			newOA.IncomeExpenditure.Expenditure.Other, _ = decimal.NewFromFloat(newOA.IncomeExpenditure.Expenditure.Other).Div(rate).Round(precision).Float64()
 		}
 		if newOA.IncomeExpenditure.Expenditure.Package > 0 {
 			newOA.IncomeExpenditure.Expenditure.Package, _ = decimal.NewFromFloat(newOA.IncomeExpenditure.Expenditure.Package).Div(rate).Round(precision).Float64()

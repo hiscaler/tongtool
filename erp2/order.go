@@ -172,8 +172,8 @@ func (o Order) StoreCountryCode() string {
 }
 
 // Amount 获取订单金额数据
-func (o Order) Amount(exchangeRates map[string]float64, precision int32, shippingFee float64) *OrderAmount {
-	oa := NewOrderAmount(o, exchangeRates, precision, shippingFee)
+func (o Order) Amount(exchangeRates map[string]float64, precision int32, shippingFee, otherFee float64) *OrderAmount {
+	oa := NewOrderAmount(o, exchangeRates, precision, shippingFee, otherFee)
 	return oa
 }
 
