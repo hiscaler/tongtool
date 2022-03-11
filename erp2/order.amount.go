@@ -38,6 +38,7 @@ type orderAmountConfig struct {
 	precision int32              // 保留精度
 }
 
+// 订单详情项
 type orderItem struct {
 	WebStoreSKU string  `json:"web_store_sku"`
 	SKU         string  `json:"sku"`
@@ -46,23 +47,26 @@ type orderItem struct {
 	Amount      float64 `json:"amount"`
 }
 
+// 订单收支
 type orderIncomeExpenditure struct {
 	Income      orderIncome      `json:"income"`      // 收入
 	Expenditure orderExpenditure `json:"expenditure"` // 支出
 }
 
+// 汇总
 type orderSummary struct {
 	Income      float64 `json:"income"`      // 收入
 	Expenditure float64 `json:"expenditure"` // 支出
 	Profit      float64 `json:"profit"`      // 利润
 }
 
+// 占比（百分比）
 type proportion struct {
-	Product  float64 `json:"product"`
-	Shipping float64 `json:"shipping"`
-	Platform float64 `json:"platform"`
-	Profit   float64 `json:"profit"`
-	Other    float64 `json:"other"`
+	Product  float64 `json:"product"`  // 商品占比
+	Shipping float64 `json:"shipping"` // 运费占比
+	Platform float64 `json:"platform"` // 平台佣金占比
+	Profit   float64 `json:"profit"`   // 利润占比
+	Other    float64 `json:"other"`    // 其他占比
 }
 
 type OrderAmount struct {
