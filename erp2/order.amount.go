@@ -11,21 +11,18 @@ import (
 
 // OrderIncomeAmount 订单收入
 type OrderIncomeAmount struct {
-	Product     float64 `json:"product"`      // 商品金额
-	ProductTax  float64 `json:"product_tax"`  // 商品税金
-	Shipping    float64 `json:"shipping"`     // 运费
-	ShippingTax float64 `json:"shipping_tax"` // 运费税金
-	Insurance   float64 `json:"insurance"`    // 保费
+	Product   float64 `json:"product"`   // 商品金额
+	Shipping  float64 `json:"shipping"`  // 运费（买家支付）
+	Insurance float64 `json:"insurance"` // 保费
 }
 
 // OrderExpenditureAmount 订单支出
 type OrderExpenditureAmount struct {
-	Product  float64 `json:"product"`  // 商品成本
-	Channel  float64 `json:"channel"`  // 渠道收费
-	Platform float64 `json:"platform"` // 平台佣金
-	VAT      float64 `json:"vat"`      // 增值税（订单总金额 * 汇率）
-	Package  float64 `json:"package"`  // 包装
-	Shipping float64 `json:"shipping"` // 运费
+	Product  float64 `json:"product"`   // 商品成本
+	Platform float64 `json:"platform "` // 平台佣金
+	VAT      float64 `json:"vat"`       // 增值税（只有欧洲才有）
+	Package  float64 `json:"package"`   // 包装
+	Shipping float64 `json:"shipping"`  // 运费（卖家支付）
 }
 
 type orderAmountConfig struct {
@@ -74,13 +71,11 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		Currency:      CNY,
 		TotalQuantity: 0,
 		IncomeAmount: OrderIncomeAmount{
-			Product:     0,
-			ProductTax:  0,
-			Shipping:    0,
-			ShippingTax: 0,
+			Product:  0,
+			Shipping: 0,
 		},
 		ExpenditureAmount: OrderExpenditureAmount{
-			Channel:  0,
+			Platform: 0,
 			VAT:      0,
 			Product:  0,
 			Shipping: order.ShippingFee,
@@ -111,8 +106,7 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	oa.IncomeAmount.Product, _ = incomeProduct.Round(precision).Float64() // 商品收入
 	if order.TaxIncome > 0 {
 		incomeProductTax := currencyExchange(order.TaxIncome, exchangeRates, order.TaxCurrency)
-		oa.IncomeAmount.ProductTax, _ = incomeProductTax.Round(precision).Float64()
-		totalIncomeAmount.Sub(incomeProductTax) // 商品金额 - 税金
+		totalIncomeAmount = totalIncomeAmount.Sub(incomeProductTax) // 商品金额 - 税金
 	}
 	incomeShipping := currencyExchange(order.ShippingFeeIncome, exchangeRates, order.ShippingFeeIncomeCurrency)
 	oa.IncomeAmount.Shipping, _ = incomeShipping.Round(precision).Float64()
@@ -126,10 +120,10 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		Float64()
 
 	// 支出
-	oa.ExpenditureAmount.Channel, _ = totalIncomeAmount.
+	oa.ExpenditureAmount.Platform, _ = totalIncomeAmount.
 		Mul(decimal.NewFromFloat(0.15)).
 		Round(precision).
-		Float64()
+		Float64() // 平台佣金（亚马逊固定 15%）
 	if order.StoreCountryCode() == constant.CountryCodeUnitedKingdom {
 		// ((商品金额 + 客户支付的运费) / 1.2 * 0.2) 简化后为 ((商品金额 + 客户支付的运费) / 6)
 		oa.ExpenditureAmount.VAT, _ = incomeProduct.Add(incomeShipping).
@@ -166,7 +160,7 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	oa.TotalExpenditureAmount, _ = decimal.NewFromFloat(oa.ExpenditureAmount.Product).
 		Add(decimal.NewFromFloat(oa.ExpenditureAmount.VAT)).
 		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Shipping)).
-		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Channel)).
+		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Platform)).
 		Add(decimal.NewFromFloat(oa.ExpenditureAmount.Package)).
 		Round(precision).
 		Float64()
@@ -184,20 +178,14 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 		if newOA.IncomeAmount.Product > 0 {
 			newOA.IncomeAmount.Product, _ = decimal.NewFromFloat(newOA.IncomeAmount.Product).Div(rate).Round(precision).Float64()
 		}
-		if newOA.IncomeAmount.ProductTax > 0 {
-			newOA.IncomeAmount.ProductTax, _ = decimal.NewFromFloat(newOA.IncomeAmount.ProductTax).Div(rate).Round(precision).Float64()
-		}
 		if newOA.IncomeAmount.Shipping > 0 {
 			newOA.IncomeAmount.Shipping, _ = decimal.NewFromFloat(newOA.IncomeAmount.Shipping).Div(rate).Round(precision).Float64()
-		}
-		if newOA.IncomeAmount.ShippingTax > 0 {
-			newOA.IncomeAmount.ShippingTax, _ = decimal.NewFromFloat(newOA.IncomeAmount.ShippingTax).Div(rate).Round(precision).Float64()
 		}
 		if newOA.ExpenditureAmount.Product > 0 {
 			newOA.ExpenditureAmount.Product, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Product).Div(rate).Round(precision).Float64()
 		}
-		if newOA.ExpenditureAmount.Channel > 0 {
-			newOA.ExpenditureAmount.Channel, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Channel).Div(rate).Round(precision).Float64()
+		if newOA.ExpenditureAmount.Platform > 0 {
+			newOA.ExpenditureAmount.Platform, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.Platform).Div(rate).Round(precision).Float64()
 		}
 		if newOA.ExpenditureAmount.VAT > 0 {
 			newOA.ExpenditureAmount.VAT, _ = decimal.NewFromFloat(newOA.ExpenditureAmount.VAT).Div(rate).Round(precision).Float64()

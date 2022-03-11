@@ -14,6 +14,8 @@ github.com/gosimple/unidecode v1.0.1 h1:hZzFTMMqSswvf0LBJZCZgThIZrpDHFXux9KeGmn6
 github.com/gosimple/unidecode v1.0.1/go.mod h1:CP0Cr1Y1kogOtx0bJblKzsVWrqYaqfNOnHzpgWw4Awc=
 github.com/hiscaler/gox v0.0.0-20220311014114-9e1e12e58e6c h1:b7ruqTi01u0YqpimDBAKt+WK8VfWIPsE5Ms+hrKFQxQ=
 github.com/hiscaler/gox v0.0.0-20220311014114-9e1e12e58e6c/go.mod h1:iRF5RHS6v2n6uYqZb3LZse6H9I9U3Wz98HA/kLDW6EE=
+github.com/hiscaler/gox v0.0.0-20220311023326-88991bf209d7 h1:xxrFKG2g2MuY3aAHBGs6yREMhyjOo+1LriurEPeNuvI=
+github.com/hiscaler/gox v0.0.0-20220311023326-88991bf209d7/go.mod h1:iRF5RHS6v2n6uYqZb3LZse6H9I9U3Wz98HA/kLDW6EE=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/shopspring/decimal v1.3.1 h1:2Usl1nmF/WZucqkFZhnfFYxxxu8LG21F6nPQBE5gKV8=
