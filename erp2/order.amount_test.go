@@ -33,5 +33,4 @@ func TestOrderAmount(t *testing.T) {
 		fmt.Println(jsonx.ToPrettyJson(orderAmount))
 		fmt.Println(jsonx.ToPrettyJson(newOrder))
 	}
-
 }

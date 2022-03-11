@@ -217,10 +217,14 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error) {
 	if v, ok := oa.config.rates[currency]; ok {
 		precision := oa.config.precision
-		rate := decimal.NewFromFloat(1).Div(decimal.NewFromFloat(v))
+		rate := decimal.NewFromFloat(v)
 		newOA = oa
 		newOA.Currency = currency
 
+		for i, item := range newOA.Items {
+			newOA.Items[i].Price, _ = decimal.NewFromFloat(item.Price).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Amount, _ = decimal.NewFromFloat(item.Amount).Div(rate).Round(precision).Float64()
+		}
 		if newOA.IncomeExpenditure.Income.Product > 0 {
 			newOA.IncomeExpenditure.Income.Product, _ = decimal.NewFromFloat(newOA.IncomeExpenditure.Income.Product).Div(rate).Round(precision).Float64()
 		}
@@ -264,7 +268,7 @@ func (oa OrderAmount) ExchangeMoney(currency string, value float64) (money float
 			return
 		}
 		money, _ = decimal.NewFromFloat(value).
-			Div(decimal.NewFromFloat(1).Div(decimal.NewFromFloat(v))).
+			Div(decimal.NewFromFloat(v)).
 			Round(oa.config.precision).
 			Float64()
 	} else {
