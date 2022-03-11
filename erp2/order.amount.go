@@ -9,6 +9,13 @@ import (
 // 订单金额计算
 // 计算后的值统一为人民币，如果需要使用其他币种，需要自行转换
 
+var decimal1, decimal100 decimal.Decimal
+
+func init() {
+	decimal1 = decimal.NewFromInt(1)
+	decimal100 = decimal.NewFromInt(100)
+}
+
 // orderIncome 订单收入
 type orderIncome struct {
 	Product   float64 `json:"product"`   // 商品金额
@@ -71,7 +78,7 @@ type OrderAmount struct {
 func currencyExchange(value float64, exchangeRate map[string]float64, currency string) decimal.Decimal {
 	decimalValue := decimal.NewFromFloat(value)
 	if rate, ok := exchangeRate[currency]; ok {
-		decimalValue = decimalValue.Div(decimal.NewFromFloat(rate))
+		decimalValue = decimalValue.Div(decimal1.Div(decimal.NewFromFloat(rate)))
 	}
 	return decimalValue
 }
@@ -79,7 +86,7 @@ func currencyExchange(value float64, exchangeRate map[string]float64, currency s
 // NewOrderAmount
 //
 // exchangeRates 以人民币为基准，比如美元兑人民币 1:6.3，对应的设置为：
-// map[string]float64{"USD": 0.1587}
+// map[string]float64{"USD": 6.3}
 // 默认情况下，转换后的币种为人民币，如果需要转换为其他币种，请使用 ExchangeTo 函数获取
 func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32, shippingFee float64) *OrderAmount {
 	oa := &OrderAmount{
@@ -107,7 +114,6 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		},
 	}
 	items := make([]orderItem, len(order.OrderDetails))
-	decimal100 := decimal.NewFromInt(100)
 	// 收入
 	incomeProduct := decimal.NewFromFloat(0)
 	for i, detail := range order.OrderDetails {
