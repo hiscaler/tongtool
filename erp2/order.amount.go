@@ -38,13 +38,22 @@ type orderAmountConfig struct {
 	precision int32              // 保留精度
 }
 
+type orderItemExpenditure struct {
+	Platform float64 `json:"platform "` // 平台佣金
+	VAT      float64 `json:"vat"`       // 增值税（只有欧洲才有）
+	Package  float64 `json:"package"`   // 包装
+	Shipping float64 `json:"shipping"`  // 运费（卖家支付）
+	Other    float64 `json:"other"`     // 其他（比如后端费用等）
+}
+
 // 订单详情项
 type orderItem struct {
-	WebStoreSKU string  `json:"web_store_sku"`
-	SKU         string  `json:"sku"`
-	Price       float64 `json:"price"`
-	Quantity    int     `json:"quantity"`
-	Amount      float64 `json:"amount"`
+	WebStoreSKU string               `json:"web_store_sku"`
+	SKU         string               `json:"sku"`
+	Price       float64              `json:"price"`
+	Quantity    int                  `json:"quantity"`
+	Amount      float64              `json:"amount"`
+	Expenditure orderItemExpenditure `json:"expenditure"`
 }
 
 // 订单收支
@@ -138,7 +147,6 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		incomeProduct = incomeProduct.Add(amount)
 		oa.TotalQuantity += detail.Quantity
 	}
-	oa.Items = items
 	oa.IncomeExpenditure.Income.Product, _ = incomeProduct.Round(precision).Float64() // 商品收入
 	incomeShipping := currencyExchange(order.ShippingFeeIncome, exchangeRates, order.ShippingFeeIncomeCurrency)
 	oa.IncomeExpenditure.Income.Shipping, _ = incomeShipping.Round(precision).Float64()
@@ -224,6 +232,38 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		Mul(decimal100).
 		Round(precision).
 		Float64()
+
+	totalQuantity := decimal.NewFromInt(int64(oa.TotalQuantity))
+	for i, item := range items {
+		quantity := decimal.NewFromInt(int64(item.Quantity))
+		item.Expenditure.Platform, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Platform).
+			Div(totalQuantity).
+			Mul(quantity).
+			Round(precision).
+			Float64()
+		item.Expenditure.VAT, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.VAT).
+			Div(totalQuantity).
+			Mul(quantity).
+			Round(precision).
+			Float64()
+		item.Expenditure.Package, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Package).
+			Div(totalQuantity).
+			Mul(quantity).
+			Round(precision).
+			Float64()
+		item.Expenditure.Shipping, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Shipping).
+			Div(totalQuantity).
+			Mul(quantity).
+			Round(precision).
+			Float64()
+		item.Expenditure.Other, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Other).
+			Div(totalQuantity).
+			Mul(quantity).
+			Round(precision).
+			Float64()
+		items[i] = item
+	}
+	oa.Items = items
 	return oa
 }
 
