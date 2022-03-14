@@ -274,7 +274,6 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 		rate := decimal.NewFromFloat(v)
 		newOA = oa
 		newOA.Currency = currency
-
 		for i, item := range newOA.Items {
 			newOA.Items[i].Price, _ = decimal.NewFromFloat(item.Price).Div(rate).Round(precision).Float64()
 			newOA.Items[i].Amount, _ = decimal.NewFromFloat(item.Amount).Div(rate).Round(precision).Float64()
