@@ -48,12 +48,12 @@ type orderItemExpenditure struct {
 
 // 订单详情项
 type orderItem struct {
-	WebStoreSKU string               `json:"web_store_sku"`
-	SKU         string               `json:"sku"`
-	Price       float64              `json:"price"`
-	Quantity    int                  `json:"quantity"`
-	Amount      float64              `json:"amount"`
-	Expenditure orderItemExpenditure `json:"expenditure"`
+	StoreSKU    string               `json:"store_sku"`   // 平台 SKU
+	SKU         string               `json:"sku"`         // 系统 SKU
+	Price       float64              `json:"price"`       // 单价
+	Quantity    int                  `json:"quantity"`    // 数量
+	Amount      float64              `json:"amount"`      // 合计
+	Expenditure orderItemExpenditure `json:"expenditure"` // 支出
 }
 
 // 订单收支
@@ -135,9 +135,9 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	incomeProduct := decimal.NewFromFloat(0)
 	for i, detail := range order.OrderDetails {
 		items[i] = orderItem{
-			WebStoreSKU: detail.WebStoreSKU,
-			SKU:         detail.GoodsMatchedSKU,
-			Quantity:    detail.Quantity,
+			StoreSKU: detail.WebStoreSKU,
+			SKU:      detail.GoodsMatchedSKU,
+			Quantity: detail.Quantity,
 		}
 		quantity := decimal.NewFromInt(int64(detail.Quantity))
 		price := currencyExchange(detail.TransactionPrice, exchangeRates, order.OrderAmountCurrency)
@@ -278,6 +278,11 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 		for i, item := range newOA.Items {
 			newOA.Items[i].Price, _ = decimal.NewFromFloat(item.Price).Div(rate).Round(precision).Float64()
 			newOA.Items[i].Amount, _ = decimal.NewFromFloat(item.Amount).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Platform, _ = decimal.NewFromFloat(item.Expenditure.Platform).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.VAT, _ = decimal.NewFromFloat(item.Expenditure.VAT).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Package, _ = decimal.NewFromFloat(item.Expenditure.Package).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Shipping, _ = decimal.NewFromFloat(item.Expenditure.Shipping).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Other, _ = decimal.NewFromFloat(item.Expenditure.Other).Div(rate).Round(precision).Float64()
 		}
 		if newOA.IncomeExpenditure.Income.Product > 0 {
 			newOA.IncomeExpenditure.Income.Product, _ = decimal.NewFromFloat(newOA.IncomeExpenditure.Income.Product).Div(rate).Round(precision).Float64()
