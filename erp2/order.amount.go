@@ -156,16 +156,17 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	oa.Summary.Income, _ = totalIncomeAmount.Round(precision).Float64()
 
 	// 支出
-	if order.PlatformCode == PlatformAmazon {
+	switch order.PlatformCode {
+	case PlatformAmazon:
 		oa.Proportion.Platform = 0.15 // 亚马逊固定 15%
 		if order.StoreCountryCode() == constant.CountryCodeUnitedKingdom {
-			// ((商品金额 + 客户支付的运费) / 1.2 * 0.2) 简化后为 ((商品金额 + 客户支付的运费) / 6)
+			// 增值税 ((商品金额 + 客户支付的运费) / 1.2 * 0.2) 简化后为 ((商品金额 + 客户支付的运费) / 6)
 			oa.IncomeExpenditure.Expenditure.VAT, _ = incomeProduct.Add(incomeShipping).
 				Div(decimal.NewFromInt(6)).
 				Round(precision).
 				Float64()
 		}
-	} else {
+	default:
 		// todo
 	}
 	if oa.Proportion.Platform > 0 {
