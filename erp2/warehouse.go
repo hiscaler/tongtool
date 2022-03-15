@@ -133,7 +133,7 @@ func (s service) Warehouse(id string) (item Warehouse, exists bool, err error) {
 
 // 物流渠道
 
-type ShippingMethod struct {
+type WarehouseShippingMethod struct {
 	CarrierName                 string `json:"carrierName"`                 // 物流商简称
 	CarrierStatus               string `json:"carrierStatus"`               // 物流商状态（0：失效、1：有效）
 	CarrierStatusBoolean        bool   `json:"carrierStatusBoolean"`        // 物流商状态
@@ -145,21 +145,21 @@ type ShippingMethod struct {
 	WarehouseName               string `json:"warehouseName"`               // 仓库名称
 }
 
-type ShippingMethodsQueryParams struct {
+type WarehouseShippingMethodsQueryParams struct {
 	Paging
 	MerchantId  string `json:"merchantId"`  // 商户ID
 	WarehouseId string `json:"warehouseId"` // 仓库id
 }
 
-func (m ShippingMethodsQueryParams) Validate() error {
+func (m WarehouseShippingMethodsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.WarehouseId, validation.Required.Error("仓库 ID 不能为空")),
 	)
 }
 
-// ShippingMethods 仓库物流渠道查询
+// WarehouseShippingMethods 仓库物流渠道查询
 // https://open.tongtool.com/apiDoc.html#/?docId=9ed7d6c3e7c44e498c0d43329d5a443b
-func (s service) ShippingMethods(params ShippingMethodsQueryParams) (items []ShippingMethod, isLastPage bool, err error) {
+func (s service) WarehouseShippingMethods(params WarehouseShippingMethodsQueryParams) (items []WarehouseShippingMethod, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -182,13 +182,13 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]ShippingMethod, 0)
+	items = make([]WarehouseShippingMethod, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {
-			Array    []ShippingMethod `json:"array"`
-			PageNo   int              `json:"pageNo"`
-			PageSize int              `json:"pageSize"`
+			Array    []WarehouseShippingMethod `json:"array"`
+			PageNo   int                       `json:"pageNo"`
+			PageSize int                       `json:"pageSize"`
 		} `json:"datas,omitempty"`
 	}{}
 	resp, err := s.tongTool.Client.R().
