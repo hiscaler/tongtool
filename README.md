@@ -47,6 +47,7 @@
 - QuotePrices(params QuotedPricesQueryParams) (items []QuotedPrice, isLastPage bool, err error)                                               // 供应商报价查询
 - AfterSales(params AfterSalesQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
 - PaypalTransactions(params PaypalTransactionsQueryParams) (items []PaypalTransaction, isLastPage bool, err error)                            // Paypal 付款记录查询
+- SurfaceSheets(params SurfaceSheetsQueryParams) (items []SurfaceSheet, err error)                                                            // 通途 ERP 面单
 
 ### 刊登
 
