@@ -31,7 +31,7 @@ type AliExpressAccount struct {
 // AmazonAccount Amazon店铺信息
 type AmazonAccount struct {
 	AccessKeyId      string `json:"accessKeyId"`      // Amazon Access Key ID
-	AmazonAccountId  string `json:"amazonAccountId"`  // amazon账号主键Id
+	AmazonAccountId  string `json:"amazonAccountId"`  // amazon 账号主键 ID
 	AmazonMerchantId string `json:"amazonMerchantId"` // Amazon商户号（操作amazon账号时必填）
 	CreatedBy        string `json:"createdBy"`        // 创建人
 	CreatedDate      string `json:"createdDate"`      // 创建时间

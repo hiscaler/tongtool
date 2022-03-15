@@ -15,7 +15,7 @@ type PurchaseSuggestion struct {
 	CurrStockQuantity      int     `json:"currStockQuantity"`      // 可用库存数
 	DailySales             float64 `json:"dailySales"`             // 日均销量
 	DeliveryDays           int     `json:"devliveryDays"`          // 安全交期
-	GoodsIdKey             string  `json:"goodsIdKey"`             // 商品 ID key
+	GoodsIdKey             string  `json:"goodsIdKey"`             // 商品 ID Key
 	GoodsSKU               string  `json:"goodsSku"`               // 商品 SKU
 	InTransitStockQuantity int     `json:"intransitStockQuantity"` // 在途库存数
 	ProposalQuantity       int     `json:"proposalQuantity"`       // 采购建议数量
@@ -23,7 +23,7 @@ type PurchaseSuggestion struct {
 	SaleAvg30              float64 `json:"saleAvg30"`              // 30 天销量
 	SaleAvg7               float64 `json:"saleAvg7"`               // 7 天销量
 	UnpickingQuantity      int     `json:"unpickingQuantity"`      // 订单未配货数量
-	WarehouseIdKey         string  `json:"warehouseIdKey"`         // 仓库 ID key
+	WarehouseIdKey         string  `json:"warehouseIdKey"`         // 仓库 ID Key
 	WarehouseName          string  `json:"warehouseName"`          // 仓库名称
 }
 

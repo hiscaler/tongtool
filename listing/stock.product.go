@@ -74,10 +74,10 @@ type StockProductGoodsInfo struct {
 	GoodPurchaseCost string  `json:"goodPurchaseCost"` // 货品采购成本
 	GoodWeight       int     `json:"goodWeight"`       // 货品重量(克)
 	GoodWidth        int     `json:"goodWidth"`        // 货品宽度
-	GoodsDetailId    string  `json:"goodsDetailId"`    // 货品ID
+	GoodsDetailId    string  `json:"goodsDetailId"`    // 货品 ID
 	MerchantId       string  `json:"merchantId"`       // 商户编号
 	ProductId        string  `json:"productId"`        // 图片组顺序号
-	SKU              string  `json:"sku"`              // 属性SKU
+	SKU              string  `json:"sku"`              // 属性 SKU
 	SortNo           int     `json:"sortNo"`           // 排序号（同一商品下，从 1 开始递增）
 }
 
@@ -87,8 +87,8 @@ type StockProductNote struct {
 	CreatedBy     string `json:"createdBy"`     // 创建人
 	CreatedDate   string `json:"createdDate"`   // 创建时间
 	MerchantId    string `json:"merchantId"`    // 商户编号
-	ProductId     string `json:"productId"`     // 商品Ids
-	ProductNoteId string `json:"productNoteId"` // 产品备注Id
+	ProductId     string `json:"productId"`     // 商品 IDs
+	ProductNoteId string `json:"productNoteId"` // 产品备注 ID
 	UpdatedBy     string `json:"updatedBy"`     // 修改人
 	UpdatedDate   string `json:"updatedDate"`   // 修改时间
 }

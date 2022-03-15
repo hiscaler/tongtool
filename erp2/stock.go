@@ -29,14 +29,14 @@ type Stock struct {
 	FirstTariff                  float64               `json:"firstTariff"`                  // 头程报关费
 	GoodsAvgCost                 float64               `json:"goodsAvgCost"`                 // 货品平均成本
 	GoodsCurCost                 float64               `json:"goodsCurCost"`                 // 货品当前成本
-	GoodsIdKey                   string                `json:"goodsIdKey"`                   // 通途商品id key
+	GoodsIdKey                   string                `json:"goodsIdKey"`                   // 通途商品 ID Key
 	GoodsShelfStockList          []GoodsShelfStockItem `json:"goodsShelfStockList"`          // 货位库存列表，多货位才会有值
-	GoodsSKU                     string                `json:"goodsSku"`                     // 商品sku
+	GoodsSKU                     string                `json:"goodsSku"`                     // 商品 SKU
 	InTransitStockQuantity       int                   `json:"intransitStockQuantity"`       // 在途库存数
 	OtherFee                     float64               `json:"otherFee"`                     // 头程其他费用
 	SafetyStock                  int                   `json:"safetyStock"`                  // 安全库存数
 	WaitingShipmentStockQuantity int                   `json:"waitingShipmentStockQuantity"` // 待发库存数
-	WarehouseIdKey               string                `json:"warehouseIdKey"`               // 通途仓库id key
+	WarehouseIdKey               string                `json:"warehouseIdKey"`               // 通途仓库 ID Key
 	WarehouseName                string                `json:"warehouseName"`                // 仓库名称
 }
 

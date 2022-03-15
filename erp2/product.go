@@ -89,7 +89,7 @@ type Product struct {
 	ProductId            string          `json:"product_id"`           // 产品id
 	PurchaseName         string          `json:"purchaseName"`         // 采购员名称
 	PurchaserId          string          `json:"purchaserId"`          // 采购员id
-	SKU                  string          `json:"sku"`                  // 商品sku
+	SKU                  string          `json:"sku"`                  // 商品 SKU
 	Status               string          `json:"status"`               // 商品删除状态（1：删除、null或0：未删除）
 	SupplierName         string          `json:"supplierName"`         // 供应商名称
 	UpdatedDate          int             `json:"updatedDate"`          // 产品信息修改时间
@@ -187,7 +187,7 @@ type ProductDetail struct {
 	GoodsAveCost  float64 `json:"goodsAveCost"`  // 商品平均成本
 	GoodsCurCost  float64 `json:"goodsCurCost"`  // 商品当前成本
 	GoodsDetailId string  `json:"goodsDetailId"` // 货品ID
-	GoodsSKU      string  `json:"goodsSku"`      // 商品sku
+	GoodsSKU      string  `json:"goodsSku"`      // 商品 SKU
 	GoodsWeight   float64 `json:"goodsWeight"`   // 货品重量(克)
 }
 
@@ -223,16 +223,16 @@ type ProductGoodsVariation struct {
 
 // ProductAttribute 商品属性
 type ProductAttribute struct {
-	AttributeKey   string `json:"attributeKey"`   // 属性key
-	AttributeValue string `json:"attributeValue"` // 配件value
+	AttributeKey   string `json:"attributeKey"`   // 属性 Key
+	AttributeValue string `json:"attributeValue"` // 配件 Value
 }
 
 // ProductGoods 变参货品列表，创建变参销售商品时必填
 type ProductGoods struct {
 	GoodsAverageCost float64                 `json:"goodsAverageCost"` // 货品平均成本
-	GoodsCurrentCost float64                 `json:"goodsCurrentCost"` // 货品成本(最新成本)
-	GoodsSKU         string                  `json:"goodsSku"`         // 货号(SKU)
-	GoodsWeight      int                     `json:"goodsWeight"`      // 货品重量(克)
+	GoodsCurrentCost float64                 `json:"goodsCurrentCost"` // 货品成本（最新成本）
+	GoodsSKU         string                  `json:"goodsSku"`         // 货号（SKU）
+	GoodsWeight      int                     `json:"goodsWeight"`      // 货品重量（克）
 	GoodsVariation   []ProductGoodsVariation `json:"goodsVariation"`   // 货品属性列表
 }
 

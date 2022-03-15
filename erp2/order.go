@@ -55,11 +55,11 @@ type OrderPackage struct {
 // PlatformGoodsInfo 平台商品信息
 type PlatformGoodsInfo struct {
 	ProductId           string `json:"product_id"`          // 商品顺序号
-	Quantity            int    `json:"quantity"`            // 原始sku数量
+	Quantity            int    `json:"quantity"`            // 原始 SKU 数量
 	WebTransactionId    string `json:"webTransactionId"`    // 平台订单产品交易号
 	WebStoreCustomLabel string `json:"webstoreCustomLabel"` // 原始 SKU
 	WebStoreItemId      string `json:"webstoreItemId"`      // 平台订单产品 ItemId
-	WebStoreSKU         string `json:"webstoreSku"`         // 通途sku
+	WebStoreSKU         string `json:"webstoreSku"`         // 通途 SKU
 }
 
 // TongToolGoodsInfo 通途商品信息
@@ -124,7 +124,7 @@ type Order struct {
 	OrderAmountCurrency       string         `json:"orderAmountCurrency"`       // 订单金额币种
 	OrderDetails              []OrderDetail  `json:"orderDetails"`              // 订单明细
 	OrderIdCode               string         `json:"orderIdCode"`               // 通途订单号
-	OrderIdKey                string         `json:"orderIdKey"`                // 通途订单 ID key
+	OrderIdKey                string         `json:"orderIdKey"`                // 通途订单 ID Key
 	OrderStatus               string         `json:"orderStatus"`               // 订单状态（waitPacking：等待配货、waitPrinting：等待打印、waitingDespatching：等待发货、despatched：已发货）
 	PackageInfoList           []OrderPackage `json:"packageInfoList"`           // 订单包裹信息
 	PaidTime                  string         `json:"paidTime"`                  // 订单付款完成时间
@@ -146,7 +146,7 @@ type Order struct {
 	ShippingLimitDate         string         `json:"shippingLimiteDate"`        // 发货截止时间
 	TaxCurrency               string         `json:"taxCurrency"`               // 税费币种
 	TaxIncome                 float64        `json:"taxIncome"`                 // 税费
-	WarehouseIdKey            string         `json:"warehouseIdKey"`            // 通途仓库 ID key
+	WarehouseIdKey            string         `json:"warehouseIdKey"`            // 通途仓库 ID Key
 	WarehouseName             string         `json:"warehouseName"`             // 仓库名称
 	WebFinalFee               float64        `json:"webFinalFee"`               // 平台佣金
 	WebStoreOrderId           string         `json:"webstoreOrderId"`           // 平台交易号
@@ -627,7 +627,7 @@ func (s service) UpdateOrder(req UpdateOrderRequest) error {
 
 type CancelOrderRequest struct {
 	MerchantId  string   `json:"merchantId"`  // 商戶 ID
-	OrderIdKeys []string `json:"orderIdKeys"` // 通途订单id key
+	OrderIdKeys []string `json:"orderIdKeys"` // 通途订单 ID Key
 }
 
 func (m CancelOrderRequest) Validate() error {

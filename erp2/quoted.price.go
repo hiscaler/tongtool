@@ -13,7 +13,7 @@ import (
 
 type QuotedPrice struct {
 	Currency        string  `json:"currency"`        // 币种
-	GoodsSKU        string  `json:"goodsSku"`        // 商品sku
+	GoodsSKU        string  `json:"goodsSku"`        // 商品 SKU
 	Price           float64 `json:"price"`           // 供应商最新报价
 	PurchaseLink    string  `json:"purchaseLink"`    // 采购链接
 	QuotedPriceDate string  `json:"quotedPriceDate"` // 报价时间

@@ -40,7 +40,7 @@ type PurchaseOrder struct {
 	CorporationFullName string  `json:"corporation_fullname"` // 供应商名称
 	CreatedDate         string  `json:"createdDate"`          // 采购单创建时间
 	Currency            string  `json:"currency"`             // 币种
-	GoodsIdKey          string  `json:"goodsIdKey"`           // 通途商品id key
+	GoodsIdKey          string  `json:"goodsIdKey"`           // 通途商品 ID Key
 	GoodsSKU            string  `json:"goods_sku"`            // 商品 SKU
 	InQuantity          int     `json:"in_quantity"`          // 已入库数量
 	PayableAmounts      float64 `json:"payableAmounts"`       // 应付金额
@@ -54,7 +54,7 @@ type PurchaseOrder struct {
 	SupplierCode        string  `json:"supplier_code"`        // 供应商代码
 	TrackingNumber      string  `json:"tracking_number"`      // 跟踪号
 	UnitPrice           float64 `json:"unit_price"`           // 采购单价
-	WarehouseIdKey      string  `json:"warehouseIdKey"`       // 通途仓库id key
+	WarehouseIdKey      string  `json:"warehouseIdKey"`       // 通途仓库 ID Key
 	WarehouseName       string  `json:"warehouseName"`        // 仓库名称
 	WillArriveDate      string  `json:"willArriveDate"`       // 预计到达日期
 }
@@ -331,7 +331,7 @@ type PurchaseOrderLog struct {
 	SupplierName      string  `json:"supplierName"`      // 供应商
 	TrackingNum       string  `json:"trackingNum"`       // 跟踪号
 	UnitPrice         float64 `json:"unitPrice"`         // 采购单价
-	WarehouseId       string  `json:"warehouseId"`       // 通途仓库 ID key
+	WarehouseId       string  `json:"warehouseId"`       // 通途仓库 ID Key
 	WarehouseName     string  `json:"warehouseName"`     // 仓库名称
 	WarehousingDate   string  `json:"warehousingDate"`   // 当前入库时间
 	WarehousingNum    int     `json:"warehousingNum"`    // 当前入库数量

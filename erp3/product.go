@@ -92,16 +92,16 @@ type ProductGoodsVariation struct {
 
 // ProductAttribute 商品属性
 type ProductAttribute struct {
-	AttributeKey   string `json:"attributeKey"`   // 属性key
-	AttributeValue string `json:"attributeValue"` // 配件value
+	AttributeKey   string `json:"attributeKey"`   // 属性 Key
+	AttributeValue string `json:"attributeValue"` // 配件 Value
 }
 
 // ProductGoods 变参货品列表，创建变参销售商品时必填
 type ProductGoods struct {
 	GoodsAverageCost float64                 `json:"goodsAverageCost"` // 货品平均成本
-	GoodsCurrentCost float64                 `json:"goodsCurrentCost"` // 货品成本(最新成本)
-	GoodsSKU         string                  `json:"goodsSku"`         // 货号(SKU)
-	GoodsWeight      int                     `json:"goodsWeight"`      // 货品重量(克)
+	GoodsCurrentCost float64                 `json:"goodsCurrentCost"` // 货品成本（最新成本）
+	GoodsSKU         string                  `json:"goodsSku"`         // 货号（SKU）
+	GoodsWeight      int                     `json:"goodsWeight"`      // 货品重量（克）
 	GoodsVariation   []ProductGoodsVariation `json:"goodsVariation"`   // 货品属性列表
 }
 

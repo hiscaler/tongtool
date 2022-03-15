@@ -182,7 +182,7 @@ type ProductGoodsInfo struct {
 	GoodsVariationList      []ProductGoodsVariation `json:"goodsVariationList"`      // 售卖商品多属性信息
 	MerchantId              string                  `json:"merchantId"`              // 商户编号
 	ProductId               string                  `json:"productId"`               // 图片组顺序号
-	SKU                     string                  `json:"sku"`                     // 属性SKU
+	SKU                     string                  `json:"sku"`                     // 属性 SKU
 	SortNo                  int                     `json:"sortNo"`                  // 排序号
 	StockGoodsDetailId      string                  `json:"stockGoodsDetailId"`      // 售卖货品顺序号
 	StockGoodsInfos         []ProductStockGoodsInfo `json:"stockGoodsInfos"`         // 关联库存
@@ -429,8 +429,8 @@ ERROR: %s
 
 type ProductQueryParams struct {
 	MerchantId string `json:"merchantId"` // 商户号
-	ProductId  string `json:"productId"`  // 产品Id（产品Id和sku必需传其一）
-	SKU        string `json:"sku"`        // 产品sku（产品Id和sku必需传其一）
+	ProductId  string `json:"productId"`  // 产品 ID（产品 ID 和 SKU 必需传其一）
+	SKU        string `json:"sku"`        // 产品 SKU（产品 ID 和 SKU 必需传其一）
 }
 
 func (m ProductQueryParams) Validate() error {
