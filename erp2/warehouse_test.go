@@ -45,7 +45,7 @@ func TestService_Warehouse(t *testing.T) {
 func TestService_ShippingMethods(t *testing.T) {
 	params := WarehouseShippingMethodsQueryParams{WarehouseId: "8151050530202008250000047045"}
 	params.PageNo = 1
-	items, _, err := ttService.ShippingMethods(params)
+	items, _, err := ttService.WarehouseShippingMethods(params)
 	if err != nil {
 		t.Errorf(err.Error())
 	} else {
