@@ -92,6 +92,7 @@ import (
     "github.com/hiscaler/tongtool"
     ttConfig "github.com/hiscaler/tongtool/config"
     "github.com/hiscaler/tongtool/erp2"
+	"fmt"
 )
 
 func main() {
@@ -102,12 +103,12 @@ func main() {
 		EnableCache: false,
 	})
 	ttService := erp2.NewService(ttInstance)
-	params := OrderQueryParams{
+	params := erp2.OrdersQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
 		SaleDateTo:   "2021-12-31 23:59:59",
 	}
     params.PageNo = 1
-	orders := make([]Order, 0)
+	orders := make([]erp2.Order, 0)
 	for {
 		pageOrders, isLastPage, err := ttService.Orders(params)
 		if err != nil {
