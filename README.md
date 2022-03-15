@@ -112,7 +112,7 @@ func main() {
 	for {
 		pageOrders, isLastPage, err := ttService.Orders(params)
 		if err != nil {
-			t.Errorf("ttService.Orders error: %s", err.Error())
+			fmt.Println(fmt.Sprintf("ttService.Orders error: %s", err.Error()))
 		} else {
 			orders = append(orders, pageOrders...)
 		}
