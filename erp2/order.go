@@ -575,10 +575,10 @@ type UpdateOrderTransaction struct {
 // UpdateOrderRequest 订单更新请求
 type UpdateOrderRequest struct {
 	BuyerInfo        OrderBuyer               `json:"buyerInfo"`                  // 买家信息
-	Transactions     []UpdateOrderTransaction `json:"transactions"`               // 交易记录信息,删除货品需要传对应的记录并数量传0
+	Transactions     []UpdateOrderTransaction `json:"transactions"`               // 交易记录信息，删除货品需要传对应的记录并数量传0
 	MerchantId       string                   `json:"merchantId"`                 // 商户ID
 	OrderId          string                   `json:"orderId"`                    // 通途订单ID
-	Remarks          []string                 `json:"remarks,omitempty"`          // 订单备注,只能新增
+	Remarks          []string                 `json:"remarks,omitempty"`          // 订单备注（只能新增）
 	ShippingMethodId string                   `json:"shippingMethodId,omitempty"` // 渠道ID
 	WarehouseId      string                   `json:"warehouseId,omitempty"`      // 仓库ID
 }
