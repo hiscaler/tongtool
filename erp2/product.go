@@ -526,7 +526,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]Product, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {
@@ -591,7 +590,7 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 		params.SKUs = []string{sku}
 	}
 	for {
-		items := make([]Product, 0)
+		var items []Product
 		isLastPage := false
 		items, isLastPage, err = s.Products(params)
 		if err == nil {

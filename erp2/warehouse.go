@@ -44,7 +44,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]Warehouse, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {
@@ -182,7 +181,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]WarehouseShippingMethod, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {

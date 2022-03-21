@@ -97,7 +97,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]Package, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {
@@ -165,7 +164,7 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, exist
 	}
 	params.PageNo = 1
 	for {
-		packages := make([]Package, 0)
+		var packages []Package
 		isLastPage := false
 		packages, isLastPage, err = s.Packages(params)
 		if err == nil {

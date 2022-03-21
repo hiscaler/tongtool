@@ -58,7 +58,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]SaleAccount, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {

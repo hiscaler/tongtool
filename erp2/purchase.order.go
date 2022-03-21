@@ -120,7 +120,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]PurchaseOrder, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {
@@ -382,7 +381,6 @@ ERROR: %s
 			s.tongTool.Logger.Printf("get cache %s error: %s", cacheKey, e.Error())
 		}
 	}
-	items = make([]PurchaseOrderLog, 0)
 	res := struct {
 		tongtool.Response
 		Datas struct {
