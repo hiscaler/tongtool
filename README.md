@@ -10,7 +10,7 @@
 
 ## 支持的方法
 
-### ERP2
+### ERP2.0
 
 - AmazonAccountSites(params AmazonAccountSitesQueryParams) (items []string, isLastPage bool, err error)                                       // 查询亚马逊账号对应的站点
 - FBAOrders(params FBAOrdersQueryParams) (items []FBAOrder, isLastPage bool, err error)                                                       // FBA 订单列表
@@ -70,10 +70,11 @@
 - DeleteProduct(req DeleteProductRequest) error  
 
 
-### ERP3
+### ERP3.0
 
-- Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error) // 商品列表
-- UserTicket(ticket string) (u User, refreshTicket string, expire int, err error)                      // 根据 ticket 获取员工信息
+- Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error)    // 商品列表
+- UserTicket(ticket string) (u User, refreshTicket string, expire int, err error)                         // 根据 ticket 获取员工信息
+- Suppliers(params SuppliersQueryParams) (items []Supplier, nextToken string, isLastPage bool, err error) // 供应商列表
 
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：
