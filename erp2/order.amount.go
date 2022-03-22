@@ -324,11 +324,12 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 }
 
 // ExchangeMoney 兑换指定的值，且以指定的货币形式返回
-func (oa OrderAmount) ExchangeMoney(currency string, value float64) (money float64, err error) {
+func (oa OrderAmount) ExchangeMoney(value float64, currency string) (money float64, err error) {
+	if value == 0 {
+		return
+	}
+
 	if v, ok := oa.config.rates[currency]; ok {
-		if value == 0 {
-			return
-		}
 		money, _ = decimal.NewFromFloat(value).
 			Div(decimal.NewFromFloat(v)).
 			Round(oa.config.precision).
