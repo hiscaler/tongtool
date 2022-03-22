@@ -1,7 +1,7 @@
-通途 ERP 开放平台 API 封装
+通途 ERP 开放平台 SDK
 =======================
 
-对 TongTool API 接口的封装，方便开发者调用，使用者无需关注接口认证、接口限制等繁琐的细节，提供 appKey 和 appSecret 即可使用。
+针对 TongTool API 接口的封装，方便开发者调用，使用者无需关注接口认证、接口限制等繁琐的细节，提供 appKey 和 appSecret 即可使用。
 
 接口返回具体格式和数据请参考 [通途接口文档](https://open.tongtool.com/apiDoc.html)
 
