@@ -259,7 +259,6 @@ func (s service) Products(params ProductsQueryParams) (items []Product, nextToke
 	if err != nil {
 		return
 	}
-	items = make([]Product, 0)
 	res := struct {
 		tongtool.Response
 		NextToken string    `json:"nextToken"`

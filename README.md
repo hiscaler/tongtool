@@ -67,7 +67,13 @@
 - Products(params ProductsQueryParams) (items []Product, err error)         // 批量获取售卖详情
 - Product(params ProductQueryParams) (item Product, exists bool, err error) // 获取售卖基本资料
 - UpdateProduct(req UpdateProductRequest) error                             // 修改售卖资料
-- DeleteProduct(req DeleteProductRequest) error                             // 删除售卖资料
+- DeleteProduct(req DeleteProductRequest) error  
+
+
+### ERP3
+
+- Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error) // 商品列表
+- UserTicket(ticket string) (u User, refreshTicket string, expire int, err error)                      // 根据 ticket 获取员工信息
 
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：

@@ -378,7 +378,7 @@ func (s service) Order(orderId string) (item Order, exists bool, err error) {
 	params := OrdersQueryParams{OrderId: orderId}
 	params.PageNo = 1
 	for {
-		items := make([]Order, 0)
+		var items []Order
 		isLastPage := false
 		items, isLastPage, err = s.Orders(params)
 		if err == nil {

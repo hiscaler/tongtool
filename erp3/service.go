@@ -10,6 +10,7 @@ type service struct {
 
 type Service interface {
 	Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error) // 商品列表
+	UserTicket(ticket string) (u User, refreshTicket string, expire int, err error)                      // 根据 ticket 获取员工信息
 }
 
 func NewService(tt *tongtool.TongTool) Service {

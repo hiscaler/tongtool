@@ -102,7 +102,7 @@ func (s service) Warehouse(id string) (item Warehouse, exists bool, err error) {
 	params := WarehousesQueryParams{}
 	params.PageNo = 1
 	for {
-		items := make([]Warehouse, 0)
+		var items []Warehouse
 		isLastPage := false
 		items, isLastPage, err = s.Warehouses(params)
 		if err == nil {

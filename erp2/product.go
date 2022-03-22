@@ -644,7 +644,6 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 	if err == nil && !exists {
 		err = tongtool.ErrNotFound
 	}
-
 	return
 }
 
