@@ -69,12 +69,14 @@
 - UpdateProduct(req UpdateProductRequest) error                             // 修改售卖资料
 - DeleteProduct(req DeleteProductRequest) error  
 
-
 ### ERP3.0
 
-- Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error)    // 商品列表
-- UserTicket(ticket string) (u User, refreshTicket string, expire int, err error)                         // 根据 ticket 获取员工信息
-- Suppliers(params SuppliersQueryParams) (items []Supplier, nextToken string, isLastPage bool, err error) // 供应商列表
+- Products(params ProductsQueryParams) (items []Product, nextToken string, isLastPage bool, err error)                // 商品列表
+- UserTicket(ticket string) (u User, refreshTicket string, expire int, err error)                                     // 根据 ticket 获取员工信息
+- Suppliers(params SuppliersQueryParams) (items []Supplier, nextToken string, isLastPage bool, err error)             // 供应商列表
+- WarehouseAreas(params WarehouseAreasQueryParams) (items []WarehouseArea, err error)                                 // 仓库分区关系
+- SaveThirdAccounts(req UpdateThirdAccountRequest) error                                                              // 保存第三方帐号信息
+- StockInSheets(params StockInSheetsQueryParams) (items []StockInSheet, nextToken string, isLastPage bool, err error) // 入库单列表
 
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：
