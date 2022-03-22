@@ -63,7 +63,7 @@ type detail struct {
 type shelve struct {
 	CreatedBy                  string `json:"createdBy"`                  // (上架)创建人
 	CreatedTime                string `json:"createdTime"`                // (上架)创建时间
-	GoodsSku                   string `json:"goodsSku"`                   // 货品SKU
+	GoodsSKU                   string `json:"goodsSku"`                   // 货品SKU
 	MerchantId                 string `json:"merchantId"`                 // 商户编号
 	ReceiptBatchNo             string `json:"receiptBatchNo"`             // 批次号
 	ReceiptCheckDetailShelveNo string `json:"receiptCheckDetailShelveNo"` // 上架单编号
@@ -86,7 +86,7 @@ type StockInSheet struct {
 	ReceiptId         string              `json:"receiptId"`         // 入库单ID
 	ReceiptNo         string              `json:"receiptNo"`         // 入库单编号(业务使用RK+年月日+8位seq)
 	ReceiptShelveList []shelve            `json:"receiptShelveList"` // 上架记录
-	ReceiptStatus     string              `json:"rceiptStatus"`      //	入库单状态(0：入库单创建、1：入库单取消、2：入库单关闭、3：收货中)
+	ReceiptStatus     string              `json:"receiptStatus"`     //	入库单状态(0：入库单创建、1：入库单取消、2：入库单关闭、3：收货中)
 	ReceiptType       string              `json:"receiptType"`       //	入库类型(0：采购入库、1：生产入库、2：调拨入库、3：退货入库、4：其他入库)
 	ReferenceNo       string              `json:"referenceNo"`       //	参考编号
 	ReferenceNo2      string              `json:"referenceNo2"`      //	参考编号2
