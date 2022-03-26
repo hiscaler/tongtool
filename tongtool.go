@@ -213,7 +213,7 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 
 	timestamp := time.Now().Unix()
 	appToken := tokenResponse.Datas
-	sign := cryptox.Md5String(fmt.Sprintf("app_token%stimestamp%d%s", appToken, timestamp, appSecret))
+	sign := cryptox.Md5(fmt.Sprintf("app_token%stimestamp%d%s", appToken, timestamp, appSecret))
 	appResponse := struct {
 		Success bool        `json:"success"`
 		Code    int         `json:"code"`
