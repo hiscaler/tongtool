@@ -18,13 +18,13 @@ type User struct {
 	CreatedBy      string `json:"createdBy"`      // 创建人
 	CreatedDate    string `json:"createdDate"`    // 创建时间
 	Email          string `json:"email"`          // email
-	EmailBind      int    `json:"emailBind"`      // 是否已绑定邮箱（null or 0:未绑定;1:已绑定）
+	EmailBind      int    `json:"emailBind"`      // 是否已绑定邮箱（null or 0：未绑定、1：已绑定）
 	Extension      string `json:"extension"`      // 分机
 	IsAdmin        string `json:"isAdmin"`        // 是否商户管理员
 	LastLoginTime  string `json:"lastLoginTime"`  // 最后登录时间
 	MerchantId     string `json:"merchantId"`     // 商户编号
 	Mobile         string `json:"mobile"`         // 手机
-	MobileBind     int    `json:"mobileBind"`     // 是否已绑定手机（null or 0:未绑定;1:已绑定）
+	MobileBind     int    `json:"mobileBind"`     // 是否已绑定手机（null or 0：未绑定、1：已绑定）
 	Openid         string `json:"openid"`         // 微信用户唯一标识
 	RoleName       string `json:"roleName"`       // 角色名称
 	Status         string `json:"status"`         // 状态(是否生效)
@@ -33,7 +33,7 @@ type User struct {
 	UpdatedDate    string `json:"updatedDate"`    // 修改时间
 	UserId         string `json:"userId"`         // 用户代码
 	UserName       string `json:"userName"`       // 姓名
-	WxBind         int    `json:"wxBind"`         // 是否已绑定微信（null or 0:未绑定;1:已绑定）
+	WxBind         int    `json:"wxBind"`         // 是否已绑定微信（null or 0：未绑定、1：已绑定）
 	ZipCode        string `json:"zipCode"`        // 电话区号
 }
 
