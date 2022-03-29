@@ -77,6 +77,7 @@
 - WarehouseAreas(params WarehouseAreasQueryParams) (items []WarehouseArea, err error)                                 // 仓库分区关系
 - SaveThirdAccounts(req UpdateThirdAccountRequest) error                                                              // 保存第三方帐号信息
 - StockInSheets(params StockInSheetsQueryParams) (items []StockInSheet, nextToken string, isLastPage bool, err error) // 入库单列表
+- AddShippingPackage(req AddShippingPackageRequest) (packages []ShippingPackage, err error)                           // 出库单交运
 
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：

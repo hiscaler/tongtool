@@ -15,6 +15,7 @@ type Service interface {
 	WarehouseAreas(params WarehouseAreasQueryParams) (items []WarehouseArea, err error)                                 // 仓库分区关系
 	SaveThirdAccounts(req UpdateThirdAccountRequest) error                                                              // 保存第三方帐号信息
 	StockInSheets(params StockInSheetsQueryParams) (items []StockInSheet, nextToken string, isLastPage bool, err error) // 入库单列表
+	AddShippingPackage(req AddShippingPackageRequest) (packages []ShippingPackage, err error)                           // 出库单交运
 }
 
 func NewService(tt *tongtool.TongTool) Service {
