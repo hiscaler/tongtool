@@ -9,7 +9,7 @@ import (
 )
 
 // 获取产品类目
-// https://open.tongtool.com/apiDoc.html#/?docId=11a5118bb70642f198a7acca0c0b56a2
+// https://open.tongtool.com/apiDoc.html#/?docId=afb5b4128bc94fb291aec0f5e9310f83
 
 type CategoriesQueryParams struct {
 	CategoryId       string `json:"categoryId,omitempty"`       // 类目编号

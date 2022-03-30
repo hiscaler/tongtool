@@ -5,11 +5,11 @@ type Paging struct {
 	PageSize  int    `json:"pageSize,omitempty"`  // 每页显示数量,范围[1~500]
 }
 
-func (qp *Paging) SetPagingVars(nextToken string, pageSize, maxPageSize int) *Paging {
-	qp.NextToken = nextToken
+func (p *Paging) SetPagingVars(nextToken string, pageSize, maxPageSize int) *Paging {
+	p.NextToken = nextToken
 	if pageSize <= 0 || pageSize > maxPageSize {
 		pageSize = maxPageSize
 	}
-	qp.PageSize = pageSize
-	return qp
+	p.PageSize = pageSize
+	return p
 }

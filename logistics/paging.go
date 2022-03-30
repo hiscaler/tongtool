@@ -5,11 +5,11 @@ type Paging struct {
 	PageSize  int    `json:"limit,omitempty"`     // 分页返回的一页最大限制数量，可以传入 1 到 300 的值，默认为 50
 }
 
-func (qp *Paging) SetPagingVars(nextToken string, pageSize, maxPageSize int) *Paging {
-	qp.NextToken = nextToken
+func (p *Paging) SetPagingVars(nextToken string, pageSize, maxPageSize int) *Paging {
+	p.NextToken = nextToken
 	if pageSize <= 0 || pageSize > maxPageSize {
 		pageSize = maxPageSize
 	}
-	qp.PageSize = pageSize
-	return qp
+	p.PageSize = pageSize
+	return p
 }
