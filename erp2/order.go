@@ -587,23 +587,17 @@ type UpdateOrderRequest struct {
 func (m UpdateOrderRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.OrderId, validation.Required.Error("订单 ID 不能为空")),
-		validation.Field(&m.Transactions, validation.When(len(m.Transactions) > 0, validation.By(func(value interface{}) error {
-			if transactions, ok := value.([]UpdateOrderTransaction); !ok {
+		validation.Field(&m.Transactions, validation.When(len(m.Transactions) > 0, validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			if transaction, ok := value.(UpdateOrderTransaction); !ok {
 				return errors.New("无效的交易记录信息")
 			} else {
-				for _, transaction := range transactions {
-					err := validation.ValidateStruct(&transaction,
-						validation.Field(&transaction.GoodsDetailId, validation.When(transaction.OrderDetailsId == "", validation.Required.Error("货品 ID 与订单详情 ID 二者必填其一"))),
-						validation.Field(&transaction.OrderDetailsId, validation.When(transaction.GoodsDetailId == "", validation.Required.Error("货品 ID 与订单详情 ID 二者必填其一"))),
-						validation.Field(&transaction, validation.Min(0).Error("数量不能小于 {{.threshold}}")),
-					)
-					if err != nil {
-						return err
-					}
-				}
+				return validation.ValidateStruct(&transaction,
+					validation.Field(&transaction.GoodsDetailId, validation.When(transaction.OrderDetailsId == "", validation.Required.Error("货品 ID 与订单详情 ID 二者必填其一"))),
+					validation.Field(&transaction.OrderDetailsId, validation.When(transaction.GoodsDetailId == "", validation.Required.Error("货品 ID 与订单详情 ID 二者必填其一"))),
+					validation.Field(&transaction.Quantity, validation.Min(0).Error("数量不能小于 {{.threshold}}")),
+				)
 			}
-			return nil
-		}))),
+		})))),
 	)
 }
 
