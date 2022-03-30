@@ -10,6 +10,6 @@ func (qp *Paging) SetPagingVars(nextToken string, pageSize, maxPageSize int) *Pa
 	if pageSize <= 0 || pageSize > maxPageSize {
 		pageSize = maxPageSize
 	}
-	qp.Limit = pageSize
+	qp.PageSize = pageSize
 	return qp
 }
