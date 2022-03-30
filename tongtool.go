@@ -24,8 +24,8 @@ const (
 	TokenExpiredError      = 523    // Token 已过期
 	UnauthorizedError      = 524    // 未授权的请求，请确认应用是否勾选对应接口
 	InvalidParametersError = 525    // 无效的参数
-	SystemError            = 527    // 系统错误
 	TooManyRequestsError   = 526    // 接口请求超请求次数限额
+	SystemError            = 527    // 系统错误
 	AccountExpiredError    = 999999 // 账号已过期
 )
 
