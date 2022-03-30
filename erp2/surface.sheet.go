@@ -23,8 +23,9 @@ func (m SurfaceSheetsQueryParams) Validate() error {
 		validation.Field(&m.TrackingNumberList,
 			validation.Required.Error("跟踪号列表不能为空"),
 			validation.By(func(value interface{}) error {
-				numbers, _ := value.([]string)
-				if len(numbers) > 100 {
+				if numbers, ok := value.([]string); !ok {
+					return errors.New("无效的跟踪号列表")
+				} else if len(numbers) > 100 {
 					return errors.New("跟踪号列表最多 100 个")
 				}
 				return nil

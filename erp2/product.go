@@ -1,9 +1,9 @@
 package erp2
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/gosimple/slug"
@@ -302,51 +302,40 @@ func (m CreateProductRequest) Validate() error {
 			validation.In(ProductSaleTypeNormal, ProductSaleTypeVariable).Error("无效的销售类型"),
 		),
 		validation.Field(&m.Goods, validation.When(m.SalesType == ProductSaleTypeVariable, validation.Required.Error("变参货品不能为空"))),
-		validation.Field(&m.Accessories, validation.When(len(m.Accessories) > 0, validation.By(func(value interface{}) error {
-			items, ok := value.([]ProductAccessory)
+		validation.Field(&m.Accessories, validation.When(len(m.Accessories) > 0, validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			item, ok := value.(ProductAccessory)
 			if !ok {
 				return errors.New("无效的商品配件")
 			}
-			for i, item := range items {
-				if item.AccessoriesName == "" {
-					return fmt.Errorf("数据 %d 中配件名称不能为空", i+1)
-				}
-				if item.AccessoriesQuantity <= 0 {
-					return fmt.Errorf("数据 %d 中配件数量不能小于 1", i+1)
-				}
-			}
-			return nil
-		}))),
+			return validation.ValidateStruct(&item,
+				validation.Field(&item.AccessoriesName, validation.Required.Error("配件名称不能为空")),
+				validation.Field(&item.AccessoriesQuantity, validation.Min(1).Error("配件数量不能小于 {{.threshold}}")),
+			)
+		})))),
 		validation.Field(&m.DetailImageUrls, validation.When(len(m.DetailImageUrls) > 0), validation.Each(is.URL.Error("无效的地址"))),
 		validation.Field(&m.ImgUrls, validation.When(len(m.ImgUrls) > 0), validation.Each(is.URL.Error("无效的图片地址"))),
-		validation.Field(&m.DetailDescriptions, validation.When(len(m.DetailDescriptions) > 0, validation.By(func(value interface{}) error {
-			items, ok := value.([]ProductDetailDescription)
+		validation.Field(&m.DetailDescriptions, validation.When(len(m.DetailDescriptions) > 0, validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			item, ok := value.(ProductDetailDescription)
 			if !ok {
 				return errors.New("无效的商品详细描述")
 			}
-			for _, item := range items {
-				err := validation.ValidateStruct(&item,
-					validation.Field(&item.Title, validation.Required.Error("详细描述标题不能为空")),
-					validation.Field(&item.DescLanguage, validation.In(
-						ProductDetailDescriptionGerman,
-						ProductDetailDescriptionBritishEnglish,
-						ProductDetailDescriptionAmericanEnglish,
-						ProductDetailDescriptionSpanish,
-						ProductDetailDescriptionFrench,
-						ProductDetailDescriptionItalian,
-						ProductDetailDescriptionPolish,
-						ProductDetailDescriptionPortuguese,
-						ProductDetailDescriptionRussian,
-						ProductDetailDescriptionSimplifiedChinese,
-					).Error("无效的描叙语言")),
-					validation.Field(&item.Content, validation.Required.Error("详细描述内容不能为空")),
-				)
-				if err != nil {
-					return err
-				}
-			}
-			return nil
-		}))),
+			return validation.ValidateStruct(&item,
+				validation.Field(&item.Title, validation.Required.Error("详细描述标题不能为空")),
+				validation.Field(&item.DescLanguage, validation.In(
+					ProductDetailDescriptionGerman,
+					ProductDetailDescriptionBritishEnglish,
+					ProductDetailDescriptionAmericanEnglish,
+					ProductDetailDescriptionSpanish,
+					ProductDetailDescriptionFrench,
+					ProductDetailDescriptionItalian,
+					ProductDetailDescriptionPolish,
+					ProductDetailDescriptionPortuguese,
+					ProductDetailDescriptionRussian,
+					ProductDetailDescriptionSimplifiedChinese,
+				).Error("无效的描叙语言")),
+				validation.Field(&item.Content, validation.Required.Error("详细描述内容不能为空")),
+			)
+		})))),
 	)
 }
 

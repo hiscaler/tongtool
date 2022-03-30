@@ -1,6 +1,7 @@
 package logistics
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -200,10 +201,11 @@ type PackageWriteBackRequest struct {
 
 func (m PackageWriteBackRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.LabelInfoArray, validation.When(len(m.LabelInfoArray) > 0, validation.By(func(value interface{}) error {
-			labels, _ := value.([]LabelInfo)
-			for _, label := range labels {
-				err := validation.ValidateStruct(&label,
+		validation.Field(&m.LabelInfoArray, validation.When(len(m.LabelInfoArray) > 0, validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			if label, ok := value.(LabelInfo); !ok {
+				return errors.New("无效的面单信息")
+			} else {
+				return validation.ValidateStruct(&label,
 					validation.Field(&label.Code,
 						validation.Required.Error("代码不能为空"),
 						validation.Length(1, 30).Error("代码有效长度为 {{.min}}  ~ {{.max}} 个字符"),
@@ -213,13 +215,9 @@ func (m PackageWriteBackRequest) Validate() error {
 						validation.Length(1, 500).Error("值有效长度为 {{.min}}  ~ {{.max}} 个字符"),
 					),
 				)
-				if err != nil {
-					return err
-				}
 			}
-			return nil
-		})),
-		), validation.Field(&m.StatusChange,
+		})))),
+		validation.Field(&m.StatusChange,
 			validation.Required.Error("状态改变标识不能为空"),
 			validation.In("A", "C", "E").Error("无效的状态改变标识"),
 		),
