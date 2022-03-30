@@ -79,6 +79,9 @@
 - StockInSheets(params StockInSheetsQueryParams) (items []StockInSheet, nextToken string, isLastPage bool, err error) // 入库单列表
 - AddShippingPackage(req AddShippingPackageRequest) (packages []ShippingPackage, err error)                           // 出库单交运
 
+### 物流
+- Packages(params PackagesQueryParams) (items []Package, nextToken string, isLastPage bool, err error) // 获取包裹信息
+
 ## 配置
 创建连接实例时，您需要提供一个配置参数。具体说明如下：
 - Debug
