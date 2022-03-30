@@ -227,6 +227,7 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 	if err != nil {
 		return
 	}
+
 	if resp.IsError() {
 		return application, ErrorWrap(resp.StatusCode(), resp.String())
 	} else if !appResponse.Success || len(appResponse.Datas) == 0 {
@@ -240,6 +241,7 @@ func auth(appKey, appSecret string, debug bool) (application app, err error) {
 	return
 }
 
+// Response Normal API response
 type Response struct {
 	Code    int         `json:"code"`
 	Datas   interface{} `json:"datas"`
