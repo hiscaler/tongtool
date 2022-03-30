@@ -276,6 +276,5 @@ func ErrorWrap(code int, message string) error {
 			message = "未知错误"
 		}
 	}
-
 	return fmt.Errorf("%d: %s", code, message)
 }
