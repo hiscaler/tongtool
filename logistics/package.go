@@ -230,7 +230,7 @@ func (m PackageWriteBackRequest) Validate() error {
 	)
 }
 
-func (s service) WriteBack(req PackageWriteBackRequest) error {
+func (s service) WriteBackPackageProcessingResult(req PackageWriteBackRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
 	}
@@ -246,6 +246,65 @@ func (s service) WriteBack(req PackageWriteBackRequest) error {
 		SetBody(req).
 		SetResult(&res).
 		Post("/openapi/product/query")
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			if strings.EqualFold(res.Datas.ACK, "Failure") {
+				errorCode, _ := strconv.Atoi(res.Datas.ErrorCode)
+				err = tongtool.ErrorWrap(errorCode, res.Datas.ErrorMessage)
+			}
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	return err
+}
+
+// 回写包裹发货信息
+// https://open.tongtool.com/apiDoc.html#/?docId=4c0851ac330c45b687b1e8c8f2f0b4d3
+
+type PackageDeliveryInformationRequest struct {
+	Currency     string  `json:"currency"`     // 运费币种（货币代码 默认CNY）
+	Freight      float64 `json:"freight"`      // 运费
+	PacketStatus string  `json:"packetStatus"` // 包裹状态（delivered：已发出）
+	TtPacketId   string  `json:"ttPacketId"`   // 通途包裹号
+	Weight       int     `json:"weight"`       // 重量（单位g）
+}
+
+func (m PackageDeliveryInformationRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.TtPacketId, validation.Required.Error("通途包裹号不能为空")),
+		validation.Field(&m.PacketStatus,
+			validation.Required.Error("包裹状态不能为空"),
+			validation.In("delivered").Error("包裹状态无效"),
+		),
+	)
+}
+
+func (s service) WriteBackPackageDeliveryInformation(req PackageDeliveryInformationRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+
+	res := struct {
+		tongtool.Response
+		Datas struct {
+			ACK          string `json:"ack"`          // 响应结果（Success：成功、Failure：失败）
+			ErrorCode    string `json:"errorCode"`    // 错误代码
+			ErrorMessage string `json:"errorMessage"` // 错误信息
+		} `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/logi/writebackPackageStatus")
 	if err != nil {
 		return err
 	}
