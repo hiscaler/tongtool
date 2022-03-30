@@ -502,6 +502,7 @@ func (m CreateOrderRequest) Validate() error {
 				}
 				return validation.ValidateStruct(&item,
 					validation.Field(&item.SKU, validation.When(item.GoodsDetailId == "", validation.Required.Error("货品 ID 与 SKU 必传其中一个"))),
+					validation.Field(&item.GoodsDetailRemark, validation.When(item.SKU == "", validation.Required.Error("货品 ID 与 SKU 必传其中一个"))),
 					validation.Field(&item.Quantity, validation.Min(1).Error("数量不能小于 {{.threshold}}")),
 				)
 			})),
@@ -567,25 +568,42 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 // 更新订单处理（未配货前可用）
 
 type UpdateOrderTransaction struct {
-	GoodsDetailId  string `json:"goodsDetailId"`  // 货品ID与订单详情ID二者必填其一
+	GoodsDetailId  string `json:"goodsDetailId"`  // 货品 ID 与订单详情 ID 二者必填其一
 	OrderDetailsId string `json:"orderDetailsId"` // 订单详情ID,此参数值来自订单查询返回,此参数有值代表是需要更新货品数量或者删除货品(要看quantity参数值)，此参数有值同时会清空原有核查结果，需要重新核查，此参数没有值但goodsDetailId有值代表是需要新增货品
-	Quantity       int    `json:"quantity"`       // 数量,等于0表示删除当前货品
+	Quantity       int    `json:"quantity"`       // 数量（等于0表示删除当前货品）
 }
 
 // UpdateOrderRequest 订单更新请求
 type UpdateOrderRequest struct {
-	BuyerInfo        OrderBuyer               `json:"buyerInfo"`                  // 买家信息
-	Transactions     []UpdateOrderTransaction `json:"transactions"`               // 交易记录信息，删除货品需要传对应的记录并数量传0
-	MerchantId       string                   `json:"merchantId"`                 // 商户ID
-	OrderId          string                   `json:"orderId"`                    // 通途订单ID
+	BuyerInfo        OrderBuyer               `json:"buyerInfo,omitempty"`        // 买家信息
+	Transactions     []UpdateOrderTransaction `json:"transactions,omitempty"`     // 交易记录信息，删除货品需要传对应的记录并数量传0
+	MerchantId       string                   `json:"merchantId"`                 // 商户 ID
+	OrderId          string                   `json:"orderId"`                    // 通途订单 ID
 	Remarks          []string                 `json:"remarks,omitempty"`          // 订单备注（只能新增）
-	ShippingMethodId string                   `json:"shippingMethodId,omitempty"` // 渠道ID
-	WarehouseId      string                   `json:"warehouseId,omitempty"`      // 仓库ID
+	ShippingMethodId string                   `json:"shippingMethodId,omitempty"` // 渠道 ID
+	WarehouseId      string                   `json:"warehouseId,omitempty"`      // 仓库 ID
 }
 
 func (m UpdateOrderRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.OrderId, validation.Required.Error("订单 ID 不能为空")),
+		validation.Field(&m.Transactions, validation.When(len(m.Transactions) > 0, validation.By(func(value interface{}) error {
+			if transactions, ok := value.([]UpdateOrderTransaction); !ok {
+				return errors.New("无效的交易记录信息")
+			} else {
+				for _, transaction := range transactions {
+					err := validation.ValidateStruct(&transaction,
+						validation.Field(&transaction.GoodsDetailId, validation.When(transaction.OrderDetailsId == "", validation.Required.Error("货品 ID 与订单详情 ID 二者必填其一"))),
+						validation.Field(&transaction.OrderDetailsId, validation.When(transaction.GoodsDetailId == "", validation.Required.Error("货品 ID 与订单详情 ID 二者必填其一"))),
+						validation.Field(&transaction, validation.Min(0).Error("数量不能小于 {{.threshold}}")),
+					)
+					if err != nil {
+						return err
+					}
+				}
+			}
+			return nil
+		}))),
 	)
 }
 
