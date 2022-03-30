@@ -103,7 +103,10 @@ func currencyExchange(value float64, exchangeRate map[string]float64, currency s
 // exchangeRates 以人民币为基准，比如美元兑人民币 1:6.3，对应的设置为：
 // map[string]float64{"USD": 6.3}
 // 默认情况下，转换后的币种为人民币，如果需要转换为其他币种，请使用 ExchangeTo 函数获取
-// 在传参过程中请注意，shippingFee, otherFee 均为人民币
+//
+// 注意事项：
+// 1. exchangeRates 参数中的币种值并不会确认是否为有效的币种，它只是一个代码
+// 2. shippingFee, otherFee 均为人民币
 func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int32, shippingFee, otherFee float64) *OrderAmount {
 	oa := &OrderAmount{
 		config:        orderAmountConfig{rates: exchangeRates, precision: precision},
