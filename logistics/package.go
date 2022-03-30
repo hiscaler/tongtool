@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	"strconv"
@@ -177,31 +178,55 @@ func (s service) Packages(params PackagesQueryParams) (items []Package, nextToke
 // 回写包裹处理结果
 // https://open.tongtool.com/apiDoc.html#/?docId=ca50c6ca18254b06945b56b19d1091d6
 type labelInfo struct {
-	Code  string `json:"code"`  // 代码，长度30
-	Value string `json:"value"` // 值，长度500
+	Code  string `json:"code"`  // 代码（长度 30）
+	Value string `json:"value"` // 值（长度 500）
 }
 
 type PackageWriteBackRequest struct {
-	FailureCode           string      `json:"failureCode"`           // 物流公司系统处理失败代码
-	LabelInfoArray        []labelInfo `json:"labelInfoArray"`        // 面单上可变信息，例如格口号、分区等，通途系统面单为通途来生成，并不获取物流公司的面单PDF，所以面单上的可变信息，需要传送给通途，打印时，通途的面单模板中会引用这些可变数据来显示。该信息为键值对
-	FailureReason         string      `json:"failureReason"`         // 物流公司系统处理失败原因
-	LogisticsSysId        string      `json:"logisticsSysId"`        // 物流公司系统内部单号
-	StatusChange          string      `json:"statusChange"`          // 状态改变标识:A 已在物流公司系统下单,C 已在物流公司系统交运/提审/预报,E 物流公司系统处理失败
-	TemplateContent       string      `json:"templateContent"`       // 物流商面单内容：type参数为PDF的话，此参数填写PDF的URL地址；type参数为HTML的话，此参数填写面单HTML内容
-	TemplateType          string      `json:"templateType"`          // 物流商面单类型:PDF,HTML,JPG,PNG
-	TrackingNumber        string      `json:"trackingNumber"`        // 追踪号
-	TtPacketId            string      `json:"ttPacketId"`            // 通途包裹号
-	UploadCarrier         string      `json:"uploadCarrier"`         // 承运人
-	VirtualTrackingNumber string      `json:"virtualTrackingNumber"` // 虚拟跟踪号
+	FailureCode           string      `json:"failureCode,omitempty"`           // 物流公司系统处理失败代码
+	LabelInfoArray        []labelInfo `json:"labelInfoArray,omitempty"`        // 面单上可变信息，例如格口号、分区等，通途系统面单为通途来生成，并不获取物流公司的面单PDF，所以面单上的可变信息，需要传送给通途，打印时，通途的面单模板中会引用这些可变数据来显示。该信息为键值对
+	FailureReason         string      `json:"failureReason,omitempty"`         // 物流公司系统处理失败原因
+	LogisticsSysId        string      `json:"logisticsSysId,omitempty"`        // 物流公司系统内部单号
+	StatusChange          string      `json:"statusChange"`                    // 状态改变标识（A：已在物流公司系统下单、C：已在物流公司系统交运/提审/预报、E：物流公司系统处理失败）
+	TemplateContent       string      `json:"templateContent,omitempty"`       // 物流商面单内容：type参数为PDF的话，此参数填写PDF的URL地址；type参数为HTML的话，此参数填写面单HTML内容
+	TemplateType          string      `json:"templateType,omitempty"`          // 物流商面单类型（PDF、HTML、JPG、PNG）
+	TrackingNumber        string      `json:"trackingNumber,omitempty"`        // 追踪号
+	TtPacketId            string      `json:"ttPacketId"`                      // 通途包裹号
+	UploadCarrier         string      `json:"uploadCarrier,omitempty"`         // 承运人
+	VirtualTrackingNumber string      `json:"virtualTrackingNumber,omitempty"` // 虚拟跟踪号
 }
 
 func (m PackageWriteBackRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.StatusChange,
+		validation.Field(&m.LabelInfoArray, validation.When(len(m.LabelInfoArray) > 0, validation.By(func(value interface{}) error {
+			labels, _ := value.([]labelInfo)
+			for _, label := range labels {
+				err := validation.ValidateStruct(&label,
+					validation.Field(&label.Code,
+						validation.Required.Error("代码不能为空"),
+						validation.Length(1, 30).Error("代码有效长度为 {{.min}}  ~ {{.max}} 个字符"),
+					),
+					validation.Field(&label.Value,
+						validation.Required.Error("值不能为空"),
+						validation.Length(1, 500).Error("值有效长度为 {{.min}}  ~ {{.max}} 个字符"),
+					),
+				)
+				if err != nil {
+					return err
+				}
+			}
+			return nil
+		})),
+		), validation.Field(&m.StatusChange,
 			validation.Required.Error("状态改变标识不能为空"),
 			validation.In("A", "C", "E").Error("无效的状态改变标识"),
 		),
 		validation.Field(&m.TtPacketId, validation.Required.Error("通途包裹号不能为空")),
+		validation.Field(&m.TemplateContent, validation.When(m.TemplateType == "PDF", is.URL.Error("无效的 PDF 面单地址"))),
+		validation.Field(&m.TemplateType,
+			validation.Required.Error("物流商面单类型不能为空"),
+			validation.In("PDF", "HTML", "JPG", "PNG").Error("物流商面单类型无效"),
+		),
 	)
 }
 
