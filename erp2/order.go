@@ -79,11 +79,11 @@ type TongToolGoodsInfo struct {
 	PackagingWeight      float64 `json:"packagingWeight"`      // 商品包装重量（克）
 	ProductAverageCost   float64 `json:"productAverageCost"`   // 商品平均成本
 	ProductCurrentCost   float64 `json:"productCurrentCost"`   // 商品成本
-	ProductHeight        float64 `json:"productHeight"`        // 商品尺寸（高cm）
-	ProductLength        float64 `json:"productLength"`        // 商品尺寸（长cm）
+	ProductHeight        float64 `json:"productHeight"`        // 商品尺寸高（cm）
+	ProductLength        float64 `json:"productLength"`        // 商品尺寸长（cm）
 	ProductName          string  `json:"productName"`          // 商品名称
 	ProductWeight        float64 `json:"productWeight"`        // 商品重量（克）
-	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸（宽cm）
+	ProductWidth         float64 `json:"productWidth"`         // 商品尺寸宽（cm）
 	Quantity             int     `json:"quantity"`             // 货品数量
 	WotId                string  `json:"wotId"`                // 平台交易编号
 }
