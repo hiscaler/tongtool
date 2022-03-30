@@ -108,7 +108,7 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 	oa := &OrderAmount{
 		config:        orderAmountConfig{rates: exchangeRates, precision: precision},
 		Number:        order.OrderIdCode,
-		Currency:      CNY,
+		Currency:      constant.CNY,
 		TotalQuantity: 0,
 		IncomeExpenditure: orderIncomeExpenditure{
 			Income: orderIncome{
