@@ -160,7 +160,7 @@ func (s service) Packages(params PackagesQueryParams) (items []Package, nextToke
 			if strings.EqualFold(res.Datas.ACK, "Success") {
 				items = res.Datas.OrderArray
 				nextToken = res.Datas.NextToken
-				isLastPage = len(items) <= params.PageSize
+				isLastPage = nextToken == ""
 			} else {
 				errorCode, _ := strconv.Atoi(res.Datas.ErrorCode)
 				err = tongtool.ErrorWrap(errorCode, res.Datas.ErrorMessage)

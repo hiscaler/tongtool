@@ -278,7 +278,7 @@ func (s service) Products(params ProductsQueryParams) (items []Product, nextToke
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas
 			nextToken = res.NextToken
-			isLastPage = len(items) <= params.PageSize
+			isLastPage = nextToken == ""
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {

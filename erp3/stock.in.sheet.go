@@ -156,7 +156,7 @@ ERROR: %s
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Result
 			nextToken = res.Datas.NextToken
-			isLastPage = len(items) < params.PageSize
+			isLastPage = nextToken == ""
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {
