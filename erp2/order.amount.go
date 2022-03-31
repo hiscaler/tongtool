@@ -6,7 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// 订单金额计算
+// 订单相关费用计算，包括商品金额、运费、报废、佣金、增值税、成本等
 // 计算后的值统一为人民币，如果需要使用其他币种，需要自行转换
 
 var decimal1, decimal100 decimal.Decimal
@@ -100,8 +100,8 @@ func currencyExchange(value float64, exchangeRate map[string]float64, currency s
 
 // NewOrderAmount
 //
-// exchangeRates 以人民币为基准，比如美元兑人民币 1:6.3，对应的设置为：
-// map[string]float64{"USD": 6.3}
+// exchangeRates 以人民币为基准，规则是 1 个单位的对方货币值多少元人民币，比如美元兑人民币 1:6.3、日元对人民币 1:0.05194，对应的设置为：
+// map[string]float64{"USD": 6.3, "JPY": 0.05194}
 // 默认情况下，转换后的币种为人民币，如果需要转换为其他币种，请使用 ExchangeTo 函数获取
 //
 // 注意事项：
