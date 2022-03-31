@@ -6,6 +6,7 @@ package logistics
 // PackageUploadItem 批量包裹信息
 type PackageUploadItem struct {
 	ACS PackageUploadItemACS `json:"acs"` // ACS物流
+	AJ  PackageUploadItemAJ  `json:"aj"`  // AnJun
 }
 
 // PackageUplodItemACSGoods 包裹物品明細
@@ -32,6 +33,15 @@ type PackageUploadItemACS struct {
 	Key         string                     `json:"key"`         // 令牌,非通途用户必填
 	SiteCode    string                     `json:"siteCode"`    // TMS的倉庫代碼
 	Transport   string                     `json:"transport"`   // 運輸方式，值為：空運，陸運，海運，海快
+}
+
+// PackageUploadItemAJ AnJun
+type PackageUploadItemAJ struct {
+	ApiUser       string `json:"apiUser"`       // 物流商提供的客户名
+	Battery       int    `json:"battery"`       // 是否带电（ 0：不带电、1：带电）
+	DeclareRemark string `json:"declareRemark"` // 配货信息，安骏(Title2)限制不超过126字符
+	Token         string `json:"token"`         // 物流商提供的 Token
+	WishAccountId string `json:"wishAccountId"` // wish 订单所在对应的 wish account ID
 }
 
 // SenderAddress 寄件人信息
