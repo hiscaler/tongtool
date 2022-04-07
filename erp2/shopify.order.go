@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
@@ -26,7 +27,7 @@ type ShopifyOrderItem struct {
 type ShopifyOrder struct {
 	Cod                 string             `json:"cod"`                 // 是否是货到付款订单
 	CodBoolean          bool               `json:"codBoolean"`          // 是否是货到付款订单布尔值
-	FinancialStatus     string             `json:"financialStatus"`     // 支付状态：pending-未付款,paid-已付款,partially_paid-部分付款
+	FinancialStatus     string             `json:"financialStatus"`     // 支付状态（pending：未付款、paid：已付款、partially_paid：部分付款）
 	Gateway             string             `json:"gateway"`             // 网关
 	Items               []ShopifyOrderItem `json:"items"`               // 订单明细
 	OrderName           string             `json:"order_name"`          // 订单名称
@@ -50,6 +51,7 @@ type ShopifyOrdersQueryParams struct {
 
 func (m ShopifyOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.BuyerEmail, validation.When(m.BuyerEmail != "", is.EmailFormat.Error("无效的买家邮箱"))),
 		validation.Field(&m.PayDateFrom, validation.When(m.PayDateFrom != "", validation.Date(constant.DatetimeFormat).Error("付款起始时间格式错误"))),
 		validation.Field(&m.PayDateTo, validation.When(m.PayDateTo != "", validation.Date(constant.DatetimeFormat).Error("付款结束时间格式错误"))),
 		validation.Field(&m.PaypalTransactionId, validation.When(m.PayDateFrom == "" && m.PayDateTo == "" && m.ShopifyOrderId == "", validation.Required.Error("Paypal 交易号/Shopify 订单号/付款时间范围 必传其一"))),
