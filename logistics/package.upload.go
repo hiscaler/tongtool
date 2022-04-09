@@ -1,5 +1,14 @@
 package logistics
 
+import (
+	"encoding/json"
+	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/tongtool"
+	"strconv"
+	"strings"
+)
+
 // 上传包裹信息
 // https://open.tongtool.com/apiDoc.html#/?docId=f4efa880c11242c1a69bf8db4d763fec
 
@@ -88,12 +97,62 @@ type PickupAddress struct {
 }
 
 type PackageUploadRequest struct {
-	CarrierCode   string              `json:"carrierCode"`   // 物流商代码
-	PackageItems  []PackageUploadItem `json:"packageItems"`  // 上传包裹信息
-	SenderAddress SenderAddress       `json:"senderAddress"` //	寄件人信息
-	ReturnAddress ReturnAddress       `json:"returnAddress"` // 退件人信息
-	PickupAddress PickupAddress       `json:"pickupAddress"` // 揽收人信息
-	MerchantId    string              `json:"merchantId"`    // 商户号
-	Source        string              `json:"source"`        // 订单来源
-	WarehouseCode string              `json:"warehouseCode"` // 仓库代码，海外仓独有属性,不要随意传值!!
+	CarrierCode   string              `json:"carrierCode"`             // 物流商代码
+	PackageItems  []PackageUploadItem `json:"packageItems"`            // 上传包裹信息
+	SenderAddress SenderAddress       `json:"senderAddress,omitempty"` //	寄件人信息
+	ReturnAddress ReturnAddress       `json:"returnAddress,omitempty"` // 退件人信息
+	PickupAddress PickupAddress       `json:"pickupAddress,omitempty"` // 揽收人信息
+	MerchantId    string              `json:"merchantId"`              // 商户号
+	Source        string              `json:"source"`                  // 订单来源
+	WarehouseCode string              `json:"warehouseCode"`           // 仓库代码，海外仓独有属性,不要随意传值!!
+}
+
+func (m PackageUploadRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.CarrierCode, validation.Required.Error("物流商代码不能为空")),
+		validation.Field(&m.PackageItems,
+			validation.Required.Error("包裹信息不能为空"),
+		),
+		validation.Field(&m.Source, validation.Required.Error("订单来源不能为空")),
+	)
+}
+
+// PackageUpload
+// todo
+func (s service) PackageUpload(req PackageUploadRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+
+	res := struct {
+		tongtool.Response
+		Datas struct {
+			ACK          string `json:"ack"`          // 响应结果（Success：成功、Failure：失败）
+			ErrorCode    string `json:"code"`         // 错误代码
+			ErrorMessage string `json:"errorMessage"` // 错误信息
+		} `json:"datas"`
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/logi/packageUpload")
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
+			if strings.EqualFold(res.Datas.ACK, "Failure") {
+				errorCode, _ := strconv.Atoi(res.Datas.ErrorCode)
+				err = tongtool.ErrorWrap(errorCode, res.Datas.ErrorMessage)
+			}
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	return err
 }
