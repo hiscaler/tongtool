@@ -8,6 +8,7 @@ import (
 	"github.com/hiscaler/gox/cryptox"
 	"github.com/hiscaler/tongtool/config"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/json-iterator/go/extra"
 	"log"
 	"net/http"
 	"os"
@@ -28,6 +29,10 @@ const (
 	SystemError            = 527    // 系统错误
 	AccountExpiredError    = 999999 // 账号已过期
 )
+
+func init() {
+	extra.RegisterFuzzyDecoders()
+}
 
 var ErrNotFound = errors.New("tongtool: not found")
 
