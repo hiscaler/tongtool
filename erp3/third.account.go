@@ -1,7 +1,6 @@
 package erp3
 
 import (
-	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/tongtool"
@@ -45,7 +44,7 @@ func (s service) SaveThirdAccounts(req UpdateThirdAccountRequest) error {
 	if resp.IsSuccess() {
 		err = tongtool.ErrorWrap(res.Code, res.Message)
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())

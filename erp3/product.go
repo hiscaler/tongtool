@@ -1,10 +1,10 @@
 package erp3
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/hiscaler/tongtool"
+	jsoniter "github.com/json-iterator/go"
 	"strings"
 )
 
@@ -281,7 +281,7 @@ func (s service) Products(params ProductsQueryParams) (items []Product, nextToke
 			isLastPage = nextToken == ""
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())

@@ -2,13 +2,13 @@ package erp2
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/isx"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
+	jsoniter "github.com/json-iterator/go"
 	"strings"
 )
 
@@ -108,7 +108,7 @@ func (s service) PurchaseOrders(params PurchaseOrdersQueryParams) (items []Purch
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
-			if e = json.Unmarshal(b, &items); e == nil {
+			if e = jsoniter.Unmarshal(b, &items); e == nil {
 				return
 			} else {
 				s.tongTool.Logger.Printf(`cache data unmarshal error
@@ -142,7 +142,7 @@ ERROR: %s
 			isLastPage = len(items) < params.PageSize
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -153,7 +153,7 @@ ERROR: %s
 	}
 
 	if s.tongTool.EnableCache && len(items) > 0 {
-		if b, e := json.Marshal(&items); e == nil {
+		if b, e := jsoniter.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
 				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
@@ -303,7 +303,7 @@ func (s service) PurchaseOrderStockIn(req PurchaseOrderStockInRequest) error {
 	if resp.IsSuccess() {
 		err = tongtool.ErrorWrap(res.Code, res.Message)
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -369,7 +369,7 @@ func (s service) PurchaseOrderStockInLogs(params PurchaseOrderLogsQueryParams) (
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
-			if e = json.Unmarshal(b, &items); e == nil {
+			if e = jsoniter.Unmarshal(b, &items); e == nil {
 				return
 			} else {
 				s.tongTool.Logger.Printf(`cache data unmarshal error
@@ -403,7 +403,7 @@ ERROR: %s
 			isLastPage = len(items) < params.PageSize
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -414,7 +414,7 @@ ERROR: %s
 	}
 
 	if s.tongTool.EnableCache && len(items) > 0 {
-		if b, e := json.Marshal(&items); e == nil {
+		if b, e := jsoniter.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
 				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
@@ -469,7 +469,7 @@ func (s service) PurchaseOrderArrival(req PurchaseOrderArrivalRequest) error {
 	if resp.IsSuccess() {
 		err = tongtool.ErrorWrap(res.Code, res.Message)
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())

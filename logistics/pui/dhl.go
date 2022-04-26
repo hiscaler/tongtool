@@ -18,7 +18,7 @@ type PackageUploadItemDHLExpress struct {
 	ExportReasonType     string `json:"exportReasonType"`
 	InvoiceType          string `json:"invoiceType"`          // 发票类型:CMI-商业发票;PFI-形式发票 默认值：CMI
 	IsDutiable           string `json:"isDutiable"`           // 征税规则:Y:包裹;N：文件
-	Password string `json:"password"`                         // 账号密码
+	Password             string `json:"password"`             // 账号密码
 	PlaceOfIncoterm      string `json:"placeOfIncoterm"`      // 贸易条款所适用的港口名称
 	PltService           string `json:"pltService"`           // 是否开启PLT服务：PLTservice-PLT服务只适用于包裹类运单，不适用于文件类运单
 	ShipperAccountNumber string `json:"shipperAccountNumber"` // 发件人账号

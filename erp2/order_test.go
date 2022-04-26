@@ -10,9 +10,9 @@ import (
 
 func TestService_Orders(t *testing.T) {
 	params := OrdersQueryParams{
-		AccountCode:  "LDXAUS",
-		SaleDateFrom: "2021-12-01 00:00:00",
-		SaleDateTo:   "2021-12-31 23:59:59",
+		AccountCode:  "BXSM",
+		SaleDateFrom: "2022-04-11 00:00:00",
+		SaleDateTo:   "2022-04-11 23:59:59",
 	}
 	params.PageNo = 1
 	orders := make([]Order, 0)

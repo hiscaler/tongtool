@@ -2,7 +2,6 @@ package erp2
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -11,6 +10,7 @@ import (
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
+	jsoniter "github.com/json-iterator/go"
 	"strings"
 	"time"
 )
@@ -306,7 +306,7 @@ func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage boo
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
-			if e = json.Unmarshal(b, &items); e == nil {
+			if e = jsoniter.Unmarshal(b, &items); e == nil {
 				return
 			} else {
 				s.tongTool.Logger.Printf(`cache data unmarshal error
@@ -345,7 +345,7 @@ ERROR: %s
 			isLastPage = len(items) < params.PageSize
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -356,7 +356,7 @@ ERROR: %s
 	}
 
 	if s.tongTool.EnableCache && len(items) > 0 {
-		if b, e := json.Marshal(&items); e == nil {
+		if b, e := jsoniter.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
 				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
@@ -545,8 +545,8 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 					OrderNumber string `json:"saleRecordNum"`
 				}{}
 				var b []byte
-				if b, err = json.Marshal(res.Datas); err == nil {
-					if err = json.Unmarshal(b, &withOrderIdValue); err == nil {
+				if b, err = jsoniter.Marshal(res.Datas); err == nil {
+					if err = jsoniter.Unmarshal(b, &withOrderIdValue); err == nil {
 						orderId = withOrderIdValue.OrderId
 						orderNumber = withOrderIdValue.OrderNumber
 					}
@@ -556,7 +556,7 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -625,7 +625,7 @@ func (s service) UpdateOrder(req UpdateOrderRequest) error {
 	if resp.IsSuccess() {
 		err = tongtool.ErrorWrap(res.Code, res.Message)
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -687,7 +687,7 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())

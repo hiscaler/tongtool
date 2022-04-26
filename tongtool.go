@@ -1,13 +1,13 @@
 package tongtool
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/allegro/bigcache/v3"
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/cryptox"
 	"github.com/hiscaler/tongtool/config"
+	jsoniter "github.com/json-iterator/go"
 	"log"
 	"net/http"
 	"os"
@@ -123,7 +123,7 @@ func NewTongTool(config config.Config) *TongTool {
 			retry := response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
 				r := struct{ Code int }{}
-				retry = json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+				retry = jsoniter.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
 			}
 			if retry {
 				text := response.Request.URL
@@ -142,6 +142,8 @@ func NewTongTool(config config.Config) *TongTool {
 			logger.Printf("Cache: %s", err.Error())
 		}
 	}
+	client.JSONMarshal = jsoniter.Marshal
+	client.JSONUnmarshal = jsoniter.Unmarshal
 	ttInstance.Client = client
 	return ttInstance
 }

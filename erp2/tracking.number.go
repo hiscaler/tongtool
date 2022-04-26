@@ -1,10 +1,10 @@
 package erp2
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
+	jsoniter "github.com/json-iterator/go"
 	"strings"
 )
 
@@ -42,7 +42,7 @@ func (s service) TrackingNumbers(params TrackingNumbersQueryParams) (items []Tra
 	if s.tongTool.EnableCache {
 		cacheKey = keyx.Generate(params)
 		if b, e := s.tongTool.Cache.Get(cacheKey); e == nil {
-			if e = json.Unmarshal(b, &items); e == nil {
+			if e = jsoniter.Unmarshal(b, &items); e == nil {
 				return
 			} else {
 				s.tongTool.Logger.Printf(`cache data unmarshal error
@@ -84,7 +84,7 @@ ERROR: %s
 			isLastPage = len(items) < params.PageSize
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -95,7 +95,7 @@ ERROR: %s
 	}
 
 	if s.tongTool.EnableCache && len(items) > 0 {
-		if b, e := json.Marshal(&items); e == nil {
+		if b, e := jsoniter.Marshal(&items); e == nil {
 			e = s.tongTool.Cache.Set(cacheKey, b)
 			if e != nil {
 				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())

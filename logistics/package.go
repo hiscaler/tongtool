@@ -2,12 +2,12 @@ package logistics
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
+	jsoniter "github.com/json-iterator/go"
 	"strconv"
 	"strings"
 )
@@ -167,7 +167,7 @@ func (s service) Packages(params PackagesQueryParams) (items []Package, nextToke
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -258,7 +258,7 @@ func (s service) WriteBackPackageProcessingResult(req PackageWriteBackRequest) e
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -317,7 +317,7 @@ func (s service) WriteBackPackageDeliveryInformation(req PackageDeliveryInformat
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = tongtool.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
