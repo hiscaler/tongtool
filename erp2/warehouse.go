@@ -13,7 +13,7 @@ type Warehouse struct {
 	WarehouseId   string `json:"warehouseId"`   // 仓库id
 	WarehouseCode string `json:"warehouseCode"` // 仓库代码
 	WarehouseName string `json:"warehouseName"` // 仓库名称
-	Status        string `json:"status"`        // 仓库状态：0-失效1-有效
+	Status        string `json:"status"`        // 仓库状态（0：失效、1：有效）
 	StatusBoolean bool   `json:"statusBoolean"` // 仓库状态布尔值（返回仓库状态布尔值，方便调用者判断）
 }
 
