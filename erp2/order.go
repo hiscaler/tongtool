@@ -337,10 +337,9 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				item.IsInvalidBoolean = !inx.StringIn(item.IsInvalid, "0", "", "null")
-				item.IsSuspendedBoolean = item.IsSuspended == "1"
-				items[i] = item
+			for i := range items {
+				items[i].IsInvalidBoolean = !inx.StringIn(items[i].IsInvalid, "0", "", "null")
+				items[i].IsSuspendedBoolean = items[i].IsSuspended == "1"
 			}
 			isLastPage = len(items) < params.PageSize
 		}

@@ -67,8 +67,9 @@ ERROR: %s
 
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-			for _, item := range res.Datas.Array {
-				items = append(items, item.SiteId)
+			items = make([]string, len(res.Datas.Array))
+			for i := range res.Datas.Array {
+				items[i] = res.Datas.Array[i].SiteId
 			}
 			isLastPage = len(items) < params.PageSize
 		}

@@ -63,8 +63,8 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].StatusBoolean = item.Status == "1"
+			for i := range items {
+				items[i].StatusBoolean = items[i].Status == "1"
 			}
 			isLastPage = len(items) < params.PageSize
 		}
@@ -109,10 +109,10 @@ func (s service) Warehouse(id string) (item Warehouse, exists bool, err error) {
 			if len(items) == 0 {
 				err = tongtool.ErrNotFound
 			} else {
-				for _, warehouse := range items {
-					if strings.EqualFold(warehouse.WarehouseId, id) {
+				for i := range items {
+					if strings.EqualFold(items[i].WarehouseId, id) {
 						exists = true
-						item = warehouse
+						item = items[i]
 						break
 					}
 				}
@@ -200,9 +200,9 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].ShippingMethodStatusBoolean = item.ShippingMethodStatus == "1"
-				items[i].CarrierStatusBoolean = item.CarrierStatus == "1"
+			for i := range items {
+				items[i].ShippingMethodStatusBoolean = items[i].ShippingMethodStatus == "1"
+				items[i].CarrierStatusBoolean = items[i].CarrierStatus == "1"
 			}
 			isLastPage = len(items) < params.PageSize
 		}
