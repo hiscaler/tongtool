@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 // 通途返回代码
@@ -147,6 +148,50 @@ func NewTongTool(config config.Config) *TongTool {
 			logger.Printf("Cache: %s", err.Error())
 		}
 	}
+	jsoniter.RegisterTypeDecoderFunc("float64", func(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+		switch iter.WhatIsNext() {
+		case jsoniter.NilValue:
+			iter.Read()
+			*((*float64)(ptr)) = 0
+		case jsoniter.StringValue:
+			var t float64
+			v := strings.TrimSpace(iter.ReadString())
+			if v != "" {
+				var err error
+				if t, err = strconv.ParseFloat(v, 64); err != nil {
+					iter.Error = err
+					return
+				}
+			}
+			*((*float64)(ptr)) = t
+		default:
+			*((*float64)(ptr)) = iter.ReadFloat64()
+		}
+	})
+	jsoniter.RegisterTypeDecoderFunc("bool", func(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+		switch iter.WhatIsNext() {
+		case jsoniter.StringValue:
+			var t bool
+			v := strings.TrimSpace(iter.ReadString())
+			if v != "" {
+				var err error
+				if t, err = strconv.ParseBool(strings.ToLower(v)); err != nil {
+					iter.Error = err
+					return
+				}
+			}
+			*((*bool)(ptr)) = t
+		case jsoniter.NumberValue:
+			if v, err := iter.ReadNumber().Int64(); err != nil {
+				iter.Error = err
+				return
+			} else {
+				*((*bool)(ptr)) = v > 0
+			}
+		default:
+			*((*bool)(ptr)) = iter.ReadBool()
+		}
+	})
 	client.JSONMarshal = jsoniter.Marshal
 	client.JSONUnmarshal = jsoniter.Unmarshal
 	ttInstance.Client = client
