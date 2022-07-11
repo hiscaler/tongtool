@@ -150,9 +150,6 @@ func NewTongTool(config config.Config) *TongTool {
 	}
 	jsoniter.RegisterTypeDecoderFunc("float64", func(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
 		switch iter.WhatIsNext() {
-		case jsoniter.NilValue:
-			iter.Read()
-			*((*float64)(ptr)) = 0
 		case jsoniter.StringValue:
 			var t float64
 			v := strings.TrimSpace(iter.ReadString())
@@ -164,6 +161,16 @@ func NewTongTool(config config.Config) *TongTool {
 				}
 			}
 			*((*float64)(ptr)) = t
+		case jsoniter.BoolValue:
+			// support bool to float64
+			if iter.ReadBool() {
+				*((*float64)(ptr)) = 1
+			} else {
+				*((*float64)(ptr)) = 0
+			}
+		case jsoniter.NilValue:
+			iter.Skip()
+			*((*float64)(ptr)) = 0
 		default:
 			*((*float64)(ptr)) = iter.ReadFloat64()
 		}
