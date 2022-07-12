@@ -195,6 +195,9 @@ func NewTongTool(config config.Config) *TongTool {
 			} else {
 				*((*bool)(ptr)) = v > 0
 			}
+		case jsoniter.NilValue:
+			iter.Skip()
+			*((*bool)(ptr)) = false
 		default:
 			*((*bool)(ptr)) = iter.ReadBool()
 		}
