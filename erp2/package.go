@@ -117,9 +117,9 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].IsValid = !inx.StringIn(item.PackageStatus, PackageStatusCancel)
-				items[i].IsCheckedBoolean = inx.StringIn(item.IsChecked, "Y")
+			for i := range items {
+				items[i].IsValid = !inx.StringIn(items[i].PackageStatus, PackageStatusCancel)
+				items[i].IsCheckedBoolean = inx.StringIn(items[i].IsChecked, "Y")
 			}
 			isLastPage = len(items) < params.PageSize
 		}
@@ -172,10 +172,10 @@ func (s service) Package(orderNumber, packageNumber string) (item Package, exist
 			if len(packages) == 0 {
 				err = tongtool.ErrNotFound
 			} else {
-				for _, p := range packages {
-					if p.IsValid && strings.EqualFold(p.PackageId, packageNumber) {
+				for i := range packages {
+					if packages[i].IsValid && strings.EqualFold(packages[i].PackageId, packageNumber) {
 						exists = true
-						item = p
+						item = packages[i]
 						break
 					}
 				}
@@ -258,19 +258,18 @@ func (s service) PackageDeliver(req PackageDeliverRequest) error {
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			if len(res.Datas.ErrorList) != 0 {
-				errorMessageNumbers := make(map[string][]string, 0)
-				for _, item := range res.Datas.ErrorList {
-					msg := strings.TrimSpace(item.Message)
+				errorMessageNumbers := make(map[string][]string, len(res.Datas.ErrorList))
+				for i := range res.Datas.ErrorList {
+					msg := strings.TrimSpace(res.Datas.ErrorList[i].Message)
 					if numbers, ok := errorMessageNumbers[msg]; ok {
-						numbers = append(numbers, item.RelatedNo)
-						errorMessageNumbers[msg] = numbers
+						errorMessageNumbers[msg] = append(numbers, res.Datas.ErrorList[i].RelatedNo)
 					} else {
-						errorMessageNumbers[msg] = []string{item.RelatedNo}
+						errorMessageNumbers[msg] = []string{res.Datas.ErrorList[i].RelatedNo}
 					}
 				}
 				errorMessages := make([]string, 0)
-				for msg, numbers := range errorMessageNumbers {
-					errorMessages = append(errorMessages, fmt.Sprintf("%s: %s", strings.Join(numbers, ","), msg))
+				for msg := range errorMessageNumbers {
+					errorMessages = append(errorMessages, fmt.Sprintf("%s: %s", strings.Join(errorMessageNumbers[msg], ","), msg))
 				}
 				err = errors.New(strings.Join(errorMessages, "; "))
 			}

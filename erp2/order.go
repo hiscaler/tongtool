@@ -384,10 +384,10 @@ func (s service) Order(orderId string) (item Order, exists bool, err error) {
 			if len(items) == 0 {
 				err = tongtool.ErrNotFound
 			} else {
-				for _, order := range items {
-					if strings.EqualFold(order.OrderIdCode, orderId) {
+				for i := range items {
+					if strings.EqualFold(items[i].OrderIdCode, orderId) {
 						exists = true
-						item = order
+						item = items[i]
 						break
 					}
 				}
@@ -678,11 +678,12 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
-			for _, item := range res.Datas.Array {
-				results = append(results, OrderCancelResult{
-					OrderId: item.OrderId,
-					Result:  strings.TrimSpace(item.Result),
-				})
+			results = make([]OrderCancelResult, len(res.Datas.Array))
+			for i := range res.Datas.Array {
+				results[i] = OrderCancelResult{
+					OrderId: res.Datas.Array[i].OrderId,
+					Result:  strings.TrimSpace(res.Datas.Array[i].Result),
+				}
 			}
 		}
 	} else {

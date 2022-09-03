@@ -60,8 +60,8 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].PlatformStatusBoolean = item.PlatformStatus == "0"
+			for i := range items {
+				items[i].PlatformStatusBoolean = items[i].PlatformStatus == "0"
 			}
 		}
 	} else {

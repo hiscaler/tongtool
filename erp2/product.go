@@ -99,9 +99,9 @@ type Product struct {
 
 // GoodsDetailIndex 商品详情下标值
 func (p Product) GoodsDetailIndex() int {
-	for k, v := range p.GoodsDetail {
-		if strings.EqualFold(v.GoodsSKU, p.SKU) {
-			return k
+	for i := range p.GoodsDetail {
+		if strings.EqualFold(p.GoodsDetail[i].GoodsSKU, p.SKU) {
+			return i
 		}
 	}
 	return -1
@@ -534,8 +534,8 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].IsDeleted = item.Status == "1"
+			for i := range items {
+				items[i].IsDeleted = items[i].Status == "1"
 			}
 			isLastPage = len(items) <= params.PageSize
 		}
@@ -593,8 +593,8 @@ func (s service) Product(typ string, sku string, isAlias bool) (item Product, ex
 							exists = true
 							item = p
 						} else {
-							for _, detail := range p.GoodsDetail {
-								if strings.EqualFold(sku, detail.GoodsSKU) {
+							for i := range p.GoodsDetail {
+								if strings.EqualFold(sku, p.GoodsDetail[i].GoodsSKU) {
 									exists = true
 									item = p
 									break
