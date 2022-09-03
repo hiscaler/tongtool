@@ -238,34 +238,33 @@ func NewOrderAmount(order Order, exchangeRates map[string]float64, precision int
 		Float64()
 
 	totalQuantity := decimal.NewFromInt(int64(oa.TotalQuantity))
-	for i, item := range items {
-		quantity := decimal.NewFromInt(int64(item.Quantity))
-		item.Expenditure.Platform, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Platform).
+	for i := range items {
+		quantity := decimal.NewFromInt(int64(items[i].Quantity))
+		items[i].Expenditure.Platform, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Platform).
 			Div(totalQuantity).
 			Mul(quantity).
 			Round(precision).
 			Float64()
-		item.Expenditure.VAT, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.VAT).
+		items[i].Expenditure.VAT, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.VAT).
 			Div(totalQuantity).
 			Mul(quantity).
 			Round(precision).
 			Float64()
-		item.Expenditure.Package, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Package).
+		items[i].Expenditure.Package, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Package).
 			Div(totalQuantity).
 			Mul(quantity).
 			Round(precision).
 			Float64()
-		item.Expenditure.Shipping, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Shipping).
+		items[i].Expenditure.Shipping, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Shipping).
 			Div(totalQuantity).
 			Mul(quantity).
 			Round(precision).
 			Float64()
-		item.Expenditure.Other, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Other).
+		items[i].Expenditure.Other, _ = decimal.NewFromFloat(oa.IncomeExpenditure.Expenditure.Other).
 			Div(totalQuantity).
 			Mul(quantity).
 			Round(precision).
 			Float64()
-		items[i] = item
 	}
 	oa.Items = items
 	return oa
@@ -278,14 +277,14 @@ func (oa OrderAmount) ExchangeTo(currency string) (newOA OrderAmount, err error)
 		rate := decimal.NewFromFloat(v)
 		newOA = oa
 		newOA.Currency = currency
-		for i, item := range newOA.Items {
-			newOA.Items[i].Price, _ = decimal.NewFromFloat(item.Price).Div(rate).Round(precision).Float64()
-			newOA.Items[i].Amount, _ = decimal.NewFromFloat(item.Amount).Div(rate).Round(precision).Float64()
-			newOA.Items[i].Expenditure.Platform, _ = decimal.NewFromFloat(item.Expenditure.Platform).Div(rate).Round(precision).Float64()
-			newOA.Items[i].Expenditure.VAT, _ = decimal.NewFromFloat(item.Expenditure.VAT).Div(rate).Round(precision).Float64()
-			newOA.Items[i].Expenditure.Package, _ = decimal.NewFromFloat(item.Expenditure.Package).Div(rate).Round(precision).Float64()
-			newOA.Items[i].Expenditure.Shipping, _ = decimal.NewFromFloat(item.Expenditure.Shipping).Div(rate).Round(precision).Float64()
-			newOA.Items[i].Expenditure.Other, _ = decimal.NewFromFloat(item.Expenditure.Other).Div(rate).Round(precision).Float64()
+		for i := range newOA.Items {
+			newOA.Items[i].Price, _ = decimal.NewFromFloat(newOA.Items[i].Price).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Amount, _ = decimal.NewFromFloat(newOA.Items[i].Amount).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Platform, _ = decimal.NewFromFloat(newOA.Items[i].Expenditure.Platform).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.VAT, _ = decimal.NewFromFloat(newOA.Items[i].Expenditure.VAT).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Package, _ = decimal.NewFromFloat(newOA.Items[i].Expenditure.Package).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Shipping, _ = decimal.NewFromFloat(newOA.Items[i].Expenditure.Shipping).Div(rate).Round(precision).Float64()
+			newOA.Items[i].Expenditure.Other, _ = decimal.NewFromFloat(newOA.Items[i].Expenditure.Other).Div(rate).Round(precision).Float64()
 		}
 		if newOA.IncomeExpenditure.Income.Product > 0 {
 			newOA.IncomeExpenditure.Income.Product, _ = decimal.NewFromFloat(newOA.IncomeExpenditure.Income.Product).Div(rate).Round(precision).Float64()

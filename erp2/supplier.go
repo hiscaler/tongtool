@@ -83,8 +83,8 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].IsDefaultBoolean = item.IsDefault == "1"
+			for i := range items {
+				items[i].IsDefaultBoolean = items[i].IsDefault == "1"
 			}
 			isLastPage = len(items) < params.PageSize
 		}

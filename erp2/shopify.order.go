@@ -104,13 +104,12 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
-			for i, item := range items {
-				items[i].CodBoolean = item.Cod == "true"
-				for j, orderItem := range item.Items {
-					orderItem.PriceValue, _ = strconv.ParseFloat(orderItem.Price, 64)
-					orderItem.QuantityValue, _ = strconv.Atoi(orderItem.Quantity)
-					orderItem.WeightValue, _ = strconv.ParseFloat(orderItem.Weight, 64)
-					items[i].Items[j] = orderItem
+			for i := range items {
+				items[i].CodBoolean = items[i].Cod == "true"
+				for j := range items[i].Items {
+					items[i].Items[j].PriceValue, _ = strconv.ParseFloat(items[i].Items[j].Price, 64)
+					items[i].Items[j].QuantityValue, _ = strconv.Atoi(items[i].Items[j].Quantity)
+					items[i].Items[j].WeightValue, _ = strconv.ParseFloat(items[i].Items[j].Weight, 64)
 				}
 			}
 			isLastPage = len(items) < params.PageSize
