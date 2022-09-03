@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/config"
+	jsoniter "github.com/json-iterator/go"
 	"os"
 	"testing"
 )
