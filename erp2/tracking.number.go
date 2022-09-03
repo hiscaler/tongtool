@@ -2,6 +2,7 @@ package erp2
 
 import (
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	jsoniter "github.com/json-iterator/go"
@@ -21,8 +22,14 @@ type TrackingNumber struct {
 
 type TrackingNumbersQueryParams struct {
 	Paging
-	MerchantId string   `json:"merchantId"`         // 商户ID
-	OrderIds   []string `json:"orderIds,omitempty"` // orderNumber集合
+	MerchantId string   `json:"merchantId"` // 商户 ID
+	OrderIds   []string `json:"orderIds"`   // orderNumber 集合
+}
+
+func (m TrackingNumbersQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.OrderIds, validation.Required.Error("订单号不能为空")),
+	)
 }
 
 // TrackingNumbers 订单物流单号列表
@@ -30,12 +37,13 @@ type TrackingNumbersQueryParams struct {
 // https://open.tongtool.com/apiDoc.html#/?docId=3b3cceec8fe04e6db44da17ec4b38f08
 func (s service) TrackingNumbers(params TrackingNumbersQueryParams) (items []TrackingNumber, isLastPage bool, err error) {
 	params.MerchantId = s.tongTool.MerchantId
-	items = make([]TrackingNumber, 0)
-	if len(params.OrderIds) == 0 {
+	if err = params.Validate(); err != nil {
 		return
 	}
-	for _, orderId := range params.OrderIds {
-		items = append(items, TrackingNumber{OrderId: orderId})
+
+	items = make([]TrackingNumber, len(params.OrderIds))
+	for i, orderId := range params.OrderIds {
+		items[i] = TrackingNumber{OrderId: orderId}
 	}
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
 	var cacheKey string

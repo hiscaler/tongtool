@@ -32,7 +32,7 @@ func TestService_TrackingNumbers(t *testing.T) {
 
 	// 验证未提供订单集合参数
 	_, _, err := ttService.TrackingNumbers(TrackingNumbersQueryParams{})
-	if err != nil {
-		t.Errorf("ttService.TrackingNumbers error: %s", err.Error())
+	if err == nil {
+		t.Error("ttService.TrackingNumbers orderIds values is required")
 	}
 }
