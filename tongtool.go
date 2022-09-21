@@ -119,8 +119,26 @@ func NewTongTool(config config.Config) *TongTool {
 			return nil
 		}).
 		SetRetryCount(2).
-		SetRetryWaitTime(5 * time.Second).
-		SetRetryMaxWaitTime(10 * time.Second).
+		SetRetryWaitTime(12 * time.Second).
+		SetRetryMaxWaitTime(60 * time.Second).
+		SetRetryAfter(func(client *resty.Client, response *resty.Response) (time.Duration, error) {
+			seconds := 0
+			if response != nil {
+				retry := response.StatusCode() == http.StatusTooManyRequests
+				if !retry {
+					r := struct{ Code int }{}
+					retry = jsoniter.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+				}
+				if retry {
+					seconds = 60 - time.Now().Second()%60 // 最多等待下一分钟到目前的秒数
+				}
+			}
+			if seconds == 0 {
+				return 0, nil
+			}
+			logger.Printf("Waiting %d seconds...", seconds)
+			return time.Duration(seconds) * time.Second, nil
+		}).
 		AddRetryCondition(func(response *resty.Response, err error) bool {
 			if response == nil {
 				return false
