@@ -198,10 +198,8 @@ type OrdersQueryParams struct {
 
 func (m OrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.AccountCode, validation.When(m.OrderId == "", validation.Required.Error("帐户代码不能为空"))),
 		validation.Field(&m.BuyerEmail, validation.When(m.BuyerEmail != "", is.EmailFormat.Error("无效的邮箱格式"))),
 		validation.Field(&m.StoreFlag,
-			validation.Required.Error("查询范围不能为空"),
 			validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围")),
 		),
 		validation.Field(&m.OrderStatus, validation.When(m.OrderStatus != "", validation.In(OrderStatusWaitPacking, OrderStatusWaitPrinting, OrderStatusWaitingDespatching, OrderStatusDespatched, OrderStatusUnpaid, OrderStatusPaid).Error("无效的订单状态"))),
