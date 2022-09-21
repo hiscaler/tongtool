@@ -91,6 +91,22 @@ func NewTongTool(config config.Config) *TongTool {
 	} else {
 		logger.Printf("auth error: %s", e.Error())
 	}
+	timeoutSeconds := config.Timeout
+	if timeoutSeconds <= 0 {
+		timeoutSeconds = 10
+	}
+	retryCount := config.RetryCount
+	if retryCount < 0 {
+		retryCount = 0
+	}
+	retryWaitTime := config.RetryWaitTime
+	if retryWaitTime <= 0 {
+		retryWaitTime = 12
+	}
+	retryMaxWaitTime := config.RetryMaxWaitTime
+	if retryMaxWaitTime <= 0 {
+		retryMaxWaitTime = 60
+	}
 	client := resty.New().
 		SetDebug(config.Debug).
 		SetBaseURL("https://open.tongtool.com/api-service").
@@ -99,7 +115,7 @@ func NewTongTool(config config.Config) *TongTool {
 			"Accept":       "application/json",
 			"api_version":  "3.0",
 		}).
-		SetTimeout(10 * time.Second).
+		SetTimeout(time.Duration(timeoutSeconds) * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			if !ttInstance.application.Valid || ttInstance.application.AppTokenExpireDate <= time.Now().Unix()-1800 {
 				application, e := auth(config.AppKey, config.AppSecret, config.Debug)
@@ -118,27 +134,9 @@ func NewTongTool(config config.Config) *TongTool {
 			})
 			return nil
 		}).
-		SetRetryCount(2).
-		SetRetryWaitTime(12 * time.Second).
-		SetRetryMaxWaitTime(60 * time.Second).
-		SetRetryAfter(func(client *resty.Client, response *resty.Response) (time.Duration, error) {
-			seconds := 0
-			if response != nil {
-				retry := response.StatusCode() == http.StatusTooManyRequests
-				if !retry {
-					r := struct{ Code int }{}
-					retry = jsoniter.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
-				}
-				if retry {
-					seconds = 60 - time.Now().Second()%60 // 最多等待下一分钟到目前的秒数
-				}
-			}
-			if seconds == 0 {
-				return 0, nil
-			}
-			logger.Printf("Waiting %d seconds...", seconds)
-			return time.Duration(seconds) * time.Second, nil
-		}).
+		SetRetryCount(retryCount).
+		SetRetryWaitTime(time.Duration(retryWaitTime) * time.Second).
+		SetRetryMaxWaitTime(time.Duration(retryMaxWaitTime) * time.Second).
 		AddRetryCondition(func(response *resty.Response, err error) bool {
 			if response == nil {
 				return false
@@ -158,6 +156,26 @@ func NewTongTool(config config.Config) *TongTool {
 			}
 			return retry
 		})
+	if config.ForceWaiting {
+		client.SetRetryAfter(func(client *resty.Client, response *resty.Response) (time.Duration, error) {
+			seconds := 0
+			if response != nil {
+				retry := response.StatusCode() == http.StatusTooManyRequests
+				if !retry {
+					r := struct{ Code int }{}
+					retry = jsoniter.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+				}
+				if retry {
+					seconds = 60 - time.Now().Second()%60 // 最多等待下一分钟到目前的秒数
+				}
+			}
+			if seconds == 0 {
+				return 0, nil
+			}
+			logger.Printf("Waiting %d seconds...", seconds)
+			return time.Duration(seconds) * time.Second, nil
+		})
+	}
 	if config.Debug {
 		client.EnableTrace()
 	}
@@ -356,5 +374,6 @@ func ErrorWrap(code int, message string) error {
 			message = "未知错误"
 		}
 	}
+
 	return fmt.Errorf("%d: %s", code, message)
 }

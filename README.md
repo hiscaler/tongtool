@@ -97,7 +97,7 @@
     通途 APP Secret（从通途开放平台的应用管理中获取）
 - EnableCache
 
-    是否激活缓存，激活的情况下，10 分钟内多次发起的请求第二次起都会从缓存中获取后直接返回，不会再走请求接口，如果您的数据变化比较频繁，建议关闭，以免获取不到最新的数据。同时也需要注意的是通途有接口请求次数限制，一分钟内最多发起 5 次接口请求，所以在应用端需要做相应的处理。
+    是否激活缓存，激活的情况下，10 分钟内多次发起的请求第二次起都会从缓存中获取后直接返回，不会再走请求接口，如果您的数据变化比较频繁，建议关闭，以免获取不到最新的数据。同时也需要注意的是通途有接口请求次数限制，一分钟内最多发起 5 次接口请求，所以在应用端需要做相应的处理。同时支持开启 forceWaiting 选项，如果设置为 true 的话，会总是等待接口端返回数据，您可以根据自己的需求开启或者关闭，默认情况下该选项是关闭的。
 
 ## 使用方法
 
@@ -112,12 +112,17 @@ import (
 )
 
 func main() {
-	ttInstance := tongtool.NewTongTool(ttConfig.Config{
-		Debug:       true,
-		AppKey:      "",
-		AppSecret:   "",
-		EnableCache: false,
-	})
+    ttInstance := tongtool.NewTongTool(ttConfig.Config{
+        Debug:       true,
+        Timeout: 120,
+        RetryCount: 2,
+        RetryWaitTime: 12,
+        RetryMaxWaitTime: 60,
+        ForceWaiting: true,
+        AppKey:      "",
+        AppSecret:   "",
+        EnableCache: false,
+    })
 	ttService := erp2.NewService(ttInstance)
 	params := erp2.OrdersQueryParams{
 		SaleDateFrom: "2021-12-01 00:00:00",
