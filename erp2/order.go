@@ -294,9 +294,6 @@ func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage boo
 
 	params.MerchantId = s.tongTool.MerchantId
 	params.SetPagingVars(params.PageNo, params.PageSize, s.tongTool.QueryDefaultValues.PageSize)
-	if !inx.StringIn(params.StoreFlag, OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived) {
-		params.StoreFlag = OrderStoreFlagActive
-	}
 	if params.OrderId != "" {
 		params.AccountCode = ""
 	}
