@@ -92,6 +92,18 @@
 - AppKey
 
     通途 APP Key（从通途开放平台的应用管理中获取）
+- RetryCount
+
+    HTTP 请求失败的情况下重试次数
+- RetryWaitTime
+    
+    重试等待时间
+- RetryMaxWaitTime
+
+    最大重试等待时间
+- ForceWaiting
+
+    强制等待，如果设置为 true 的话，会总是等待接口端返回数据。
 - AppSecret
 
     通途 APP Secret（从通途开放平台的应用管理中获取）
@@ -160,4 +172,4 @@ FuncName(req Request) (item DataType, exists bool, err error)
 ### 调用速率限制处理
 所有接口调用频率为一分钟 5 次，需要调用端做好频率控制。但是通途接口并没有在返回数据中告知剩余的可访问次数，所以不能做到精细控制。
 
-目前如果遇到调用速率限制，会间隔 5 秒后再次发起请求，最多发起两次。同时也建议在生产环境中开启缓存，进一步地避免该问题。
+目前如果遇到调用速率限制，请设置配置配置参数中的 `RetryCount`、`RetryWaitTime`、`RetryMaxWaitTime`、`ForceWaiting` 参数。同时也建议在生产环境中开启缓存，进一步地避免该问题。
