@@ -117,44 +117,44 @@
 package main
 
 import (
-    "github.com/hiscaler/tongtool"
-    ttConfig "github.com/hiscaler/tongtool/config"
-    "github.com/hiscaler/tongtool/erp2"
-	"fmt"
+  "github.com/hiscaler/tongtool"
+  ttConfig "github.com/hiscaler/tongtool/config"
+  "github.com/hiscaler/tongtool/erp2"
+  "fmt"
 )
 
 func main() {
-    ttInstance := tongtool.NewTongTool(ttConfig.Config{
-        Debug:       true,
-        Timeout: 120,
-        RetryCount: 2,
-        RetryWaitTime: 12,
-        RetryMaxWaitTime: 60,
-        ForceWaiting: true,
-        AppKey:      "",
-        AppSecret:   "",
-        EnableCache: false,
-    })
-	ttService := erp2.NewService(ttInstance)
-	params := erp2.OrdersQueryParams{
-		SaleDateFrom: "2021-12-01 00:00:00",
-		SaleDateTo:   "2021-12-31 23:59:59",
-	}
-    params.PageNo = 1
-	orders := make([]erp2.Order, 0)
-	for {
-		pageOrders, isLastPage, err := ttService.Orders(params)
-		if err != nil {
-			fmt.Println(fmt.Sprintf("ttService.Orders error: %s", err.Error()))
-		} else {
-			orders = append(orders, pageOrders...)
-		}
-		if isLastPage || err != nil {
-			break
-		}
-		params.PageNo++
-	}
-	fmt.Println(fmt.Sprintf("%#v", orders))
+  ttInstance := tongtool.NewTongTool(ttConfig.Config{
+    Debug:       true,
+    Timeout: 120,
+    RetryCount: 2,
+    RetryWaitTime: 12,
+    RetryMaxWaitTime: 60,
+    ForceWaiting: true,
+    AppKey:      "",
+    AppSecret:   "",
+    EnableCache: false,
+  })
+  ttService := erp2.NewService(ttInstance)
+  params := erp2.OrdersQueryParams{
+    SaleDateFrom: "2021-12-01 00:00:00",
+    SaleDateTo:   "2021-12-31 23:59:59",
+  }
+  params.PageNo = 1
+  orders := make([]erp2.Order, 0)
+  for {
+    pageOrders, isLastPage, err := ttService.Orders(params)
+    if err != nil {
+      fmt.Println(fmt.Sprintf("ttService.Orders error: %s", err.Error()))
+    } else {
+      orders = append(orders, pageOrders...)
+    }
+    if isLastPage || err != nil {
+      break
+    }
+    params.PageNo++
+  }
+  fmt.Println(fmt.Sprintf("%#v", orders))
 }
 ```
 
@@ -178,4 +178,4 @@ FuncName(req Request) (item DataType, exists bool, err error)
 
 所有接口调用频率为一分钟 5 次，需要调用端做好频率控制。但是通途接口并没有在返回数据中告知剩余的可访问次数，所以不能做到精细控制。
 
-目前如果遇到调用速率限制，请设置配置配置参数中的 `RetryCount`、`RetryWaitTime`、`RetryMaxWaitTime`、`ForceWaiting` 参数。同时也建议在生产环境中开启缓存，进一步地避免该问题。
+目前如果遇到调用速率限制，请调整配置参数中的 `RetryCount`、`RetryWaitTime`、`RetryMaxWaitTime`、`ForceWaiting` 参数。同时也建议在生产环境中开启缓存，进一步地避免该问题。
