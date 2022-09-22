@@ -72,41 +72,41 @@ type Package struct {
 	IOSSNo                 string            `json:"iossNo"`                 // 卖家 IOSS 税号
 	LastSyncTime           string            `json:"lastsyncTime"`           // 订单状态的最后更新时间
 	Length                 float64           `json:"length"`                 // 包裹长（单位cm）
-	MerchantId             string            `json:"merchantId"`             //	通途商户号
-	PickingArray           []picking         `json:"pickingArray"`           //	配货信息
+	MerchantId             string            `json:"merchantId"`             // 通途商户号
+	PickingArray           []picking         `json:"pickingArray"`           // 配货信息
 	PlatformId             string            `json:"platformId"`             // 平台类型
-	RecipientAddress1      string            `json:"recipientAddress1"`      //	收件人地址1
-	RecipientAddress2      string            `json:"recipientAddress2"`      //	收件人地址2
-	RecipientCity          string            `json:"recipientCity"`          //	收件人城市
-	RecipientCompany       string            `json:"recipientCompany"`       //	收件人公司
-	RecipientCountry       string            `json:"recipientCountry"`       //	收件人国家二字代码
-	RecipientCountryCnName string            `json:"recipientCountryCnName"` //	收件人国家中文名称
-	RecipientCountryEnName string            `json:"recipientCountryEnName"` //	收件人国家英文名称
-	RecipientEmail         string            `json:"recipientEmail"`         //	收件人电子邮箱
-	RecipientMobile        string            `json:"recipientMobile"`        //	收件人手机
-	RecipientName          string            `json:"recipientName"`          //	收件人姓名
-	RecipientPostalCode    string            `json:"recipientPostalCode"`    //	收件人邮编
-	RecipientState         string            `json:"recipientState"`         //	收件人省州
-	RecipientTelephone     string            `json:"recipientTelephone"`     //	收件人电话
+	RecipientAddress1      string            `json:"recipientAddress1"`      // 收件人地址1
+	RecipientAddress2      string            `json:"recipientAddress2"`      // 收件人地址2
+	RecipientCity          string            `json:"recipientCity"`          // 收件人城市
+	RecipientCompany       string            `json:"recipientCompany"`       // 收件人公司
+	RecipientCountry       string            `json:"recipientCountry"`       // 收件人国家二字代码
+	RecipientCountryCnName string            `json:"recipientCountryCnName"` // 收件人国家中文名称
+	RecipientCountryEnName string            `json:"recipientCountryEnName"` // 收件人国家英文名称
+	RecipientEmail         string            `json:"recipientEmail"`         // 收件人电子邮箱
+	RecipientMobile        string            `json:"recipientMobile"`        // 收件人手机
+	RecipientName          string            `json:"recipientName"`          // 收件人姓名
+	RecipientPostalCode    string            `json:"recipientPostalCode"`    // 收件人邮编
+	RecipientState         string            `json:"recipientState"`         // 收件人省州
+	RecipientTelephone     string            `json:"recipientTelephone"`     // 收件人电话
 	SalesRecordNumber      string            `json:"salesRecordNumber"`      // 包裹订单号（如果有多订单情况会以|做区分）
-	SenderAddress1         string            `json:"senderAddress1"`         //	寄件人地址1
-	SenderAddress2         string            `json:"senderAddress2"`         //	寄件人地址2
-	SenderCity             string            `json:"senderCity"`             //	寄件人城市
-	SenderCompany          string            `json:"senderCompany"`          //	寄件人公司
-	SenderCountry          string            `json:"senderCountry"`          //	寄件人国家
-	SenderEmail            string            `json:"senderEmail"`            //	寄件人电子邮箱
-	SenderMobile           string            `json:"senderMobile"`           //	寄件人手机
-	SenderName             string            `json:"senderName"`             //	寄件人姓名
-	SenderPostalCode       string            `json:"senderPostalCode"`       //	寄件人邮编
-	SenderState            string            `json:"senderState"`            //	寄件人省州
-	SenderTelephone        string            `json:"senderTelephone"`        //	寄件人电话
-	ShippingMethodCode     string            `json:"shippingMethodCode"`     //	物流渠道代码
-	TrackingNumber         string            `json:"trackingNumber"`         //	未在物流商系统下单状态的订单或无跟踪号的渠道的订单为空
-	TtPacketId             string            `json:"ttPacketId"`             //	通途包裹号
-	TtPacketStatus         string            `json:"ttPacketStatus"`         //	通途包裹状态WAIT_UPLOAD 等待在物流商系统下单,WAIT_CONFIRM 等待在物流商系统交运,CONFIRM客户已经交运但是没有发货,WAIT_CANCEL等待在物流商系统取消,FAILURE物流商系统处理失败
-	VatNo                  string            `json:"vatNo"`                  //	卖家VAT税号
-	VirtualTrackingNumber  string            `json:"virtualTrackingNumber"`  //	虚拟跟踪号
-	Width                  float64           `json:"width"`                  //	包裹宽，单位cm
+	SenderAddress1         string            `json:"senderAddress1"`         // 寄件人地址1
+	SenderAddress2         string            `json:"senderAddress2"`         // 寄件人地址2
+	SenderCity             string            `json:"senderCity"`             // 寄件人城市
+	SenderCompany          string            `json:"senderCompany"`          // 寄件人公司
+	SenderCountry          string            `json:"senderCountry"`          // 寄件人国家
+	SenderEmail            string            `json:"senderEmail"`            // 寄件人电子邮箱
+	SenderMobile           string            `json:"senderMobile"`           // 寄件人手机
+	SenderName             string            `json:"senderName"`             // 寄件人姓名
+	SenderPostalCode       string            `json:"senderPostalCode"`       // 寄件人邮编
+	SenderState            string            `json:"senderState"`            // 寄件人省州
+	SenderTelephone        string            `json:"senderTelephone"`        // 寄件人电话
+	ShippingMethodCode     string            `json:"shippingMethodCode"`     // 物流渠道代码
+	TrackingNumber         string            `json:"trackingNumber"`         // 未在物流商系统下单状态的订单或无跟踪号的渠道的订单为空
+	TtPacketId             string            `json:"ttPacketId"`             // 通途包裹号
+	TtPacketStatus         string            `json:"ttPacketStatus"`         // 通途包裹状态WAIT_UPLOAD 等待在物流商系统下单,WAIT_CONFIRM 等待在物流商系统交运,CONFIRM客户已经交运但是没有发货,WAIT_CANCEL等待在物流商系统取消,FAILURE物流商系统处理失败
+	VatNo                  string            `json:"vatNo"`                  // 卖家VAT税号
+	VirtualTrackingNumber  string            `json:"virtualTrackingNumber"`  // 虚拟跟踪号
+	Width                  float64           `json:"width"`                  // 包裹宽（单位cm）
 }
 
 type PackagesQueryParams struct {
