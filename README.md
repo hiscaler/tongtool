@@ -66,7 +66,6 @@
 - Products(params ProductsQueryParams) (items []Product, err error)         // 批量获取售卖详情
 - Product(params ProductQueryParams) (item Product, exists bool, err error) // 获取售卖基本资料
 - UpdateProduct(req UpdateProductRequest) error                             // 修改售卖资料
-- DeleteProduct(req DeleteProductRequest) error  
 
 ### ERP3.0
 
