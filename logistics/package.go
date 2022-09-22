@@ -28,11 +28,11 @@ type declaration struct {
 	DeclareCurrency  string  `json:"declareCurrency"`  // 申报币种，三字货币代码
 	DeclareEnName    string  `json:"declareEnName"`    // 申报英文品名
 	DeclareNumber    int     `json:"declareNumber"`    // 申报产品数量
-	DeclareProductId string  `json:"declareProductId"` // 申报的产品ID,通常为平台上的产品id
+	DeclareProductId string  `json:"declareProductId"` // 申报的产品 ID，通常为平台上的产品 ID
 	DeclareURL       string  `json:"declareUrl"`       // 申报的产品链接
 	DeclareValue     float64 `json:"declareValue"`     // 单个货品申报价值
 	DeclareWeight    float64 `json:"declareWeight"`    // 单个货品申报重量，单位克
-	GoodsSKU         string  `json:"goodsSku"`         // 申报产品SKU
+	GoodsSKU         string  `json:"goodsSku"`         // 申报产品 SKU
 	HsCode           string  `json:"hsCode"`           // 海关编码
 	Material         string  `json:"material"`         // 申报的产品材质
 	Purpose          string  `json:"purpose"`          // 申报的产品用途
@@ -42,21 +42,21 @@ type declaration struct {
 type extendParameter struct {
 	Code  string `json:"parameterCode"`  // 扩展参数代码
 	Name  string `json:"parameterName"`  // 扩展参数名称
-	Type  string `json:"parameterType"`  // input 输入字符串,checkbox 多选按钮,select单选按钮
+	Type  string `json:"parameterType"`  // input 输入字符串（checkbox：多选按钮、select：单选按钮）
 	Value string `json:"parameterValue"` // 如果是多选或者单选按钮，需要提供取值范围，多个取值之间用逗号或者分号隔开。
 }
 
 // 配货信息
 type picking struct {
 	CargoSpace        string `json:"cargoSpace"`        // 货位号
-	EbayItemId        string `json:"ebayItemId"`        //	Ebay订单货品ID
-	EbayTransactionId string `json:"ebayTransactionId"` //	Ebay订单交易ID
-	ProductName       string `json:"productName"`       //	货品配货名称
-	ProductWeight     int    `json:"productWeight"`     //	货品单品重量（单位克）
-	Quantity          int    `json:"quantity"`          //	数量
-	Remark            string `json:"remark"`            //	备注
-	SKU               string `json:"sku"`               //	货品SKU（默认先传仓库专用货号）
-	WarehouseName     string `json:"warehouseName"`     //	仓库代码
+	EbayItemId        string `json:"ebayItemId"`        // Ebay 订单货品 ID
+	EbayTransactionId string `json:"ebayTransactionId"` // Ebay 订单交易 ID
+	ProductName       string `json:"productName"`       // 货品配货名称
+	ProductWeight     int    `json:"productWeight"`     // 货品单品重量（单位克）
+	Quantity          int    `json:"quantity"`          // 数量
+	Remark            string `json:"remark"`            // 备注
+	SKU               string `json:"sku"`               // 货品 SKU（默认先传仓库专用货号）
+	WarehouseName     string `json:"warehouseName"`     // 仓库代码
 }
 
 type Package struct {
@@ -64,14 +64,14 @@ type Package struct {
 	BuyerPassportCode      string            `json:"buyerPassportCode"`      // 收件人识别编号
 	CarrierOrderId         string            `json:"carrierOrderId"`         // 物流商系统单号未在物流商系统下单状态的订单为空
 	DeclarationArray       []declaration     `json:"declarationArray"`       // 申报信息列表
-	EbayBuyerId            string            `json:"ebayBuyerId"`            // Ebay买家ID
-	EbaySellerId           string            `json:"ebaySellerId"`           // Ebay卖家ID
+	EbayBuyerId            string            `json:"ebayBuyerId"`            // Ebay 买家 ID
+	EbaySellerId           string            `json:"ebaySellerId"`           // Ebay 卖家 ID
 	ExtendParameterArray   []extendParameter `json:"extendParameterArray"`   // 邮寄方式扩展设置信息
-	Height                 float64           `json:"height"`                 //	包裹高，单位cm
-	IOSSMethod             string            `json:"iossMethod"`             //	预缴增值税方式（IOSS、no-IOSS、other）
-	IOSSNo                 string            `json:"iossNo"`                 //	卖家 IOSS 税号
-	LastSyncTime           string            `json:"lastsyncTime"`           //	订单状态的最后更新时间
-	Length                 float64           `json:"length"`                 //	包裹长（单位cm）
+	Height                 float64           `json:"height"`                 // 包裹高，单位cm
+	IOSSMethod             string            `json:"iossMethod"`             // 预缴增值税方式（IOSS、no-IOSS、other）
+	IOSSNo                 string            `json:"iossNo"`                 // 卖家 IOSS 税号
+	LastSyncTime           string            `json:"lastsyncTime"`           // 订单状态的最后更新时间
+	Length                 float64           `json:"length"`                 // 包裹长（单位cm）
 	MerchantId             string            `json:"merchantId"`             //	通途商户号
 	PickingArray           []picking         `json:"pickingArray"`           //	配货信息
 	PlatformId             string            `json:"platformId"`             // 平台类型

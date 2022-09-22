@@ -2,9 +2,9 @@ package pui
 
 // PackageUploadItemAliExpress 速卖通线上物流获取token所需字段,调用速卖通线上物流必填
 type PackageUploadItemAliExpress struct {
-	AppKey                string `json:"appKey"`                // 速卖通开发者APPKEY(如果不传入默认使用tongtool的开发者账号)
-	AppSecret             string `json:"appSecret"`             // 速卖通开发者APPSECRET(如果不传入默认使用tongtool的开发者账号)
-	DomesticTrackingNo    string `json:"domesticTrackingNo"`    // 国内快递运单号，长度1-32
+	AppKey                string `json:"appKey"`                // 速卖通开发者 APPKEY（如果不传入默认使用tongtool的开发者账号）
+	AppSecret             string `json:"appSecret"`             // 速卖通开发者 APPSECRET（如果不传入默认使用tongtool的开发者账号）
+	DomesticTrackingNo    string `json:"domesticTrackingNo"`    // 国内快递运单号（长度 1 ~ 32）
 	ExtendData            string `json:"extendData"`            // 拣单信息[{"imageUrl":"http://xxxxxx","productDescription":"ALIBAB ALIBABA ALIBABA"}]
 	IsAneroidMarkup       string `json:"isAneroidMarkup"`       // 是否含非液体化妆品(必填，填0代表不含非液体化妆品;填1代表含非液体化妆品；默认为0)
 	IsContainsBattery     string `json:"isContainsBattery"`     // 是否包含锂电池(必填0/1)
