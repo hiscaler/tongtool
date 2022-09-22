@@ -7,7 +7,6 @@
 
 针对通途 API 接口返回的数据和格式未做任何改动，所以具体数据和格式您可以以通途开发文档为准。
 
-
 ## 支持的方法
 
 ### ERP2.0
@@ -36,7 +35,7 @@
 - PurchaseOrderStockInLogs(params PurchaseOrderLogsQueryParams) (items []PurchaseOrderLog, isLastPage bool, err error)                        // 采购单入库查询
 - SaleAccounts(params SaleAccountsQueryParams) (items []SaleAccount, isLastPage bool, err error)                                              // 商户账号列表
 - Stocks(params StocksQueryParams) (items []Stock, isLastPage bool, err error)                                                                // 库存列表
-- StockChangeLogs(params StockChangeLogsQueryParams) (items []StockChangeLog, isLastPage bool, err error)                                     //  库存变动查询
+- StockChangeLogs(params StockChangeLogsQueryParams) (items []StockChangeLog, isLastPage bool, err error)                                     // 库存变动查询
 - Warehouses(params WarehousesQueryParams) (items []Warehouse, isLastPage bool, err error)                                                    // 仓库列表
 - Warehouse(id string) (item Warehouse, exists bool, err error)                                                                               // 仓库列表
 - WarehouseShippingMethods(params ShippingMethodsQueryParams) (items []WarehouseShippingMethod, isLastPage bool, err error)                   // 仓库物流渠道列表
@@ -85,31 +84,33 @@
 - WriteBackPackageDeliveryInformation(req PackageWriteBackRequest) error                               // 回写包裹发货信息
 
 ## 配置
-创建连接实例时，您需要提供一个配置参数。具体说明如下：
+
+创建连接实例时，您需要提供一个配置参数。参数具体说明如下：
+
 - Debug
 
-    是否为调试模式，开启的情况下会输出接口请求数据，在开发模式下建议开启，方便调试，生产系统上则建议关闭。
+  是否为调试模式，开启的情况下会输出接口请求数据，在开发模式下建议开启，方便调试，生产系统上则建议关闭。
 - AppKey
 
-    通途 APP Key（从通途开放平台的应用管理中获取）
+  通途 APP Key（从通途开放平台的应用管理中获取）
 - RetryCount
 
-    HTTP 请求失败的情况下重试次数
+  HTTP 请求失败的情况下重试次数
 - RetryWaitTime
-    
-    重试等待时间
+
+  重试等待时间
 - RetryMaxWaitTime
 
-    最大重试等待时间
+  最大重试等待时间
 - ForceWaiting
 
-    强制等待，如果设置为 true 的话，会总是等待接口端返回数据。
+  强制等待，如果设置为 true 的话，会总是等待接口端返回数据。
 - AppSecret
 
-    通途 APP Secret（从通途开放平台的应用管理中获取）
+  通途 APP Secret（从通途开放平台的应用管理中获取）
 - EnableCache
 
-    是否激活缓存，激活的情况下，10 分钟内多次发起的请求第二次起都会从缓存中获取后直接返回，不会再走请求接口，如果您的数据变化比较频繁，建议关闭，以免获取不到最新的数据。同时也需要注意的是通途有接口请求次数限制，一分钟内最多发起 5 次接口请求，所以在应用端需要做相应的处理。同时支持开启 forceWaiting 选项，如果设置为 true 的话，会总是等待接口端返回数据，您可以根据自己的需求开启或者关闭，默认情况下该选项是关闭的。
+  是否激活缓存，激活的情况下，10 分钟内多次发起的请求第二次起都会从缓存中获取后直接返回，不会再走请求接口，如果您的数据变化比较频繁，建议关闭，以免获取不到最新的数据。同时也需要注意的是通途有接口请求次数限制，一分钟内最多发起 5 次接口请求，所以在应用端需要做相应的处理。同时支持开启 forceWaiting 选项，如果设置为 true 的话，会总是等待接口端返回数据，您可以根据自己的需求开启或者关闭，默认情况下该选项是关闭的。
 
 ## 使用方法
 
@@ -159,17 +160,23 @@ func main() {
 ```
 
 ## 注意事项
+
 ### 判断数据是否存在
+
 针对单项数据的查询，通常返回数据格式为：
+
 ```go
 FuncName(req Request) (item DataType, exists bool, err error)
 ```
+
 如果你需要判断返回的数据是否有效，在使用数据前请先判断 exists 返回值是否为 true。为 true 的情况下数据一定是存在且有效的，而如果为 false 则需要继续判断 err 返回值是否为 nil，为 nil 则表示数据确实不存在，而非 nil 则是在查询过程中出现问题导致不能正常获取到相应的数据，需要您根据业务需求来确定后续的代码逻辑。
 
 ### 数据扩展
+
 通途的返回格式比较混乱，比如布尔值的返回有多种（Y, 1, null, ""），为了减少开发者负担，针对这种情况做了部分处理，增加的属性为原属性名称增加 Boolean 后缀，返回值类型为布尔值。
 
 ### 调用速率限制处理
+
 所有接口调用频率为一分钟 5 次，需要调用端做好频率控制。但是通途接口并没有在返回数据中告知剩余的可访问次数，所以不能做到精细控制。
 
 目前如果遇到调用速率限制，请设置配置配置参数中的 `RetryCount`、`RetryWaitTime`、`RetryMaxWaitTime`、`ForceWaiting` 参数。同时也建议在生产环境中开启缓存，进一步地避免该问题。
