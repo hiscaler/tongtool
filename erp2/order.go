@@ -68,7 +68,7 @@ type TongToolGoodsInfo struct {
 	GoodsCurrentCost     float64 `json:"goodsCurrentCost"`     // 货品成本（最新成本）
 	GoodsImageGroupId    string  `json:"goodsImageGroupId"`    // 商品图片
 	GoodsPackagingCost   float64 `json:"goodsPackagingCost"`   // 货品包装成本
-	GoodsPackagingWeight float64 `json:"goodsPackagingWeight"` // 货品包装重量(克)
+	GoodsPackagingWeight float64 `json:"goodsPackagingWeight"` // 货品包装重量（克）
 	GoodsSKU             string  `json:"goodsSku"`             // 货品 SKU
 	GoodsTitle           string  `json:"goodsTitle"`           // 商品规格
 	GoodsWeight          float64 `json:"goodsWeight"`          // 货品重量（克）
@@ -107,7 +107,7 @@ type Order struct {
 	BuyerPhone                string         `json:"buyerPhone"`                // 买家电话
 	BuyerState                string         `json:"buyerState"`                // 买家省份
 	Carrier                   string         `json:"carrier"`                   // 上传物流的carrier
-	CarrierType               string         `json:"carrierType"`               // 物流商类型 (0：通途API对接、1：通途Excel文件导出、2：通途离线生成跟踪号、3：无对接、4：自定义Excel对接)
+	CarrierType               string         `json:"carrierType"`               // 物流商类型（0：通途API对接、1：通途Excel文件导出、2：通途离线生成跟踪号、3：无对接、4：自定义Excel对接）
 	CarrierURL                string         `json:"carrierUrl"`                // 物流网络地址
 	DespatchCompleteTime      string         `json:"despatchCompleteTime"`      // 订单发货完成时间
 	DispatchTypeName          string         `json:"dispathTypeName"`           // 邮寄方式名称
@@ -118,7 +118,7 @@ type Order struct {
 	InsuranceIncome           float64        `json:"insuranceIncome"`           // 买家所付保费
 	InsuranceIncomeCurrency   string         `json:"insuranceIncomeCurrency"`   // 买家所付保费币种
 	IsInvalid                 string         `json:"isInvalid"`                 // 是否作废（0,'',null：未作废、1：手工作废、2：订单任务下载永久作废、3：拆分单主单作废、4：拆分单子单作废）
-	IsSuspended               string         `json:"isSuspended"`               // 是否需要人工审核 (1：需要人工审核、0或null：不需要)
+	IsSuspended               string         `json:"isSuspended"`               // 是否需要人工审核（1：需要人工审核、0或null：不需要）
 	MerchantCarrierShortname  string         `json:"merchantCarrierShortname"`  // 承运人简称
 	OrderAmount               float64        `json:"orderAmount"`               // 订单总金额（商品金额+运费+保费）
 	OrderAmountCurrency       string         `json:"orderAmountCurrency"`       // 订单金额币种
@@ -411,7 +411,7 @@ type OrderBuyer struct {
 	BuyerAddress2    string `json:"buyerAddress2"`    // 地址2
 	BuyerAddress3    string `json:"buyerAddress3"`    // 地址3
 	BuyerCity        string `json:"buyerCity"`        // 城市
-	BuyerCountryCode string `json:"buyerCountryCode"` // 国家(名称或代码)
+	BuyerCountryCode string `json:"buyerCountryCode"` // 国家（名称或代码）
 	BuyerEmail       string `json:"buyerEmail"`       // 买家邮箱
 	BuyerMobilePhone string `json:"buyerMobilePhone"` // 手机
 	BuyerName        string `json:"buyerName"`        // 买家名称
@@ -435,7 +435,7 @@ type OrderPayment struct {
 
 // OrderTransaction 订单交易信息
 type OrderTransaction struct {
-	GoodsDetailId              string  `json:"goodsDetailId"`              // 货品ID，与SKU二传一即可;如果与SKU都传值了，以这个字段值为准
+	GoodsDetailId              string  `json:"goodsDetailId"`              // 货品 ID（与 SKU 二传一即可，如果与 SKU 都传值了，以这个字段值为准）
 	GoodsDetailRemark          string  `json:"goodsDetailRemark"`          // 货品备注
 	ProductsTotalPrice         float64 `json:"productsTotalPrice"`         // 商品总金额
 	ProductsTotalPriceCurrency string  `json:"productsTotalPriceCurrency"` // 商品总金额币种
@@ -451,7 +451,7 @@ type CreateOrderRequest struct {
 	Currency                string             `json:"currency"`                // 币种
 	InsuranceIncome         float64            `json:"insuranceIncome"`         // 买家支付的保险
 	InsuranceIncomeCurrency string             `json:"insuranceIncomeCurrency"` // 买家支付的保险币种
-	NeedReturnOrderId       string             `json:"needReturnOrderId"`       // 是否需要返回通途订单ID（0：不需要、1：需要）默认0不需要;如果需要返回订单ID那么返回结果集是一个Object:{"orderId":"","saleRecordNum":""},否则返回一个字符串，内容是saleRecordNum
+	NeedReturnOrderId       string             `json:"needReturnOrderId"`       // 是否需要返回通途订单ID（0：不需要、1：需要）默认 0 不需要；如果需要返回订单 ID 那么返回结果集是一个Object:{"orderId":"","saleRecordNum":""},否则返回一个字符串，内容是saleRecordNum
 	Notes                   string             `json:"notes"`                   // 买家留言
 	OrderCurrency           string             `json:"ordercurrency"`           // 订单币种
 	PaymentInfos            []OrderPayment     `json:"paymentInfos"`            // 付款信息
@@ -459,13 +459,13 @@ type CreateOrderRequest struct {
 	Remarks                 []string           `json:"remarks"`                 // 订单备注,只能新增
 	SaleRecordNum           string             `json:"saleRecordNum"`           // 订单号
 	SellerAccountCode       string             `json:"sellerAccountCode"`       // 卖家账号代码
-	ShippingMethodId        string             `json:"shippingMethodId"`        // 渠道ID
+	ShippingMethodId        string             `json:"shippingMethodId"`        // 渠道 ID
 	TaxIncome               float64            `json:"taxIncome"`               // 买家支付的税金
 	TaxIncomeCurrency       string             `json:"taxIncomeCurrency"`       // 买家支付的税金币种
 	TotalPrice              float64            `json:"totalPrice"`              // 订单总额
 	TotalPriceCurrency      string             `json:"totalPriceCurrency"`      // 订单总额币种
 	Transactions            []OrderTransaction `json:"transactions"`            // 交易信息
-	WarehouseId             string             `json:"warehouseId"`             // 仓库ID
+	WarehouseId             string             `json:"warehouseId"`             // 仓库 ID
 }
 
 func (m CreateOrderRequest) Validate() error {
@@ -513,7 +513,7 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 	}
 
 	orderReq := struct {
-		MerchantId string             `json:"merchantId"` // 商户ID
+		MerchantId string             `json:"merchantId"` // 商户 ID
 		Order      CreateOrderRequest `json:"order"`      // 订单信息
 	}{
 		MerchantId: s.tongTool.MerchantId,
@@ -563,14 +563,14 @@ func (s service) CreateOrder(req CreateOrderRequest) (orderId, orderNumber strin
 
 type UpdateOrderTransaction struct {
 	GoodsDetailId  string `json:"goodsDetailId"`  // 货品 ID 与订单详情 ID 二者必填其一
-	OrderDetailsId string `json:"orderDetailsId"` // 订单详情ID,此参数值来自订单查询返回,此参数有值代表是需要更新货品数量或者删除货品(要看quantity参数值)，此参数有值同时会清空原有核查结果，需要重新核查，此参数没有值但goodsDetailId有值代表是需要新增货品
-	Quantity       int    `json:"quantity"`       // 数量（等于0表示删除当前货品）
+	OrderDetailsId string `json:"orderDetailsId"` // 订单详情 ID，此参数值来自订单查询返回，此参数有值代表是需要更新货品数量或者删除货品（要看quantity 参数值），此参数有值同时会清空原有核查结果，需要重新核查，此参数没有值但 goodsDetailId 有值代表是需要新增货品
+	Quantity       int    `json:"quantity"`       // 数量（等于 0 表示删除当前货品）
 }
 
 // UpdateOrderRequest 订单更新请求
 type UpdateOrderRequest struct {
 	BuyerInfo        OrderBuyer               `json:"buyerInfo,omitempty"`        // 买家信息
-	Transactions     []UpdateOrderTransaction `json:"transactions,omitempty"`     // 交易记录信息，删除货品需要传对应的记录并数量传0
+	Transactions     []UpdateOrderTransaction `json:"transactions,omitempty"`     // 交易记录信息，删除货品需要传对应的记录并数量传 0
 	MerchantId       string                   `json:"merchantId"`                 // 商户 ID
 	OrderId          string                   `json:"orderId"`                    // 通途订单 ID
 	Remarks          []string                 `json:"remarks,omitempty"`          // 订单备注（只能新增）
@@ -595,8 +595,9 @@ func (m UpdateOrderRequest) Validate() error {
 	)
 }
 
-// UpdateOrder 更新订单
+// UpdateOrder 更新订单（未配货前可用）
 // https://open.tongtool.com/apiDoc.html#/?docId=3e0d01bfe01441aa8e2071c2c88cc9fb
+// 注意：当前接口仅支持手工订单和 API 导入的订单进行更新，平台订单不支持更新！
 func (s service) UpdateOrder(req UpdateOrderRequest) error {
 	if err := req.Validate(); err != nil {
 		return err
