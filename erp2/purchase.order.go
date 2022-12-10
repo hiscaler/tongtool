@@ -61,15 +61,15 @@ type PurchaseOrder struct {
 
 type PurchaseOrdersQueryParams struct {
 	Paging
-	MerchantId        string `json:"merchantId"`                  // 商户ID
-	POrderStatus      string `json:"pOrderStatus,omitempty"`      // 采购单状态（delivering：等待到货、pReceivedAndWaitM：部分到货等待剩余、partialReceived：部分到货不等待剩余、Received：全部到货、cancel：已作废、NotPaymentApply：未申请付款、paymentApply：已申请付款、paymentCancel：已取消付款、payed：已付款、partialPayed：部分付款）
-	PurchaseDateFrom  string `json:"purchaseDateFrom,omitempty"`  // 采购日期开始时间
-	PurchaseDateTo    string `json:"purchaseDateTo,omitempty"`    // 采购日期结束时间
-	PurchaseOrderCode string `json:"purchaseOrderCode,omitempty"` // 采购单号
-	SKUs              string `json:"skus,omitempty"`              // SKU 数组，长度不超过 10
-	SupplierName      string `json:"supplierName,omitempty"`      // 供应商名称
-	UpdatedDateFrom   string `json:"updatedDateFrom,omitempty"`   // 采购单更新开始时间
-	UpdatedDateTo     string `json:"updatedDateTo,omitempty"`     // 采购单更新结束时间
+	MerchantId        string   `json:"merchantId"`                  // 商户ID
+	POrderStatus      string   `json:"pOrderStatus,omitempty"`      // 采购单状态（delivering：等待到货、pReceivedAndWaitM：部分到货等待剩余、partialReceived：部分到货不等待剩余、Received：全部到货、cancel：已作废、NotPaymentApply：未申请付款、paymentApply：已申请付款、paymentCancel：已取消付款、payed：已付款、partialPayed：部分付款）
+	PurchaseDateFrom  string   `json:"purchaseDateFrom,omitempty"`  // 采购日期开始时间
+	PurchaseDateTo    string   `json:"purchaseDateTo,omitempty"`    // 采购日期结束时间
+	PurchaseOrderCode string   `json:"purchaseOrderCode,omitempty"` // 采购单号
+	SKUs              []string `json:"skus,omitempty"`              // SKU 数组，长度不超过 10
+	SupplierName      string   `json:"supplierName,omitempty"`      // 供应商名称
+	UpdatedDateFrom   string   `json:"updatedDateFrom,omitempty"`   // 采购单更新开始时间
+	UpdatedDateTo     string   `json:"updatedDateTo,omitempty"`     // 采购单更新结束时间
 }
 
 func (m PurchaseOrdersQueryParams) Validate() error {
