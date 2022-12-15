@@ -185,3 +185,23 @@ func TestService_UpdateOrder(t *testing.T) {
 		t.Errorf("ttService.UpdateOrder error: %s", err.Error())
 	}
 }
+
+
+func TestService_OrderPair(t *testing.T) {
+	req := OrderPairRequest{
+		OrderId: "8738050530202212150164809993",
+		Transactions: []OrderPairTransaction{
+			{
+				GoodsDetailId: "8738050530202212150004750426",
+				OrderDetailsId: "8738050530202212150164809994",
+				Quantity:    1,
+			},
+		},
+	}
+	err := ttService.OrderPair(req)
+	if err != nil {
+		t.Errorf("ttService.OrderPair error: %s", err.Error())
+	}
+}
+
+

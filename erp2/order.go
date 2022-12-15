@@ -691,3 +691,65 @@ func (s service) CancelOrder(req CancelOrderRequest) (results []OrderCancelResul
 	}
 	return
 }
+
+// 订单配对
+// 订单未配货前可用；目前支持亚马逊、速卖通和 shopify 平台订单添加货品
+
+type OrderPairTransaction struct {
+	GoodsDetailId  string `json:"goodsDetailId"`  // 货品 ID
+	OrderDetailsId string `json:"orderDetailsId"` // 订单详情 ID
+	Quantity       int    `json:"quantity"`       // 数量
+}
+
+type OrderPairRequest struct {
+	MerchantId   string                 `json:"merchantId"`   // 商户 ID
+	Transactions []OrderPairTransaction `json:"transactions"` // 订单交易信息
+	OrderId      string                 `json:"orderId"`      // 通途订单 ID
+}
+
+func (m OrderPairRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Transactions, validation.Required.Error("订单交易信息不能为空")),
+		validation.Field(&m.Transactions, validation.When(len(m.Transactions) > 0, validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+			if transaction, ok := value.(OrderPairTransaction); !ok {
+				return errors.New("无效的配对信息")
+			} else {
+				return validation.ValidateStruct(&transaction,
+					validation.Field(&transaction.GoodsDetailId, validation.Required.Error("货品 ID 不能为空")),
+					validation.Field(&transaction.OrderDetailsId, validation.Required.Error("订单详情 ID 不能为空")),
+					validation.Field(&transaction.Quantity, validation.Required.Error("数量不能为空"), validation.Min(1).Error("数量不能小于 {{.threshold}}")),
+				)
+			}
+		})))),
+		validation.Field(&m.OrderId, validation.Required.Error("订单 ID 不能为空")),
+	)
+}
+
+func (s service) OrderPair(req OrderPairRequest) error {
+	if err := req.Validate(); err != nil {
+		return err
+	}
+
+	req.MerchantId = s.tongTool.MerchantId
+	res := struct {
+		tongtool.Response
+	}{}
+	resp, err := s.tongTool.Client.R().
+		SetBody(req).
+		SetResult(&res).
+		Post("/openapi/tongtool/orderAddProduct")
+	if err != nil {
+		return err
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	return err
+}

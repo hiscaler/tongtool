@@ -17,6 +17,7 @@ type Service interface {
 	Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
 	Order(id string) (item Order, exists bool, err error)                                                                                       // 单个订单
 	CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                                // 作废订单
+	OrderPair(req OrderPairRequest) error                                                                                                       // 订单配对
 	Products(params ProductsQueryParams) (items []Product, isLastPage bool, err error)                                                          // 商品列表
 	Product(typ string, sku string, isAlias bool) (item Product, exists bool, err error)                                                        // 单个商品
 	ProductExists(typ string, sku string, isAlias bool) (exists bool, err error)                                                                // 商品是否存在
