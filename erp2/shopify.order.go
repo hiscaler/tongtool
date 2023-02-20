@@ -54,8 +54,8 @@ func (m ShopifyOrdersQueryParams) Validate() error {
 		validation.Field(&m.BuyerEmail, validation.When(m.BuyerEmail != "", is.EmailFormat.Error("无效的买家邮箱"))),
 		validation.Field(&m.PayDateFrom, validation.When(m.PayDateFrom != "", validation.Date(constant.DatetimeFormat).Error("付款起始时间格式错误"))),
 		validation.Field(&m.PayDateTo, validation.When(m.PayDateTo != "", validation.Date(constant.DatetimeFormat).Error("付款结束时间格式错误"))),
-		validation.Field(&m.PaypalTransactionId, validation.When(m.PayDateFrom == "" && m.PayDateTo == "" && m.ShopifyOrderId == "", validation.Required.Error("Paypal 交易号/Shopify 订单号/付款时间范围 必传其一"))),
-		validation.Field(&m.ShopifyOrderId, validation.When(m.PayDateFrom == "" && m.PayDateTo == "" && m.PaypalTransactionId == "", validation.Required.Error("Paypal 交易号/Shopify 订单号/付款时间范围 必传其一"))),
+		validation.Field(&m.PaypalTransactionId, validation.When(m.PayDateFrom == "" && m.PayDateTo == "" && m.ShopifyOrderId == "", validation.Required.Error("[ Paypal 交易号 / Shopify 订单号 / 付款时间范围 ]必传其一"))),
+		validation.Field(&m.ShopifyOrderId, validation.When(m.PayDateFrom == "" && m.PayDateTo == "" && m.PaypalTransactionId == "", validation.Required.Error("[ Paypal 交易号 / Shopify 订单号 / 付款时间范围 ]必传其一"))),
 	)
 }
 
