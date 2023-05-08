@@ -69,7 +69,7 @@ type Product struct {
 	GoodsDetail          []ProductDetail `json:"goodsDetail"`          // 商品明细
 	HsCode               string          `json:"hsCode"`               // 海关编码
 	InquirerName         string          `json:"inquirerName"`         // 采购询价员名称
-	LabelList            []Label         `json:"labelList"`            // 产品标签
+	LabelList            []ProductLabel         `json:"labelList"`            // 产品标签
 	LabelName            string          `json:"labelName"`            // 标签名称
 	PackageCost          float64         `json:"packageCost"`          // 商品包装成本
 	PackageHeight        float64         `json:"packageHeight"`        // 包裹尺寸(高cm)
@@ -191,7 +191,7 @@ type ProductDetail struct {
 	GoodsWeight   float64 `json:"goodsWeight"`   // 货品重量(克)
 }
 
-type Label struct {
+type ProductLabel struct {
 	SKULabel string `json:"skuLabel"` // 商品标签
 }
 
