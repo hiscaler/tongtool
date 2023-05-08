@@ -46,6 +46,9 @@ type Service interface {
 	AfterSales(params AfterSalesQueryParams) (items []AfterSale, isLastPage bool, err error)                                                    // 售后单信息查询
 	PaypalTransactions(params PaypalTransactionsQueryParams) (items []PaypalTransaction, isLastPage bool, err error)                            // Paypal 付款记录查询
 	SurfaceSheets(params SurfaceSheetsQueryParams) (items []SurfaceSheet, err error)                                                            // 通途 ERP 面单
+	CreateLabel(req CreateLabelRequest) error                                                                                                   // 创建标签
+	Labels(params LabelsQueryParams) (items []Label, isLastPage bool, err error)                                                                // 标签列表
+	LabelExists(name string) (exists bool, err error)                                                                                           // 标签是否存在
 }
 
 func NewService(tt *tongtool.TongTool) Service {
