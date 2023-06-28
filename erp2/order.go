@@ -146,6 +146,7 @@ type Order struct {
 	ShippingLimitDate         string         `json:"shippingLimiteDate"`        // 发货截止时间
 	TaxCurrency               string         `json:"taxCurrency"`               // 税费币种
 	TaxIncome                 float64        `json:"taxIncome"`                 // 税费
+	UpdatedTime               string         `json:"updatedTime"`               // 订单更新时间
 	WarehouseIdKey            string         `json:"warehouseIdKey"`            // 通途仓库 ID Key
 	WarehouseName             string         `json:"warehouseName"`             // 仓库名称
 	WebFinalFee               float64        `json:"webFinalFee"`               // 平台佣金
