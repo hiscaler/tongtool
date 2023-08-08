@@ -17,13 +17,6 @@ import (
 // 亚马逊定制信息处理
 
 const (
-	pageContainerCustomization      = "PageContainerCustomization"
-	previewContainerCustomization   = "PreviewContainerCustomization"
-	flatContainerCustomization      = "FlatContainerCustomization"
-	placementContainerCustomization = "PlacementContainerCustomization"
-
-	containerCustomization = "ContainerCustomization"
-
 	imageCustomization  = "ImageCustomization"
 	optionCustomization = "OptionCustomization"
 	fontCustomization   = "FontCustomization"
@@ -129,7 +122,7 @@ type AmazonCustomizationInformationParser struct {
 	jsonText            string
 	SnapshotImageName   string
 	SnapshotImageBase64 string
-	Images              []string
+	Images              map[string]string
 	Text                string
 }
 
@@ -316,19 +309,18 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		parser.SnapshotImageBase64 = imageBase64String
 	}
 	labeledValues := make([]string, 0)
-	images := make([]string, 0)
+	images := make(map[string]string, 0)
 	for _, c := range previewContainerCustomizationData.Children {
 		v1, v2 := read(c.Children)
 		labeledValues = append(labeledValues, v1...)
 		for _, img := range v2 {
 			imageBase64String, err = toImageBase64(filepath.Join(dst, img))
 			if err != nil {
-				images = append(images, img)
+				images[img] = img
 			} else {
-				images = append(images, img)
-				// images = append(images, imageBase64String)
+				images[img] = img
+				// images[img] = imageBase64String
 			}
-
 		}
 	}
 
@@ -343,7 +335,7 @@ func (parser *AmazonCustomizationInformationParser) Reset() *AmazonCustomization
 	parser.jsonText = ""
 	parser.SnapshotImageName = ""
 	parser.SnapshotImageBase64 = ""
-	parser.Images = make([]string, 0)
+	parser.Images = make(map[string]string, 0)
 	parser.Text = ""
 	return parser
 }
