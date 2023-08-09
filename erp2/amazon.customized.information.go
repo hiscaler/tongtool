@@ -221,7 +221,9 @@ func read(customizations []map[string]interface{}) (labeledValues []string, imag
 			}
 			label = d.Label
 			value = d.Image.ImageName
-			images = append(images, value)
+			if value != "" {
+				images = append(images, value)
+			}
 
 		case fontCustomization:
 			var d FontCustomization
@@ -315,7 +317,8 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		for _, img := range v2 {
 			imageBase64String, err = toImageBase64(filepath.Join(dst, img))
 			if err != nil {
-				images[img] = img
+				return parser, err
+				// images[img] = img
 			} else {
 				images[img] = imageBase64String
 			}
