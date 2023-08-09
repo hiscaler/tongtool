@@ -43,6 +43,8 @@ type queryDefaultValues struct {
 }
 
 type TongTool struct {
+	application        app                // 认证后的应用数据
+	assetSaveDir       string             // 资源保存地址
 	Debug              bool               // 是否调试模式
 	Client             *resty.Client      // HTTP 客户端
 	MerchantId         string             // 商户 ID
@@ -50,7 +52,7 @@ type TongTool struct {
 	EnableCache        bool               // 是否激活缓存
 	Cache              *bigcache.BigCache // 缓存
 	QueryDefaultValues queryDefaultValues // 查询默认值
-	application        app                // 认证后的应用数据
+
 }
 
 type app struct {
@@ -282,6 +284,15 @@ func (t *TongTool) SwitchCache(v bool) (err error) {
 		t.EnableCache = false
 	}
 	return
+}
+
+func (t *TongTool) SetAssetSaveDir(dir string) *TongTool {
+	t.assetSaveDir = dir
+	return t
+}
+
+func (t *TongTool) GetAssetSaveDir() string {
+	return t.assetSaveDir
 }
 
 func auth(appKey, appSecret string, debug bool) (application app, err error) {

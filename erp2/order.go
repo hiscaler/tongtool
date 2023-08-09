@@ -6,11 +6,16 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/gox/keyx"
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	jsoniter "github.com/json-iterator/go"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -54,12 +59,18 @@ type OrderPackage struct {
 
 // PlatformGoodsInfo 平台商品信息
 type PlatformGoodsInfo struct {
-	ProductId           string `json:"product_id"`          // 商品顺序号
-	Quantity            int    `json:"quantity"`            // 原始 SKU 数量
-	WebTransactionId    string `json:"webTransactionId"`    // 平台订单产品交易号
-	WebStoreCustomLabel string `json:"webstoreCustomLabel"` // 原始 SKU
-	WebStoreItemId      string `json:"webstoreItemId"`      // 平台订单产品 ItemId
-	WebStoreSKU         string `json:"webstoreSku"`         // 通途 SKU
+	ProductId             string `json:"product_id"`          // 商品顺序号
+	Quantity              int    `json:"quantity"`            // 原始 SKU 数量
+	WebTransactionId      string `json:"webTransactionId"`    // 平台订单产品交易号
+	WebStoreCustomLabel   string `json:"webstoreCustomLabel"` // 原始 SKU
+	WebStoreItemId        string `json:"webstoreItemId"`      // 平台订单产品 ItemId
+	WebStoreSKU           string `json:"webstoreSku"`         // 通途 SKU
+	CustomizedURL         string `json:"customizedUrl"`       // 定制信息下载地址
+	CustomizedInformation struct {
+		SnapshotImage string            `json:"snapshotImage"` // Image is base64 format
+		Text          string            `json:"text"`          // All text use \n split
+		Images        map[string]string `json:"images"`        // Image is base64 format
+	} `json:"customizedInformation"` // 定制信息
 }
 
 // TongToolGoodsInfo 通途商品信息
@@ -283,6 +294,35 @@ func (m OrdersQueryParams) Validate() error {
 	)
 }
 
+func download(url, filename, dir string) (path string, err error) {
+	path = filepath.Join(dir, filename+".zip")
+	if filex.Exists(path) {
+		// Return it if zip file exists.
+		return
+	}
+
+	file, err := os.Create(path)
+	if err != nil {
+		return
+	}
+	client := http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			r.URL.Opaque = r.URL.Path
+			return nil
+		},
+	}
+	// Put content on file
+	resp, err := client.Get(url)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(file, resp.Body)
+	defer file.Close()
+	return
+}
+
 // Orders 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error) {
@@ -333,7 +373,30 @@ ERROR: %s
 	if resp.IsSuccess() {
 		if err = tongtool.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Datas.Array
+			parser := NewAmazonCustomizationInformationParser()
 			for i := range items {
+				for _, detail := range items[i].OrderDetails {
+					for ii, gf := range items[i].GoodsInfo.PlatformGoodsInfoList {
+						if gf.WebStoreItemId == detail.WebStoreItemId {
+							if gf.CustomizedURL != "" {
+								var zipFile string
+								zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
+								if err != nil {
+									return
+								}
+								_, err = parser.Reset().SetZipFile(zipFile).Parse()
+								if err != nil {
+									return
+								}
+								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
+								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
+								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
+							}
+							break
+						}
+					}
+				}
+
 				items[i].IsInvalidBoolean = !inx.StringIn(items[i].IsInvalid, "0", "", "null")
 				items[i].IsSuspendedBoolean = items[i].IsSuspended == "1"
 			}

@@ -118,12 +118,12 @@ type AmazonCustomizationInformation struct {
 }
 
 type AmazonCustomizationInformationParser struct {
-	zipFile             string
-	jsonText            string
-	SnapshotImageName   string
-	SnapshotImageBase64 string
-	Images              map[string]string
-	Text                string
+	zipFile           string
+	jsonText          string
+	SnapshotImageName string
+	SnapshotImage     string            // Image is base64 format
+	Images            map[string]string // Image is base64 format
+	Text              string
 }
 
 func NewAmazonCustomizationInformationParser() *AmazonCustomizationInformationParser {
@@ -177,7 +177,6 @@ func read(customizations []map[string]interface{}) (labeledValues []string, imag
 			rawChildren, ok := customization["children"]
 			if !ok {
 				continue
-				// return labeledValues
 			}
 			children := make([]map[string]interface{}, 0)
 			for _, child := range rawChildren.([]interface{}) {
@@ -190,7 +189,7 @@ func read(customizations []map[string]interface{}) (labeledValues []string, imag
 
 		jsonData, err := json.Marshal(customization)
 		if err != nil {
-			// return labeledValues
+			return
 		}
 
 		label := ""
@@ -252,7 +251,7 @@ func read(customizations []map[string]interface{}) (labeledValues []string, imag
 }
 
 // Parse 解析压缩文件内容
-// 文件名格式：702-2644781-4722617_82729974619961，json 文件为 82729974619961
+// 文件名格式：702-2644781-4722617_82729974619961 [订单号_订单商品 ID]，json 文件为 82729974619961
 func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizationInformationParser, error) {
 	if parser.zipFile == "" {
 		return parser, errors.New("zip 文件路径不能为空")
@@ -306,10 +305,10 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		if err != nil {
 			return parser, err
 		}
-		parser.SnapshotImageBase64 = imageBase64String
+		parser.SnapshotImage = imageBase64String
 	}
 	labeledValues := make([]string, 0)
-	images := make(map[string]string, 0)
+	images := make(map[string]string)
 	for _, c := range previewContainerCustomizationData.Children {
 		v1, v2 := read(c.Children)
 		labeledValues = append(labeledValues, v1...)
@@ -318,8 +317,7 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 			if err != nil {
 				images[img] = img
 			} else {
-				images[img] = img
-				// images[img] = imageBase64String
+				images[img] = imageBase64String
 			}
 		}
 	}
@@ -334,8 +332,8 @@ func (parser *AmazonCustomizationInformationParser) Reset() *AmazonCustomization
 	parser.zipFile = ""
 	parser.jsonText = ""
 	parser.SnapshotImageName = ""
-	parser.SnapshotImageBase64 = ""
-	parser.Images = make(map[string]string, 0)
+	parser.SnapshotImage = ""
+	parser.Images = make(map[string]string)
 	parser.Text = ""
 	return parser
 }

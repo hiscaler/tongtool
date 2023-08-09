@@ -25,6 +25,7 @@ func TestMain(m *testing.M) {
 	}
 
 	ttInstance = tongtool.NewTongTool(c)
+	ttInstance.SetAssetSaveDir("../uploads/amazon.c.i")
 	ttService = NewService(ttInstance)
 	m.Run()
 }
