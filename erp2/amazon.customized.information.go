@@ -66,7 +66,7 @@ type ImageCustomization struct {
 	Label string `json:"label"`
 	Image struct {
 		ImageName     string `json:"imageName"`
-		BuyerFilename string `json:"BuyerFilename"`
+		BuyerFilename string `json:"buyerFilename"`
 	} `json:"image"`
 }
 
