@@ -158,7 +158,7 @@ func toImageBase64(name string) (base64Encoding string, err error) {
 }
 
 func isValidCustomizationType(typ string) bool {
-	if inx.StringIn(typ, imageCustomization, fontCustomization, colorCustomization, optionCustomization) {
+	if inx.StringIn(typ, imageCustomization, fontCustomization, colorCustomization, optionCustomization, textCustomization) {
 		return true
 	}
 	return false
