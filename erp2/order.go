@@ -124,6 +124,8 @@ type Order struct {
 	CarrierURL                string         `json:"carrierUrl"`                // 物流网络地址
 	DespatchCompleteTime      string         `json:"despatchCompleteTime"`      // 订单发货完成时间
 	DispatchTypeName          string         `json:"dispathTypeName"`           // 邮寄方式名称
+	DownloadTime              string         `json:"downloadTime"`              // 订单首次下载或创建时间
+	EarliestDeliveryDate      string         `json:"earliestDeliveryDate"`      // 亚马逊订单预计最早送达时间
 	EbayNotes                 string         `json:"ebayNotes"`                 // 订单备注
 	EbaySiteEnName            string         `json:"ebaySiteEnName"`            // 站点
 	FirstTariff               float64        `json:"firstTariff"`               // 头程运费
