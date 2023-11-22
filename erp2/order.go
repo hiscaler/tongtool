@@ -196,21 +196,22 @@ func (o Order) Amount(exchangeRates map[string]float64, precision int32, shippin
 
 type OrdersQueryParams struct {
 	Paging
-	AccountCode      string `json:"accountCode"`                // ERP系统中，基础设置->账号管理 列表中的代码
-	BuyerEmail       string `json:"buyerEmail,omitempty"`       // 买家邮箱
-	MerchantId       string `json:"merchantId"`                 // 商户 ID
-	OrderId          string `json:"orderId,omitempty"`          // 订单号
-	OrderStatus      string `json:"orderStatus,omitempty"`      // 订单状态（waitPacking：等待配货、waitPrinting：等待打印、waitingDespatching：等待发货、despatched：已发货、unpaid：未付款、payed：已付款）
-	PayDateFrom      string `json:"payDateFrom,omitempty"`      // 付款起始时间
-	PayDateTo        string `json:"payDateTo,omitempty"`        // 付款结束时间
-	PlatformCode     string `json:"platformCode,omitempty"`     // 通途中平台代码
-	RefundedDateFrom string `json:"refundedDateFrom,omitempty"` // 退款起始时间
-	RefundedDateTo   string `json:"refundedDateTo,omitempty"`   // 退款结束时间
-	SaleDateFrom     string `json:"saleDateFrom,omitempty"`     // 销售起始时间
-	SaleDateTo       string `json:"saleDateTo,omitempty"`       // 销售结束时间
-	StoreFlag        string `json:"storeFlag"`                  // 是否需要查询 1 年表或归档表数据（根据时间参数或者全量查询订单的时候使用该参数，0：活跃表、1：一年表、2：归档表，默认为 0）
-	UpdatedDateFrom  string `json:"updatedDateFrom,omitempty"`  // 更新开始时间
-	UpdatedDateTo    string `json:"updatedDateTo,omitempty"`    // 更新结束时间
+	AccountCode                           string `json:"accountCode"`                              // ERP系统中，基础设置->账号管理 列表中的代码
+	BuyerEmail                            string `json:"buyerEmail,omitempty"`                     // 买家邮箱
+	MerchantId                            string `json:"merchantId"`                               // 商户 ID
+	OrderId                               string `json:"orderId,omitempty"`                        // 订单号
+	OrderStatus                           string `json:"orderStatus,omitempty"`                    // 订单状态（waitPacking：等待配货、waitPrinting：等待打印、waitingDespatching：等待发货、despatched：已发货、unpaid：未付款、payed：已付款）
+	PayDateFrom                           string `json:"payDateFrom,omitempty"`                    // 付款起始时间
+	PayDateTo                             string `json:"payDateTo,omitempty"`                      // 付款结束时间
+	PlatformCode                          string `json:"platformCode,omitempty"`                   // 通途中平台代码
+	RefundedDateFrom                      string `json:"refundedDateFrom,omitempty"`               // 退款起始时间
+	RefundedDateTo                        string `json:"refundedDateTo,omitempty"`                 // 退款结束时间
+	SaleDateFrom                          string `json:"saleDateFrom,omitempty"`                   // 销售起始时间
+	SaleDateTo                            string `json:"saleDateTo,omitempty"`                     // 销售结束时间
+	StoreFlag                             string `json:"storeFlag"`                                // 是否需要查询 1 年表或归档表数据（根据时间参数或者全量查询订单的时候使用该参数，0：活跃表、1：一年表、2：归档表，默认为 0）
+	UpdatedDateFrom                       string `json:"updatedDateFrom,omitempty"`                // 更新开始时间
+	UpdatedDateTo                         string `json:"updatedDateTo,omitempty"`                  // 更新结束时间
+	DownloadCustomizedInformationResource bool   `json:"download_customized_information_resource"` // 是否下载定制信息资源
 }
 
 func (m OrdersQueryParams) Validate() error {
@@ -383,7 +384,7 @@ ERROR: %s
 				for _, detail := range items[i].OrderDetails {
 					for ii, gf := range items[i].GoodsInfo.PlatformGoodsInfoList {
 						if gf.WebStoreItemId == detail.WebStoreItemId {
-							if gf.CustomizedURL != "" {
+							if gf.CustomizedURL != "" && params.DownloadCustomizedInformationResource {
 								var zipFile string
 								zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
 								if err != nil {
