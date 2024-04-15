@@ -115,6 +115,13 @@ type AmazonCustomizationInformation struct {
 	Title             string                     `json:"title"`
 	Quantity          int                        `json:"quantity"`
 	CustomizationData PageContainerCustomization `json:"customizationData"`
+	Version3          struct {
+		CustomizationInfo struct {
+			Surfaces []struct {
+				Areas []map[string]any `json:"areas"`
+			} `json:"surfaces"`
+		} `json:"customizationInfo"`
+	} `json:"version3.0"`
 }
 
 type AmazonCustomizationInformationParser struct {
@@ -124,6 +131,8 @@ type AmazonCustomizationInformationParser struct {
 	SnapshotImage     string            // Image is base64 format
 	Images            map[string]string // Image is base64 format
 	Text              string
+	LabeledValues     map[string]string
+	Version3          map[string]string
 }
 
 func NewAmazonCustomizationInformationParser() *AmazonCustomizationInformationParser {
@@ -164,8 +173,9 @@ func isValidCustomizationType(typ string) bool {
 	return false
 }
 
-func read(customizations []map[string]interface{}) (labeledValues []string, images []string) {
-	labeledValues = make([]string, 0)
+func read(customizations []map[string]interface{}) (labeledValues map[string]string, lines []string, images []string) {
+	labeledValues = make(map[string]string)
+	lines = make([]string, 0)
 	for _, customization := range customizations {
 		s, ok := customization["type"]
 		typ := s.(string)
@@ -182,9 +192,12 @@ func read(customizations []map[string]interface{}) (labeledValues []string, imag
 			for _, child := range rawChildren.([]interface{}) {
 				children = append(children, child.(map[string]interface{}))
 			}
-			v1, v2 := read(children)
-			labeledValues = append(labeledValues, v1...)
-			images = append(images, v2...)
+			v1, v2, v3 := read(children)
+			for k, v := range v1 {
+				labeledValues[k] = v
+			}
+			lines = append(lines, v2...)
+			images = append(images, v3...)
 		}
 
 		jsonData, err := json.Marshal(customization)
@@ -245,7 +258,8 @@ func read(customizations []map[string]interface{}) (labeledValues []string, imag
 		}
 
 		if label != "" {
-			labeledValues = append(labeledValues, fmt.Sprintf("%s:%s", label, value))
+			lines = append(lines, fmt.Sprintf("%s:%s", label, value))
+			labeledValues[label] = value
 		}
 	}
 
@@ -296,6 +310,38 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		return parser, errors.New("无效的 JSON")
 	}
 
+	if len(ci.Version3.CustomizationInfo.Surfaces) == 0 {
+		labeledValue := make(map[string]string)
+		areas := ci.Version3.CustomizationInfo.Surfaces[0].Areas
+		for _, area := range areas {
+			typ, ok := area["customizationType"]
+			if !ok {
+				continue
+			}
+			label := ""
+			if v, ok := area["label"]; ok {
+				label = v.(string)
+			}
+			value := ""
+			switch typ {
+			case "TextPrinting":
+				if v, ok := area["text"]; ok {
+					value = v.(string)
+				}
+
+			case "Options":
+				if v, ok := area["optionValue"]; ok {
+					value = v.(string)
+				}
+			}
+			if label == "" {
+				continue
+			}
+			labeledValue[label] = value
+		}
+		parser.Version3 = labeledValue
+	}
+
 	previewContainerCustomizationData := ci.CustomizationData.Children[0]
 
 	var imageBase64String string
@@ -309,12 +355,16 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		}
 		parser.SnapshotImage = imageBase64String
 	}
-	labeledValues := make([]string, 0)
+	lines := make([]string, 0)
 	images := make(map[string]string)
+	labeledValues := make(map[string]string)
 	for _, c := range previewContainerCustomizationData.Children {
-		v1, v2 := read(c.Children)
-		labeledValues = append(labeledValues, v1...)
-		for _, img := range v2 {
+		v1, v2, v3 := read(c.Children)
+		for k, v := range v1 {
+			labeledValues[k] = v
+		}
+		lines = append(lines, v2...)
+		for _, img := range v3 {
 			imageBase64String, err = toImageBase64(filepath.Join(dst, img))
 			if err != nil {
 				return parser, err
@@ -325,8 +375,9 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		}
 	}
 
-	parser.Text = strings.Join(labeledValues, "\n")
+	parser.Text = strings.Join(lines, "\n")
 	parser.Images = images
+	parser.LabeledValues = labeledValues
 
 	return parser, nil
 }
@@ -338,5 +389,7 @@ func (parser *AmazonCustomizationInformationParser) Reset() *AmazonCustomization
 	parser.SnapshotImage = ""
 	parser.Images = make(map[string]string)
 	parser.Text = ""
+	parser.LabeledValues = make(map[string]string)
+	parser.Version3 = make(map[string]string)
 	return parser
 }

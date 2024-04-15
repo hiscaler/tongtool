@@ -72,6 +72,7 @@ type PlatformGoodsInfo struct {
 		SnapshotImage string            `json:"snapshotImage"` // Image is base64 format
 		Text          string            `json:"text"`          // All text use \n split
 		Images        map[string]string `json:"images"`        // Image is base64 format
+		LabeledValues map[string]string `json:"labeledValues"` // Label value for information
 	} `json:"customizedInformation"` // 定制信息
 }
 
@@ -322,10 +323,20 @@ func download(url, filename, dir string) (path string, err error) {
 	if err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err = Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
 
 	_, err = io.Copy(file, resp.Body)
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			return
+		}
+	}(file)
 	return
 }
 
@@ -400,6 +411,7 @@ ERROR: %s
 								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
 								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
 								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
+								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.LabeledValues= parser.LabeledValues
 							}
 							break
 						}
