@@ -310,7 +310,7 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		return parser, errors.New("无效的 JSON")
 	}
 
-	if len(ci.Version3.CustomizationInfo.Surfaces) == 0 {
+	if len(ci.Version3.CustomizationInfo.Surfaces) != 0 {
 		labeledValue := make(map[string]string)
 		areas := ci.Version3.CustomizationInfo.Surfaces[0].Areas
 		for _, area := range areas {
