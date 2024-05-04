@@ -406,14 +406,16 @@ ERROR: %s
 								_, err = parser.Reset().SetZipFile(zipFile).Parse()
 								if err != nil {
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = err.Error()
+									err = nil
 									return
+								} else {
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Ok = true
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImageName = parser.SnapshotImageName
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.LabeledValues = parser.LabeledValues
 								}
-								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Ok = true
-								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImageName = parser.SnapshotImageName
-								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
-								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
-								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
-								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.LabeledValues = parser.LabeledValues
 							}
 							break
 						}
