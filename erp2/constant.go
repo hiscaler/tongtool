@@ -55,4 +55,5 @@ const (
 	PlatformManoMano             = "manomano_api"      // ManoMano
 	PlatformShoptima             = "shoptima_api"      // Shoptima
 	PlatformShoprises            = "shoprises_api"     // Shoprises
+	PlatformTemu                 = "temu_api"          // Temu
 )
