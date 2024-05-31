@@ -305,8 +305,10 @@ func (m OrdersQueryParams) Validate() error {
 func download(url, filename, dir string) (path string, err error) {
 	path = filepath.Join(dir, filename+".zip")
 	if filex.Exists(path) {
-		// Return it if zip file exists.
-		return
+		err = os.Remove(path)
+		if err != nil {
+			return
+		}
 	}
 
 	file, err := os.Create(path)
