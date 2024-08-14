@@ -257,7 +257,7 @@ func read(customizations []map[string]interface{}) (labeledValues map[string]str
 			value = fmt.Sprintf("%s (%s)", d.ColorSelection.Name, d.ColorSelection.Value)
 		}
 
-		if label != "" {
+		if label != "" && value != "" {
 			lines = append(lines, fmt.Sprintf("%s:%s", label, value))
 			labeledValues[label] = value
 		}
@@ -306,7 +306,7 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 		return parser, err
 	}
 
-	if len(ci.CustomizationData.Children) != 1 {
+	if len(ci.CustomizationData.Children) == 0 {
 		return parser, errors.New("无效的 JSON")
 	}
 
@@ -358,19 +358,21 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 	lines := make([]string, 0)
 	images := make(map[string]string)
 	labeledValues := make(map[string]string)
-	for _, c := range previewContainerCustomizationData.Children {
-		v1, v2, v3 := read(c.Children)
-		for k, v := range v1 {
-			labeledValues[k] = v
-		}
-		lines = append(lines, v2...)
-		for _, img := range v3 {
-			imageBase64String, err = toImageBase64(filepath.Join(dst, img))
-			if err != nil {
-				return parser, err
-				// images[img] = img
-			} else {
-				images[img] = imageBase64String
+	for _, child := range ci.CustomizationData.Children {
+		for _, c := range child.Children {
+			v1, v2, v3 := read(c.Children)
+			for k, v := range v1 {
+				labeledValues[k] = v
+			}
+			lines = append(lines, v2...)
+			for _, img := range v3 {
+				imageBase64String, err = toImageBase64(filepath.Join(dst, img))
+				if err != nil {
+					return parser, err
+					// images[img] = img
+				} else {
+					images[img] = imageBase64String
+				}
 			}
 		}
 	}
