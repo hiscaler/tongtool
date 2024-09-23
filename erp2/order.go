@@ -68,6 +68,7 @@ type PlatformGoodsInfo struct {
 	CustomizedURL         string `json:"customizedUrl"`       // 定制信息下载地址
 	CustomizedInformation struct {
 		Ok                bool              `json:"ok"`                // 是否处理完毕
+		Json              []byte            `json:"json"`              // Json 内容
 		Error             string            `json:"error"`             // 处理时所产生的错误信息
 		SnapshotImage     string            `json:"snapshotImage"`     // Image is base64 format
 		SnapshotImageName string            `json:"SnapshotImageName"` // Snapshot image name
@@ -413,6 +414,7 @@ ERROR: %s
 								} else {
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Ok = true
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImageName = parser.SnapshotImageName
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Json = []byte(parser.jsonText)
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
