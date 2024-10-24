@@ -69,7 +69,7 @@ type Product struct {
 	GoodsDetail          []ProductDetail `json:"goodsDetail"`          // 商品明细
 	HsCode               string          `json:"hsCode"`               // 海关编码
 	InquirerName         string          `json:"inquirerName"`         // 采购询价员名称
-	LabelList            []ProductLabel         `json:"labelList"`            // 产品标签
+	LabelList            []ProductLabel  `json:"labelList"`            // 产品标签
 	LabelName            string          `json:"labelName"`            // 标签名称
 	PackageCost          float64         `json:"packageCost"`          // 商品包装成本
 	PackageHeight        float64         `json:"packageHeight"`        // 包裹尺寸(高cm)
@@ -109,16 +109,16 @@ func (p Product) GoodsDetailIndex() int {
 
 // Image 商品图片
 func (p Product) Image() string {
-	path := ""
+	imagePath := ""
 	n := len(p.ProductImgList)
 	if n > 0 {
 		index := p.GoodsDetailIndex()
 		if index >= 0 && index < n {
 			// 0 ~ n-1
-			path = p.ProductImgList[index].ImageGroupId
+			imagePath = p.ProductImgList[index].ImageGroupId
 		}
 	}
-	return path
+	return imagePath
 }
 
 // ImageIsNormalized 图片地址是否规范
@@ -557,7 +557,7 @@ ERROR: %s
 				s.tongTool.Logger.Printf("set cache %s error: %s", cacheKey, e.Error())
 			}
 		} else {
-			s.tongTool.Logger.Printf("items marshal error: %s", err.Error())
+			s.tongTool.Logger.Printf("items marshal error: %s", e.Error())
 		}
 	}
 	return
