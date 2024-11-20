@@ -15,6 +15,9 @@ type Service interface {
 	CreateOrder(req CreateOrderRequest) (orderId, orderNumber string, err error)                                                                // 手工创建订单
 	UpdateOrder(req UpdateOrderRequest) error                                                                                                   // 更新订单
 	Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error)                                                                // 订单列表
+
+	RetryDownload(orderIdKey string, webStoreItemId string) (url string ,err error)
+
 	Order(id string) (item Order, exists bool, err error)                                                                                       // 单个订单
 	CancelOrder(req CancelOrderRequest) (results []OrderCancelResult, err error)                                                                // 作废订单
 	OrderPair(req OrderPairRequest) error                                                                                                       // 订单配对

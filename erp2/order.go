@@ -344,6 +344,49 @@ func download(url, filename, dir string) (path string, err error) {
 	return
 }
 
+func (s service) RetryDownload(orderIdKey string, webStoreItemId string) (url string, err error) {
+	params := map[string]string{
+		"merchantId": s.tongTool.MerchantId,
+		"orderIdKey": orderIdKey,
+		"reDownload": "1",
+	}
+	var res struct {
+		tongtool.Response
+		Datas []struct {
+			CustomizedUrl       string `json:"customizedUrl"`       // 定制信息地址
+			WebStoreCustomLabel string `json:"webstoreCustomLabel"` // 原始sku
+			WebStoreItemId      string `json:"webStoreItemId"`      // 平台订单产品 ItemId
+		} `json:"datas"`
+	}
+	resp, err := s.tongTool.Client.R().
+		SetBody(params).
+		SetResult(&res).
+		Post("/openapi/tongtool/downloadAmazonCustomize")
+	if err != nil {
+		return
+	}
+
+	if resp.IsSuccess() {
+		err = tongtool.ErrorWrap(res.Code, res.Message)
+	} else {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
+			err = tongtool.ErrorWrap(res.Code, res.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	if err != nil {
+		return
+	}
+
+	for _, data := range res.Datas {
+		if strings.EqualFold(data.WebStoreItemId, webStoreItemId) {
+			return data.CustomizedUrl, nil
+		}
+	}
+	return "", fmt.Errorf("%s is not exists in download resources", webStoreItemId)
+}
+
 // Orders 订单列表
 // https://open.tongtool.com/apiDoc.html#/?docId=f4371e5d65c242a588ebe05872c8c4f8
 func (s service) Orders(params OrdersQueryParams) (items []Order, isLastPage bool, err error) {
