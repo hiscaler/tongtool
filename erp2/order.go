@@ -457,7 +457,7 @@ ERROR: %s
 								} else {
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Ok = true
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImageName = parser.SnapshotImageName
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Json = []byte(parser.jsonText)
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Json = []byte(parser.JsonText)
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
 									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images

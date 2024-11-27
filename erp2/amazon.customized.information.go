@@ -126,7 +126,7 @@ type AmazonCustomizationInformation struct {
 
 type AmazonCustomizationInformationParser struct {
 	zipFile           string
-	jsonText          string
+	JsonText          string
 	SnapshotImageName string
 	SnapshotImage     string            // Image is base64 format
 	Images            map[string]string // Image is base64 format
@@ -298,7 +298,7 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 	if err != nil {
 		return parser, err
 	}
-	parser.jsonText = string(b)
+	parser.JsonText = string(b)
 
 	var ci AmazonCustomizationInformation
 	err = json.Unmarshal(b, &ci)
@@ -386,7 +386,7 @@ func (parser *AmazonCustomizationInformationParser) Parse() (*AmazonCustomizatio
 
 func (parser *AmazonCustomizationInformationParser) Reset() *AmazonCustomizationInformationParser {
 	parser.zipFile = ""
-	parser.jsonText = ""
+	parser.JsonText = ""
 	parser.SnapshotImageName = ""
 	parser.SnapshotImage = ""
 	parser.Images = make(map[string]string)
