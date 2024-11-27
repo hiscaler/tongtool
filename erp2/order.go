@@ -444,9 +444,11 @@ ERROR: %s
 						if gf.WebStoreItemId == detail.WebStoreItemId {
 							if gf.CustomizedURL != "" && params.DownloadCustomizedInformationResource {
 								var zipFile string
-								zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
-								if err != nil {
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = err.Error()
+								// 保存文件地址为 /uploads/amazon.c.i/{Number}.{ItemId}.zip
+								zipFile = fmt.Sprintf("%s/%s.%s.zip", s.tongTool.GetAssetSaveDir(), items[i].OrderIdCode, detail.WebStoreItemId)
+								// zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
+								if !filex.Exists(zipFile) {
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = "zip: 文件不存在"
 									return
 								}
 								_, err = parser.Reset().SetZipFile(zipFile).Parse()
