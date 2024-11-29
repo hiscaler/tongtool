@@ -32,7 +32,8 @@ const (
 
 // 查询对象
 const (
-	OrderStoreFlagActive   = "0" // 活跃表（3 个月内）
+	OrderStoreFlagActive   = "0" // 活跃表（3 个月内全部状态）
+	OrderStoreFlagActiveUndelivered   = "01" // 活跃表（3 个月内未发货）
 	OrderStoreFlagOneYear  = "1" // 一年表（3 个月到 15 个月）
 	OrderStoreFlagArchived = "2" // 归档表（15 个月以前）
 )
@@ -221,7 +222,7 @@ func (m OrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.BuyerEmail, validation.When(m.BuyerEmail != "", is.EmailFormat.Error("无效的邮箱格式"))),
 		validation.Field(&m.StoreFlag,
-			validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围")),
+			validation.When(m.StoreFlag != "", validation.In(OrderStoreFlagActive, OrderStoreFlagActiveUndelivered, OrderStoreFlagOneYear, OrderStoreFlagArchived).Error("无效的查询范围")),
 		),
 		validation.Field(&m.OrderStatus, validation.When(m.OrderStatus != "", validation.In(OrderStatusWaitPacking, OrderStatusWaitPrinting, OrderStatusWaitingDespatching, OrderStatusDespatched, OrderStatusUnpaid, OrderStatusPaid).Error("无效的订单状态"))),
 		validation.Field(&m.PayDateFrom, validation.When(m.PayDateTo != "", validation.Date(constant.DatetimeFormat).Error("无效的付款起始时间"))),
