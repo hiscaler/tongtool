@@ -32,10 +32,10 @@ const (
 
 // 查询对象
 const (
-	OrderStoreFlagActive   = "0" // 活跃表（3 个月内全部状态）
-	OrderStoreFlagActiveUndelivered   = "01" // 活跃表（3 个月内未发货）
-	OrderStoreFlagOneYear  = "1" // 一年表（3 个月到 15 个月）
-	OrderStoreFlagArchived = "2" // 归档表（15 个月以前）
+	OrderStoreFlagActive            = "0"  // 活跃表（3 个月内全部状态）
+	OrderStoreFlagActiveUndelivered = "01" // 活跃表（3 个月内未发货）
+	OrderStoreFlagOneYear           = "1"  // 一年表（3 个月到 15 个月）
+	OrderStoreFlagArchived          = "2"  // 归档表（15 个月以前）
 )
 
 // OrderDetail 通途订单详情
@@ -446,11 +446,17 @@ ERROR: %s
 							if gf.CustomizedURL != "" && params.DownloadCustomizedInformationResource {
 								var zipFile string
 								// 保存文件地址为 /uploads/amazon.c.i/{Number}_{ItemId}.zip
+								if strings.Contains(gf.CustomizedURL, "null_") {
+									zipName := items[i].WebStoreOrderId + "_" + detail.WebStoreItemId + "_" + items[i].OrderIdCode[strings.Index(items[i].OrderIdCode, "-")+1:] + ".zip"
+									gf.CustomizedURL = gf.CustomizedURL[:strings.LastIndex(gf.CustomizedURL, "/")] + "/" + zipName
+								}
 								zipFile = fmt.Sprintf("%s/%s_%s.zip", s.tongTool.GetAssetSaveDir(), items[i].OrderIdCode, detail.WebStoreItemId)
-								// zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
 								if !filex.Exists(zipFile) {
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = "zip: 文件不存在"
-									return
+									zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
+									if err != nil {
+										items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = "zip: 文件不存在"
+										return
+									}
 								}
 								_, err = parser.Reset().SetZipFile(zipFile).Parse()
 								if err != nil {
