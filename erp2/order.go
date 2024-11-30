@@ -449,6 +449,7 @@ ERROR: %s
 								if strings.Contains(gf.CustomizedURL, "null_") {
 									zipName := items[i].WebStoreOrderId + "_" + detail.WebStoreItemId + "_" + items[i].OrderIdCode[strings.Index(items[i].OrderIdCode, "-")+1:] + ".zip"
 									gf.CustomizedURL = gf.CustomizedURL[:strings.LastIndex(gf.CustomizedURL, "/")] + "/" + zipName
+									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedURL = gf.CustomizedURL
 								}
 								zipFile = fmt.Sprintf("%s/%s_%s.zip", s.tongTool.GetAssetSaveDir(), items[i].OrderIdCode, detail.WebStoreItemId)
 								if !filex.Exists(zipFile) {
