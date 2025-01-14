@@ -441,6 +441,10 @@ ERROR: %s
 			parser := NewAmazonCustomizationInformationParser()
 			for i := range items {
 				for _, detail := range items[i].OrderDetails {
+					if detail.Quantity == 0 {
+						continue
+					}
+
 					for ii, gf := range items[i].GoodsInfo.PlatformGoodsInfoList {
 						if gf.WebStoreItemId == detail.WebStoreItemId {
 							zipFile := fmt.Sprintf("%s/%s_%s.zip", s.tongTool.GetAssetSaveDir(), items[i].OrderIdCode, detail.WebStoreItemId)
