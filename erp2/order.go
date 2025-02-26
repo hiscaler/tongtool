@@ -448,48 +448,49 @@ ERROR: %s
 			for i := range items {
 				for j, detail := range items[i].OrderDetails {
 					items[i].OrderDetails[j].RequiredDelivery = detail.IsDeliverGoods == "0"
-					if detail.Quantity == 0 {
+
+					if detail.Quantity == 0 || !params.DownloadCustomizedInformationResource {
 						continue
 					}
 
 					for ii, gf := range items[i].GoodsInfo.PlatformGoodsInfoList {
-						if gf.WebStoreItemId == detail.WebStoreItemId {
-							zipFile := fmt.Sprintf("%s/%s_%s.zip", s.tongTool.GetAssetSaveDir(), items[i].OrderIdCode, detail.WebStoreItemId)
-							if params.DownloadCustomizedInformationResource {
-								// 保存文件地址为 /uploads/amazon.c.i/{Number}_{ItemId}.zip
-								if gf.CustomizedURL != "" && strings.Contains(gf.CustomizedURL, "null_") {
-									zipName := items[i].WebStoreOrderId + "_" + detail.WebStoreItemId + "_" + items[i].OrderIdCode[strings.Index(items[i].OrderIdCode, "-")+1:] + ".zip"
-									gf.CustomizedURL = gf.CustomizedURL[:strings.LastIndex(gf.CustomizedURL, "/")] + "/" + zipName
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedURL = gf.CustomizedURL
-								}
+						if !strings.EqualFold(gf.WebStoreItemId, detail.WebStoreItemId) {
+							continue
+						}
 
-								if !filex.Exists(zipFile) && gf.CustomizedURL != "" {
-									zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
-									if err != nil {
-										items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = "zip: 文件不存在"
-										return
-									}
-								}
-								if zipFile == "" {
-									break
-								}
-								_, err = parser.Reset().SetZipFile(zipFile).Parse()
-								if err != nil {
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = err.Error()
-									err = nil
-									return
-								} else {
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Ok = true
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImageName = parser.SnapshotImageName
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Json = []byte(parser.JsonText)
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
-									items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.LabeledValues = parser.LabeledValues
-								}
+						zipFile := fmt.Sprintf("%s/%s_%s.zip", s.tongTool.GetAssetSaveDir(), items[i].OrderIdCode, detail.WebStoreItemId)
+						// 保存文件地址为 /uploads/amazon.c.i/{Number}_{ItemId}.zip
+						if gf.CustomizedURL != "" && strings.Contains(gf.CustomizedURL, "null_") {
+							zipName := items[i].WebStoreOrderId + "_" + detail.WebStoreItemId + "_" + items[i].OrderIdCode[strings.Index(items[i].OrderIdCode, "-")+1:] + ".zip"
+							gf.CustomizedURL = gf.CustomizedURL[:strings.LastIndex(gf.CustomizedURL, "/")] + "/" + zipName
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedURL = gf.CustomizedURL
+						}
+
+						if !filex.Exists(zipFile) && gf.CustomizedURL != "" {
+							zipFile, err = download(gf.CustomizedURL, fmt.Sprintf("%s_%s", items[i].OrderIdCode, detail.WebStoreItemId), s.tongTool.GetAssetSaveDir())
+							if err != nil {
+								items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = "zip: 文件不存在"
+								return
 							}
+						}
+						if zipFile == "" {
 							break
 						}
+						_, err = parser.Reset().SetZipFile(zipFile).Parse()
+						if err != nil {
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Error = err.Error()
+							err = nil
+							return
+						} else {
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Ok = true
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImageName = parser.SnapshotImageName
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Json = []byte(parser.JsonText)
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.SnapshotImage = parser.SnapshotImage
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Text = parser.Text
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.Images = parser.Images
+							items[i].GoodsInfo.PlatformGoodsInfoList[ii].CustomizedInformation.LabeledValues = parser.LabeledValues
+						}
+						break
 					}
 				}
 
