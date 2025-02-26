@@ -12,6 +12,7 @@ import (
 	"github.com/hiscaler/tongtool"
 	"github.com/hiscaler/tongtool/constant"
 	jsoniter "github.com/json-iterator/go"
+	"gopkg.in/guregu/null.v4"
 	"io"
 	"net/http"
 	"os"
@@ -40,14 +41,19 @@ const (
 
 // OrderDetail 通途订单详情
 type OrderDetail struct {
-	GoodsMatchedQuantity int     `json:"goodsMatchedQuantity"`
-	GoodsMatchedSKU      string  `json:"goodsMatchedSku"`
-	OrderDetailsId       string  `json:"orderDetailsId"`
-	Quantity             int     `json:"quantity"`
-	TransactionPrice     float64 `json:"transaction_price"`
-	WebStoreCustomLabel  string  `json:"webstore_custom_label"`
-	WebStoreItemId       string  `json:"webstore_item_id"`
-	WebStoreSKU          string  `json:"webstore_sku"`
+	GoodsMatchedQuantity int         `json:"goodsMatchedQuantity"`
+	GoodsMatchedSKU      string      `json:"goodsMatchedSku"`
+	OrderDetailsId       string      `json:"orderDetailsId"`        // 订单详情 ID
+	Quantity             int         `json:"quantity"`              // 货品数量
+	TransactionPrice     float64     `json:"transaction_price"`     // 交易价格
+	WebStoreCustomLabel  string      `json:"webstore_custom_label"` // 平台原始 sku
+	WebStoreItemId       string      `json:"webstore_item_id"`      // 平台订单明细 id
+	WebStoreSKU          string      `json:"webstore_sku"`          // 平台 sku
+	GoodsDetailRemark    null.String `json:"goodsDetailRemark"`     // 货品备注
+	DiscountedPrice      string      `json:"discountedPrice"`       // shopee 折扣后价格
+	Location             null.String `json:"location"`              // ebay location
+	IsDeliverGoods       string      `json:"isDeliverGoods"`        // 是否需要发货(0-需发货,1-无需发货)
+	RequiredDelivery     bool        `json:"required_delivery"`     // 是否需要发货（自定义属性，根据 isDeliverGoods 来判断）
 }
 
 // OrderPackage 订单包裹信息
@@ -440,7 +446,8 @@ ERROR: %s
 			items = res.Datas.Array
 			parser := NewAmazonCustomizationInformationParser()
 			for i := range items {
-				for _, detail := range items[i].OrderDetails {
+				for j, detail := range items[i].OrderDetails {
+					items[i].OrderDetails[j].RequiredDelivery = detail.IsDeliverGoods == "0"
 					if detail.Quantity == 0 {
 						continue
 					}
