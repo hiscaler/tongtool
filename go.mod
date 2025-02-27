@@ -11,6 +11,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/shopspring/decimal v1.3.1
 	github.com/stretchr/testify v1.7.0
+	gopkg.in/guregu/null.v4 v4.0.0
 )
 
 require (
