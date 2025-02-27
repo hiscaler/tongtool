@@ -52,7 +52,7 @@ type OrderDetail struct {
 	GoodsDetailRemark    null.String `json:"goodsDetailRemark"`     // 货品备注
 	DiscountedPrice      string      `json:"discountedPrice"`       // shopee 折扣后价格
 	Location             null.String `json:"location"`              // ebay location
-	IsDeliverGoods       string      `json:"isDeliverGoods"`        // 是否需要发货(0-需发货,1-无需发货)
+	IsDeliverGoods       null.String `json:"isDeliverGoods"`        // 是否需要发货(0-需发货,1-无需发货, null 未知)
 	RequiredDelivery     bool        `json:"required_delivery"`     // 是否需要发货（自定义属性，根据 isDeliverGoods 来判断）
 }
 
@@ -447,7 +447,7 @@ ERROR: %s
 			parser := NewAmazonCustomizationInformationParser()
 			for i := range items {
 				for j, detail := range items[i].OrderDetails {
-					items[i].OrderDetails[j].RequiredDelivery = detail.IsDeliverGoods == "0"
+					items[i].OrderDetails[j].RequiredDelivery = !detail.IsDeliverGoods.Valid || detail.IsDeliverGoods.String == "0"
 
 					if detail.Quantity == 0 || !params.DownloadCustomizedInformationResource {
 						continue
