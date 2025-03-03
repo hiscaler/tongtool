@@ -53,7 +53,7 @@ type OrderDetail struct {
 	DiscountedPrice      string      `json:"discountedPrice"`       // shopee 折扣后价格
 	Location             null.String `json:"location"`              // ebay location
 	IsDeliverGoods       null.String `json:"isDeliverGoods"`        // 是否需要发货(0-需发货,1-无需发货, null 未知)
-	RequiredDelivery     bool        `json:"required_delivery"`     // 是否需要发货（自定义属性，根据 isDeliverGoods 来判断）
+	RequiredDelivery     null.Bool   `json:"required_delivery"`     // 是否需要发货（自定义属性，根据 isDeliverGoods 来判断）
 }
 
 // OrderPackage 订单包裹信息
@@ -447,7 +447,16 @@ ERROR: %s
 			parser := NewAmazonCustomizationInformationParser()
 			for i := range items {
 				for j, detail := range items[i].OrderDetails {
-					items[i].OrderDetails[j].RequiredDelivery = !detail.IsDeliverGoods.Valid || detail.IsDeliverGoods.String == "0"
+					// 0-需发货,1-无需发货, null 未知
+					requiredDelivery := null.NewBool(false, false)
+					if detail.IsDeliverGoods.Valid {
+						if detail.IsDeliverGoods.String == "0" {
+							requiredDelivery = null.BoolFrom(true)
+						} else if detail.IsDeliverGoods.String == "1" {
+							requiredDelivery = null.BoolFrom(false)
+						}
+					}
+					items[i].OrderDetails[j].RequiredDelivery = requiredDelivery
 
 					if detail.Quantity == 0 || !params.DownloadCustomizedInformationResource {
 						continue
