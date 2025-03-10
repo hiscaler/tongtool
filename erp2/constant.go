@@ -56,4 +56,5 @@ const (
 	PlatformShoptima             = "shoptima_api"      // Shoptima
 	PlatformShoprises            = "shoprises_api"     // Shoprises
 	PlatformTemu                 = "temu_api"          // Temu
+	PlatformShein                = "shein_api"         // 希音
 )
